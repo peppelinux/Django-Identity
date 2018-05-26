@@ -1,7 +1,128 @@
 # Django-Identity
-Code and resources related to AAI in a Django context
+Code and resources related to AAI in a Django context.
 
-### resorces
+## Bootstrap code examples
+Each one for targeted projects, they will be migrated to project's Readme files.
+
+These are workng examples of IDP and SP made with Django.
+Components used:
+
+- pysaml2
+- djangosaml2
+- djangosaml2idp
+
+## Todo 
+
+#### django-saml-idp doesn't filter out attribute policy restrictions. 
+djangosaml2idp.views needs to be turned into debugging mode. 
+Implement attribute policy restrinctions at line 111
+
+````
+    # Create Identity dict (SP-specific)
+    sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
+    identity = processor.create_identity(request.user, sp_mapping)
+````
+
+
+Also this code should be improved:
+
+````
+if "SigAlg" in request.session and "Signature" in request.session:
+        _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
+        verified_ok = False
+        for cert in _certs:
+            # TODO implement
+            #if verify_redirect_signature(_info, IDP.sec.sec_backend, cert):
+            #    verified_ok = True
+            #    break
+            pass
+        if not verified_ok:
+            return HttpResponseBadRequest("Message signature verification failure")
+````
+
+- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships.
+
+- django production grade pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
+- [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
+- courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
+
+
+### django-saml-idp (IDP server)
+````
+sudo apt install xmlsec1 mariadb-server libmariadbclient-dev python3-dev python3-pip libssl-dev
+pip3 install virtualenv
+
+mkdir django-saml2-idp
+cd django-saml2-idp
+
+virtualenv -ppython3 django-saml2-idp.env
+source django-saml2-idp.env/bin/activate
+
+# copy project folder from this git repo
+#django-admin startproject django_saml2_idp
+
+# create your MysqlDB
+export USER='django-saml2-idp'
+export PASS='django-saml2-idp78'
+export HOST='%'
+export DB='django-saml2-idp'
+
+sudo mysql -u root -e "\
+CREATE USER ${USER}@'${HOST}' IDENTIFIED BY '${PASS}';\
+CREATE DATABASE ${DB} CHARACTER SET utf8 COLLATE utf8_general_ci;\
+GRANT ALL PRIVILEGES ON ${DB}.* TO ${USER}@'${HOST}';"
+
+# try the example app here
+cd django_saml2_idp
+
+pip3 install -r requirements
+./manage.py migrate
+./manage.py runserver 0.0.0.0:9000
+````
+
+### djangosaml2-sp (SP server)
+https://github.com/knaperek/djangosaml2
+
+````
+sudo apt install xmlsec1 mariadb-server libmariadbclient-dev python3-dev python3-pip libssl-dev
+pip3 install virtualenv
+
+mkdir djangosaml2_sp
+cd djangosaml2_sp
+
+virtualenv -ppython3 djangosaml2_sp.env
+source djangosaml2_sp.env/bin/activate
+
+# copy project folder from this git repo
+#django-admin startproject djangosaml2_sp
+
+# create your MysqlDB
+export USER='djangosaml2_sp'
+export PASS='djangosaml2_sp78'
+export HOST='%'
+export DB='djangosaml2_sp'
+
+sudo mysql -u root -e "\
+CREATE USER ${USER}@'${HOST}' IDENTIFIED BY '${PASS}';\
+CREATE DATABASE ${DB} CHARACTER SET utf8 COLLATE utf8_general_ci;\
+GRANT ALL PRIVILEGES ON ${DB}.* TO ${USER}@'${HOST}';"
+
+# try the example app here
+cd djangosaml2_sp
+
+pip3 install -r requirements
+./manage.py migrate
+
+# download idp metadata to sp
+wget http://localhost:9000/idp/metadata/
+
+# download sp metadata to idp
+wget http://localhost:8000/saml2/metadata/
+
+./manage.py runserver
+````
+
+### Resources
 
 - https://github.com/OTA-Insight/djangosaml2idp
 - http://djangosaml2idp.readthedocs.io/en/latest/
@@ -11,21 +132,3 @@ Code and resources related to AAI in a Django context
 
 - https://github.com/fangli/django-saml2-auth
 - https://github.com/knaperek/djangosaml2
-
-- http://repos.entrouvert.org/authentic.git (it seems quite obsolete, Django 1.5!)
-
-
-# Bootstrap code examples
-
-### django-saml-idp
-
-````
-mkdir django-saml2-idp
-cd django-saml2-idp
-
-virtualenv -ppython3 django-saml2-idp.env
-source django-saml2-idp.env/bin/activate
-
-django-admin startproject django_saml2_idp
-
-````

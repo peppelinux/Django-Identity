@@ -1,0 +1,11 @@
+django>2.0,<2.1
+mysqlclient
+uwsgi
+ipython
+
+# hint before: pip install -U setuptools
+pysaml2
+cffi
+
+# django saml2 SP
+git+https://github.com/knaperek/djangosaml2.git
