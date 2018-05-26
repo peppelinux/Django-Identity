@@ -12,4 +12,4 @@ Code and resources related to AAI in a Django context
 - https://github.com/fangli/django-saml2-auth
 - https://github.com/knaperek/djangosaml2
 
-- http://repos.entrouvert.org/authentic.git
+- http://repos.entrouvert.org/authentic.git (it seems quite obsolete, Django 1.5!)
