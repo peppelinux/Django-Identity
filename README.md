@@ -3,19 +3,19 @@ Code and resources related to AAI in a Django context.
 
 ## Bootstrap code examples
 Each one for targeted projects, they will be migrated to project's Readme files.
-
-These are workng examples of IDP and SP made with Django.
+These are workng examples of an IDP and a SP made with Django.
 Components used:
 
-- pysaml2
-- djangosaml2
-- djangosaml2idp
+- [pysaml2](https://github.com/IdentityPython/pysaml2)
+- [djangosaml2](https://github.com/knaperek/djangosaml2)
+- [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
 ## Todo 
 
 #### django-saml-idp doesn't filter out attribute policy restrictions. 
 djangosaml2idp.views needs to be turned into debugging mode. 
-Implement attribute policy restrinctions at line 111
+Implement attribute policy restrinctions at line 111 standing on pysaml2 approach (introduce this).
+Actually the only way to filter out attributes per SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping'].
 
 ````
     # Create Identity dict (SP-specific)
@@ -23,9 +23,7 @@ Implement attribute policy restrinctions at line 111
     identity = processor.create_identity(request.user, sp_mapping)
 ````
 
-
 Also this code should be improved:
-
 ````
 if "SigAlg" in request.session and "Signature" in request.session:
         _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
@@ -40,12 +38,12 @@ if "SigAlg" in request.session and "Signature" in request.session:
             return HttpResponseBadRequest("Message signature verification failure")
 ````
 
-- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships.
+- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. 
 
-- django production grade pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
+- django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
 - [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
 - courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
-
+- SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 
 ### django-saml-idp (IDP server)
 ````
@@ -81,8 +79,6 @@ pip3 install -r requirements
 ````
 
 ### djangosaml2-sp (SP server)
-https://github.com/knaperek/djangosaml2
-
 ````
 sudo apt install xmlsec1 mariadb-server libmariadbclient-dev python3-dev python3-pip libssl-dev
 pip3 install virtualenv
@@ -113,22 +109,17 @@ cd djangosaml2_sp
 pip3 install -r requirements
 ./manage.py migrate
 
-# download idp metadata to sp
-wget http://localhost:9000/idp/metadata/
+# download idp metadata to sp, not needed if remote options is enabled
+# wget http://localhost:9000/idp/metadata/
 
-# download sp metadata to idp
+# download sp metadata to idp [remote not yet working here]
 wget http://localhost:8000/saml2/metadata/
 
 ./manage.py runserver
 ````
 
-### Resources
+### Other usefull resources
 
-- https://github.com/OTA-Insight/djangosaml2idp
 - http://djangosaml2idp.readthedocs.io/en/latest/
-
 - https://github.com/IdentityPython
-- https://github.com/IdentityPython/pysaml2
-
 - https://github.com/fangli/django-saml2-auth
-- https://github.com/knaperek/djangosaml2
