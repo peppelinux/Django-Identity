@@ -47,6 +47,7 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
 - courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
+- pySAML2 AttributeAuthority Server
 
 ### django-saml-idp (IDP server)
 ````
