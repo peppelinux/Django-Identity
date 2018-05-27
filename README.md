@@ -127,3 +127,4 @@ wget http://localhost:8000/saml2/metadata/
 - http://djangosaml2idp.readthedocs.io/en/latest/
 - https://github.com/IdentityPython
 - https://github.com/fangli/django-saml2-auth
+- https://github.com/SAMLRaider/SAMLRaider (pentest)
