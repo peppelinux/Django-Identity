@@ -1,8 +1,8 @@
 # Django-Identity
-Development panel to bring AAI technologies to Django in a secure and stadard way. 
-Actually started from SAML2 implementation for IDP and SP Django based this project will implement also OIDC/oAuth2 and other AAA features.
+Development panel that aims to bring AAI technologies to Django in a secure and standard way. 
+Actually started from a SAML2 IDP and SP implementation built on pysaml2, this project will implement also OIDC/oAuth2 and other AAA features.
 
-Here you can find quite tested Applications, Code and general Resources related to AAI deployment in a Django context.
+In this repository we can find quite tested Applications, Code and general Resources related to AAI deployment in a pure Django context.
 
 ## Bootstrap code examples
 Each one for targeted projects, they will be migrated to project's Readme files.
