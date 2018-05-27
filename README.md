@@ -50,9 +50,9 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - pySAML2 AttributeAuthority Server
 
 ### Contributions, purposes, interesting bugs
-- pysaml2 [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
+- [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
-- (https://github.com/IdentityPython/pysaml2/issues/456)
+- [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
 - [Cookies encrypted in AES CBC](https://github.com/IdentityPython/pysaml2/issues/453)
 
 ### django-saml-idp (IDP server)
