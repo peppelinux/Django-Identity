@@ -13,17 +13,17 @@ Components used:
 ## Todo 
 
 #### django-saml-idp doesn't filter out attribute policy restrictions. 
-djangosaml2idp.views needs to be turned into debugging mode. 
-Implement attribute policy restrinctions at line 111 standing on pysaml2 approach (introduce this).
-Actually the only way to filter out attributes per SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping'].
+Implement attribute policy restrinctions at line 111 of views.py following pysaml2 approach.
+Actually the only way to filter out attributes for each SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping']. It works but policies with attribute restrictions allow us to introduce regexp filter per for every field.
 
+This is the code that should be extended:
 ````
     # Create Identity dict (SP-specific)
     sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
     identity = processor.create_identity(request.user, sp_mapping)
 ````
 
-Also this code should be improved:
+Also this code should be improved. Check what's going on here and do a security assessment of all the IDP Signing capabilities.
 ````
 if "SigAlg" in request.session and "Signature" in request.session:
         _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
@@ -38,7 +38,7 @@ if "SigAlg" in request.session and "Signature" in request.session:
             return HttpResponseBadRequest("Message signature verification failure")
 ````
 
-- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. 
+- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
 
 - django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
 - [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
