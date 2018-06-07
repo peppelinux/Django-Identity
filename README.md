@@ -143,3 +143,4 @@ With less features then pySAML2:
 - https://github.com/fangli/django-saml2-auth
 - https://addons.mozilla.org/en-US/firefox/addon/saml-tracer/ (debug)
 - https://github.com/SAMLRaider/SAMLRaider (pentest)
+- https://wiki.oasis-open.org/security/FrontPage (stdlib source)
