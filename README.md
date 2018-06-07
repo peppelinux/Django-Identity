@@ -131,6 +131,11 @@ wget http://localhost:8000/saml2/metadata/
 ./manage.py runserver
 ````
 
+### pySAML2 alternative
+With less features then pySAML2:
+
+- https://github.com/fangli/django-saml2-auth
+
 ### Other usefull resources
 
 - http://djangosaml2idp.readthedocs.io/en/latest/
