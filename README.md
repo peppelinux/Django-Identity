@@ -144,3 +144,4 @@ With less features then pySAML2:
 - https://addons.mozilla.org/en-US/firefox/addon/saml-tracer/ (debug)
 - https://github.com/SAMLRaider/SAMLRaider (pentest)
 - https://wiki.oasis-open.org/security/FrontPage (stdlib source)
+- https://www.aleksey.com/xmlsec/download.html (xmlsec1 sources)
