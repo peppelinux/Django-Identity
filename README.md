@@ -131,6 +131,9 @@ wget http://localhost:8000/saml2/metadata/
 ./manage.py runserver
 ````
 
+### SAML2 security raccomandations
+- Artifact resolution is the best auth method in several bandwidth and security aspects. Read [this](
+
 ### pySAML2 alternative
 With less features then pySAML2:
 
