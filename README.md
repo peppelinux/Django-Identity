@@ -132,7 +132,7 @@ wget http://localhost:8000/saml2/metadata/
 ````
 
 ### SAML2 security raccomandations
-- Artifact resolution is the best auth method in several bandwidth and security aspects. Read [this](
+- Artifact resolution is the best auth method in several bandwidth and security aspects. Read [this](#https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
 
 ### pySAML2 alternative
 With less features then pySAML2:
