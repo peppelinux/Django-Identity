@@ -141,7 +141,7 @@ With less features then pySAML2:
 - https://github.com/fangli/django-saml2-auth
 
 ### Other usefull resources
-
+- [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
 - http://djangosaml2idp.readthedocs.io/en/latest/
 - https://github.com/IdentityPython
 - https://github.com/fangli/django-saml2-auth
