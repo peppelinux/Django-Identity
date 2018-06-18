@@ -6,9 +6,8 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = 'http://localhost:8000/saml2'
-IDP_URL = 'http://localhost:9000/idp'
-
+BASE_URL = 'http://sp.pysaml2.testunical.it:8000/saml2'
+IDP_URL = 'https://idp.testunical.it/idp'
 
 SAML_CONFIG = {
     'debug' : True,
@@ -18,7 +17,6 @@ SAML_CONFIG = {
     'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                                       'saml2_config'),
                                       'attribute-maps'),
-
     'service': {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
@@ -33,7 +31,8 @@ SAML_CONFIG = {
                     ],
                 }, # end endpoints
             
-            # Mandates that the identity provider MUST authenticate the presenter directly rather than rely on a previous security context.
+            # Mandates that the identity provider MUST authenticate the
+            # presenter directly rather than rely on a previous security context.
             "force_authn": True,
             
             # attributes that this project need to identify a user
@@ -45,13 +44,18 @@ SAML_CONFIG = {
             'authn_requests_signed': True,
             'logout_requests_signed': True,
             
-            # Indicates that Authentication Responses to this SP must be signed. If set to True, the SP will not consume any SAML Responses that are not signed.
+            # Indicates that Authentication Responses to this SP must be signed.
+            # If set to True, the SP will not consume any SAML Responses that are not signed.
             'want_assertions_signed': True,
             
-            # When set to true, the SP will consume unsolicited SAML Responses, i.e. SAML Responses for which it has not sent a respective SAML Authentication Request.
+            # When set to true, the SP will consume unsolicited SAML Responses,
+            # i.e. SAML Responses for which it has not sent a respective SAML Authentication Request.
             'allow_unsolicited': True,
             
-            # Since this is a very simple SP it only needs to know about one IdP, therefore there is really no need for a metadata file or a WAYF-function or anything like that. It needs the URL of the IdP and that’s all.:
+            # Since this is a very simple SP it only needs to know about
+            # one IdP, therefore there is really no need for a metadata
+            # file or a WAYF-function or anything like that.
+            # It needs the URL of the IdP and that’s all.:
             #"idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
             
             # in this section the list of IdPs we talk to are defined
@@ -61,7 +65,7 @@ SAML_CONFIG = {
               # present in our metadata
             
               # the keys of this dictionary are entity ids
-              '{}/metadata'.format(IDP_URL): {
+              '{}/shibboleth'.format(IDP_URL): {
                   'single_sign_on_service': {
                         saml2.BINDING_HTTP_REDIRECT: '{}/login/process/'.format(IDP_URL),
                         },
@@ -77,25 +81,26 @@ SAML_CONFIG = {
 
     # where the remote metadata is stored
     'metadata': {
+        # if you downloaded in a localfile
         # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
-        # 
+        #
+        # ondemand
         "remote": [{
-            "url":"{}/metadata/".format(IDP_URL),
+            "url":"{}/shibboleth".format(IDP_URL),
             # "cert":"idp_https_cert.pem"}]
             }]
             
     },
     
     # Signing
-    'key_file': BASE_DIR + '/certificates/private_key.pem',
-    'cert_file': BASE_DIR + '/certificates/public_key.pem',
+    'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
+    'cert_file': BASE_DIR + '/certificates/shibidp/sp-cert.pem',
     
     # Encryption
     'encryption_keypairs': [{
-        'key_file': BASE_DIR + '/certificates/private_key.pem',
-        'cert_file': BASE_DIR + '/certificates/public_key.pem',
+        'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
+        'cert_file': BASE_DIR + '/certificates/shibidp/sp-cert.pem',
     }],
-
 
     # own metadata settings
     'contact_person': [
@@ -132,8 +137,9 @@ SAML_ATTRIBUTE_MAPPING = {
     # Must also be present in attribute-maps!
     # 'username': ( 'username', ),
     'email': ('email', ),
-    'first_name': ('first_name', ),
-    'last_name': ('last_name', ),
-    'is_staff': ('is_staff', ),
-    'is_superuser':  ('is_superuser', ),
+    'first_name': ('givenName', ),
+    'last_name': ('sn', ),
+    'matricola': ('uid')
+    #'is_staff': ('is_staff', ),
+    #'is_superuser':  ('is_superuser', ),
 }
