@@ -56,7 +56,8 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - [Cookies encrypted in AES CBC](https://github.com/IdentityPython/pysaml2/issues/453)
 - [empty URI in ServiceName element](https://github.com/IdentityPython/pysaml2/issues/345)
 - [handle_logout_request doesn't sign redirect binding responses as requested](https://github.com/IdentityPython/pysaml2/issues/334)
-
+- [XXE attack](https://github.com/IdentityPython/pysaml2/issues)
+- [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
 
 ### django-saml-idp (IDP server)
 ````
