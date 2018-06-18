@@ -1,2 +1,7 @@
 libs/*
 */*.env
+easy-rsa
+*.pyc
+*~
+*__pycache__
+*/.~lock*

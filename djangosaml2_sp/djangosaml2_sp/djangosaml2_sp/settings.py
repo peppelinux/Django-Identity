@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -27,10 +26,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    # custom user model
+    'custom_accounts',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangosaml2_sp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -108,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'custom_accounts.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -129,9 +130,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 if 'djangosaml2' in INSTALLED_APPS:
-    from . import sp_pysaml2
+    # from . import sp_pysaml2
+    from . import sp_pysaml2_shibidp as sp_pysaml2
     
-    # pySAML2 SP
+    # pySAML2 SP mandatory
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
     
     AUTHENTICATION_BACKENDS = (
@@ -143,7 +145,7 @@ if 'djangosaml2' in INSTALLED_APPS:
     LOGOUT_URL = '/logout/'
     LOGIN_REDIRECT_URL = '/'
     LOGOUT_REDIRECT_URL = '/'
-    
+
     BASE_URL = sp_pysaml2.BASE_URL
 
     # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
@@ -153,4 +155,3 @@ if 'djangosaml2' in INSTALLED_APPS:
 
     SAML_CONFIG = sp_pysaml2.SAML_CONFIG
     SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING
-
