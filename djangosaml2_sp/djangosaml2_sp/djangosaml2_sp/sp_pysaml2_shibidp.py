@@ -6,7 +6,7 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = 'http://sp.pysaml2.testunical.it:8000/saml2'
+BASE_URL = 'http://sp.pysaml2.testunical.it/saml2'
 IDP_URL = 'https://idp.testunical.it/idp'
 
 SAML_CONFIG = {
@@ -22,6 +22,7 @@ SAML_CONFIG = {
             'name': '%s/metadata/' % BASE_URL,
             'name_id_format': [NAMEID_FORMAT_EMAILADDRESS],
             'endpoints': {
+                #'artifact_resolution_service': []
                 'assertion_consumer_service': [
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
                     ],
@@ -30,16 +31,19 @@ SAML_CONFIG = {
                     ('%s/ls/post' % BASE_URL, saml2.BINDING_HTTP_POST),
                     ],
                 }, # end endpoints
+
+            # attributes that this project need to identify a user
+            'required_attributes': ['uid',
+                                    #'mail',
+                                    'surname',
+                                    'givenName',],
             
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
             "force_authn": True,
             
-            # attributes that this project need to identify a user
-            'required_attributes': ['uid'],
-            
             # attributes that may be useful to have but not required
-            'optional_attributes': ['eduPersonAffiliation'],
+            #'optional_attributes': ['eduPersonAffiliation'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
@@ -50,7 +54,11 @@ SAML_CONFIG = {
             
             # When set to true, the SP will consume unsolicited SAML Responses,
             # i.e. SAML Responses for which it has not sent a respective SAML Authentication Request.
-            'allow_unsolicited': True,
+            #'allow_unsolicited': True,
+
+            # This kind of functionality is required for the eIDAS SAML profile.
+            # eIDAS-Connectors SHOULD NOT provide AssertionConsumerServiceURL.
+            "hide_assertion_consumer_service": True,
             
             # Since this is a very simple SP it only needs to know about
             # one IdP, therefore there is really no need for a metadata
@@ -81,14 +89,20 @@ SAML_CONFIG = {
 
     # where the remote metadata is stored
     'metadata': {
-        # if you downloaded in a localfile
-        # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
+        # To verify the authenticity of the file downloaded from the net, the local copy of the public key should be used.
+        # This public key must be acquired by some out-of-band method.
+
+        # Uses metadata files, both local and remote, and will talk to whatever IdP that appears in any of the metadata files.
+
+        # wget -O idp_metadata.xml https://idp.testunical.it/idp/shibboleth
+        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
         #
         # ondemand
-        "remote": [{
-            "url":"{}/shibboleth".format(IDP_URL),
-            # "cert":"idp_https_cert.pem"}]
-            }]
+        # "remote": [{
+            # "url": "{}/shibboleth".format(IDP_URL),
+            # if self-signed
+            # "cert": "/certificates/shibidp/idp-cert.pem"
+            # }]
             
     },
     
@@ -136,10 +150,11 @@ SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO
     # Must also be present in attribute-maps!
     # 'username': ( 'username', ),
-    'email': ('email', ),
+    'email': ('mail', ),
     'first_name': ('givenName', ),
-    'last_name': ('sn', ),
-    'matricola': ('uid')
+    'last_name': ('surname', ),
+    'matricola': ('uid',),
+    'codice_fiscale': ('eduPersonUniqueId',),
     #'is_staff': ('is_staff', ),
     #'is_superuser':  ('is_superuser', ),
 }

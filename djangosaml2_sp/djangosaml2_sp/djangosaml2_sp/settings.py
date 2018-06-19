@@ -24,7 +24,7 @@ SECRET_KEY = 'btl-x0ja09$zqer3h^n^_ic!9h+1q0g!-wqzj&&zio@(@5p*no'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['sp.pysaml2.testunical.it',]
 
 # Application definition
 
@@ -153,5 +153,6 @@ if 'djangosaml2' in INSTALLED_APPS:
     # SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
     # SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 
+    SAML_CREATE_UNKNOWN_USER = sp_pysaml2.SAML_CREATE_UNKNOWN_USER
     SAML_CONFIG = sp_pysaml2.SAML_CONFIG
     SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING

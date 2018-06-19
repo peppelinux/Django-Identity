@@ -1,6 +1,7 @@
 libs/*
 */*.env
 easy-rsa
+certs/keys/*
 *.pyc
 *~
 *__pycache__
