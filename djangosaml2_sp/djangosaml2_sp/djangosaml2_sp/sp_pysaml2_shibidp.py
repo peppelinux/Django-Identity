@@ -58,7 +58,7 @@ SAML_CONFIG = {
 
             # This kind of functionality is required for the eIDAS SAML profile.
             # eIDAS-Connectors SHOULD NOT provide AssertionConsumerServiceURL.
-            "hide_assertion_consumer_service": True,
+            # "hide_assertion_consumer_service": True,
             
             # Since this is a very simple SP it only needs to know about
             # one IdP, therefore there is really no need for a metadata
