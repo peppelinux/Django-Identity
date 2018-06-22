@@ -1,6 +1,7 @@
 ### OpenSSL PKI and CA
 - [OpenSSL private CA setup](https://jamielinux.com/docs/openssl-certificate-authority/index.html)
 - [Private CA and Python requests certifi](https://liuhongjiang.github.io/hexotech/2016/12/23/setup-your-own-ca/)
+- https://help.ubuntu.com/lts/serverguide/certificates-and-security.html.en
 
 #### Installing your OWN CA certificates in a GNU/Linux workstation
 Copy your certificate in PEM format (the format that has ----BEGIN CERTIFICATE---- in it) into /usr/local/share/ca-certificates and name it with a .crt file extension.
