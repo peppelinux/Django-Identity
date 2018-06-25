@@ -10,6 +10,22 @@ Then run sudo update-ca-certificates.
 
 Caveats: This installation only affects products that use this certificate store. Some products may use other certificate stores; if you use those products, you'll need to add this CA certificate to those other certificate stores, too. (Firefox Instructions, Chrome Instructions, Java Instructions)
 
+##### Reading RSA,CSR and CRT (x509)
+````
+# check certificate x509
+openssl x509 -text -noout -in /etc/ssl/certs/ca-certificates.crt 
+
+# CSR
+openssl req -text -noout -verify -in CSR.csr
+
+# Key (RSA)
+openssl rsa -in privateKey.key -check
+
+# check pk12 format
+openssl pkcs12 -info -in keyStore.p12
+````
+
+
 ##### Testing The CA
 You can verify if this worked by looking for the certificate that you just added in /etc/ssl/certs/ca-certificates.crt (which is just a long list of all of your trusted CA's concatenated together).
 
