@@ -2,7 +2,7 @@
 export CERT_PATH=`pwd`"/certs"
 export PEM_PATH="$CERT_PATH/pem"
 export DOMAIN="testunical.it"
-export SERVER_FQDN="pysaml2.sp.$DOMAIN"
+export SERVER_FQDN="sp.pysaml2.$DOMAIN"
 
 apt install easy-rsa
 rm -f easy-rsa
@@ -40,7 +40,7 @@ export KEY_EMAIL="me@$DOMAIN"
 ./clean-all
 
 ./build-ca
-./build-dh
+#./build-dh
 
 export KEY_ALTNAMES=$SERVER_FQDN
 export KEY_NAME=$SERVER_FQDN

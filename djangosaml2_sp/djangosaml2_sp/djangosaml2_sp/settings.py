@@ -129,6 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
 if 'djangosaml2' in INSTALLED_APPS:
     # from . import sp_pysaml2
     from . import sp_pysaml2_shibidp as sp_pysaml2
@@ -150,9 +151,42 @@ if 'djangosaml2' in INSTALLED_APPS:
 
     # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
     SAML_USE_NAME_ID_AS_USERNAME = sp_pysaml2.SAML_USE_NAME_ID_AS_USERNAME 
-    # SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
-    # SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
+
+    # SAML_DJANGO_USER_MAIN_ATTRIBUTE = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE
+    # SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = sp_pysaml2.'__iexact'
 
     SAML_CREATE_UNKNOWN_USER = sp_pysaml2.SAML_CREATE_UNKNOWN_USER
     SAML_CONFIG = sp_pysaml2.SAML_CONFIG
     SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING
+    
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            },
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+            'djangosaml2': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+        }
+    }
