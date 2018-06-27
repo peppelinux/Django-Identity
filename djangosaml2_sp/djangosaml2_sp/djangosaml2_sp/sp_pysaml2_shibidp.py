@@ -14,7 +14,7 @@ IDP_URL = 'https://idp.testunical.it/idp'
 
 # Set false if IDP uses selfsigned CERTS
 # TODO:
-AUTHORITATIVE_IDP_CERTS = False
+# AUTHORITATIVE_IDP_CERTS = False
 # reference: https://github.com/IdentityPython/pysaml2/pull/485
 
 SAML_CONFIG = {
@@ -25,6 +25,12 @@ SAML_CONFIG = {
     'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                                       'saml2_config'),
                                       'attribute-maps'),
+
+    # TEST DEBUG/DOCUMENT THE FOLLOWING
+    # 'disable_ssl_certificate_validation': True,
+    # 'ca_certs' : "/certificates/shibidp/testunical.it-cacert.pem",
+    # THESE DOESN'T SEEMS to WORK properly
+    #
     
     'service': {
         'sp': {
@@ -36,6 +42,10 @@ SAML_CONFIG = {
             # 'name_id_format': [NAMEID_FORMAT_EMAILADDRESS],
 
             'name_id_format': [NAMEID_FORMAT_TRANSIENT],
+                              # [NAMEID_FORMAT_TRANSIENT,
+                               # NAMEID_FORMAT_PERSISTENT],
+
+            
             'name_id_format_allow_create': True,
             
             'endpoints': {
@@ -59,7 +69,7 @@ SAML_CONFIG = {
             # PR https://github.com/IdentityPython/pysaml2/pull/495
             # requires saml2/config.py patch line 
             # 'authn_requests_signed_alg': 'sha512',
-            
+
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
             "force_authn": True,
