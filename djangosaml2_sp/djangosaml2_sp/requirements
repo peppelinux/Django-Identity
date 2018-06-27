@@ -8,7 +8,7 @@ pysaml2
 cffi
 
 # django saml2 SP
-git+https://github.com/knaperek/djangosaml2.git
+git+https://github.com/knaperek/djangosaml2
 
 # for custom_accounts
 django_countries

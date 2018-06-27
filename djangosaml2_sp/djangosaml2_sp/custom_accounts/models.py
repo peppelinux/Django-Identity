@@ -31,7 +31,7 @@ class User(AbstractUser):
     
     is_active = models.BooleanField(_('attivo'), default=True)
     email = models.EmailField(_('email address'), blank=True, null=True)
-    matricola = models.CharField(_('Matricola'), max_length=6, 
+    matricola = models.CharField(_('Matricola'), max_length=254, 
                                  blank=True, null=True,
                                  help_text="come rappresentata su CSA")
     first_name = models.CharField(_('Nome'), max_length=30, blank=True, null=True)

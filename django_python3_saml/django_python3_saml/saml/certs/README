@@ -17,3 +17,7 @@ openssl req -new -x509 -days 3652 -nodes -out sp.crt -keyout sp.key
 
 # convert pem to crt
 openssl x509 -outform der -in idp.testunical.it-cert.pem -out idp.testunical.it-cert.crt
+
+# convert crt and key to pem
+openssl x509 -inform PEM -in sp.crt > sp-cert.pem
+openssl rsa -in sp.key -text > sp-key.pem

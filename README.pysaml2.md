@@ -20,7 +20,18 @@ py.test
 - https://github.com/IdentityPython/pysaml2/blob/master/doc/examples/sp.rst
 - [EntityCategory EduGain](https://github.com/IdentityPython/pysaml2/blob/master/example/sp-wsgi/sp_conf.py.example)
 
-### Hints
+
+### Self Signed Certificates
+````
+openssl genrsa -out sp-key.pem 2048
+openssl req -new -key sp-key.pem -out sp.csr
+openssl x509 -req -days 3650 -in sp.csr -signkey sp-key.pem -out sp.crt
+
+# convert them to pem
+openssl x509 -inform PEM -in sp.crt > sp-cert.pem
+````
+
+### OpenSSL debug
 
 ````
 always check idp certificate validity
@@ -39,7 +50,7 @@ echo -n | openssl s_client -connect idp.testunical.it:443 -CAfile /etc/ssl/certs
 
 ### Common Errors
 
-##### IDP Auth works but redirect on SP side fails
+##### Self signed certs with xmlsec
 ````
 func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=360:obj=x509-store:subj=X509_verify_cert:error=4:crypto library function failed:subj=/CN=idp.testunical.it;err=18;msg=self signed certificate
 func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
@@ -68,148 +79,101 @@ Error: failed to verify file "/tmp/tmpntnzc1mb.xml"
 
 ````
 Problem: xmlsec1 (OpenSSL) needs to know where self-signed certificates are for security verification.
-SSL_CTX_get_cert_store() was the right clue and X509_STORE_add_cert() did the trick.
-This could be related
-
-Resources:
- - https://www.aleksey.com/xmlsec/api/xmlsec-openssl-x509.html
- - https://www.aleksey.com/pipermail/xmlsec/2011/009076.html
- - http://openssl.6102.n7.nabble.com/Error-18-self-signed-certificate-td47361.html
-
-UPDATES:
-Problem: as we see Encyrption method should not be rsa-sha1 but Shibboleth default SHA256!
- - https://github.com/onelogin/python-saml/issues/33#issuecomment-64851119
- - https://www.aleksey.com/pipermail/xmlsec/2014/009862.html
 
 Test this:
  xmlsec1  --verify --trusted-pem testing/ROOT-CA-CERT.pem ../xmltmpl/appreq_signed.xml 
 
-NOTE pysaml2 internals:
-- write here...
-
-UPDATES:
-- https://github.com/IdentityPython/pysaml2/pull/495
+This warning is not a real problem, just the warning will be printed in stdout.
+If ava dictionary doesn't contain any items means that idp attribute filters doesn't have a policy for this.
 
 
-
-### Debug config loader
+### Debug hints
 
 ````
-conf = get_config(config_loader_path, request)
+# A SAML Request test
+
+python3 tests/request_saml_auth.py
+````
+
+##### DjangoSAML2 Config manager
+````
+from django.conf import settings
+from djangosaml2.conf import get_config
+conf = get_config(config_loader_path=None, request)
 pprint(conf.__dict__)
-
-
-{'_homedir': '.',
- '_sp_attribute_converters': [<saml2.attribute_converter.AttributeConverter object at 0x7f2dbddfc320>,
-                              <saml2.attribute_converter.AttributeConverter object at 0x7f2dbddfc748>,
-                              <saml2.attribute_converter.AttributeConverter object at 0x7f2dbddfc8d0>,
-                              <saml2.attribute_converter.AttributeConverter object at 0x7f2dbde14048>,
-                              <saml2.attribute_converter.AttributeConverter object at 0x7f2dbde14550>],
- '_sp_authn_requests_signed': True,
- '_sp_endpoints': {'assertion_consumer_service': [('http://sp.pysaml2.testunical.it/saml2/acs/',
-                                                   'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST')],
-                   'single_logout_service': [('http://sp.pysaml2.testunical.it/saml2/ls/',
-                                              'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'),
-                                             ('http://sp.pysaml2.testunical.it/saml2/ls/post',
-                                              'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST')]},
- '_sp_force_authn': True,
- '_sp_idp': {'https://idp.testunical.it/idp/shibboleth': {'single_logout_service': {'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect': 'https://idp.testunical.it/idp/logout'},
-                                                          'single_sign_on_service': {'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect': 'https://idp.testunical.it/idp/login/process/'}}},
- '_sp_logout_requests_signed': True,
- '_sp_name': 'http://sp.pysaml2.testunical.it/saml2/metadata/',
- '_sp_required_attributes': ['uid',
-                             'mail',
-                             'sn',
-                             'cn',
-                             'schacPersonalUniqueID'],
- '_sp_want_assertions_signed': True,
- 'accepted_time_diff': None,
- 'additional_cert_files': None,
- 'allow_unknown_attributes': False,
- 'attribute': [],
- 'attribute_converters': [<saml2.attribute_converter.AttributeConverter object at 0x7f2dbddfc668>,
-                          <saml2.attribute_converter.AttributeConverter object at 0x7f2dbde24080>,
-                          <saml2.attribute_converter.AttributeConverter object at 0x7f2dbde24470>],
- 'attribute_profile': [],
- 'ca_certs': None,
- 'cert_file': '/home/wert/DEV3/Django-Identity/djangosaml2_sp/djangosaml2_sp/certificates/shibidp/sp.pysaml2.testunical.it-cert.pem',
- 'cert_handler_extra_class': None,
- 'contact_person': [{'company': 'Universita della Calabria',
-                     'contact_type': 'technical',
-                     'email_address': 'giuseppe.demarco@unical.it',
-                     'given_name': 'Giuseppe',
-                     'sur_name': 'De Marco'},
-                    {'company': 'Universita della Calabria',
-                     'contact_type': 'technical',
-                     'email_address': 'giuseppe.demarco@unical.it',
-                     'given_name': 'Giuseppe',
-                     'sur_name': 'De Marco'}],
- 'context': 'sp',
- 'crypto_backend': 'xmlsec1',
- 'debug': False,
- 'description': None,
- 'disable_ssl_certificate_validation': None,
- 'domain': '',
- 'encryption_keypairs': [{'cert_file': '/home/wert/DEV3/Django-Identity/djangosaml2_sp/djangosaml2_sp/certificates/shibidp/sp.pysaml2.testunical.it-cert.pem',
-                          'key_file': '/home/wert/DEV3/Django-Identity/djangosaml2_sp/djangosaml2_sp/certificates/shibidp/sp.pysaml2.testunical.it-key.pem'}],
- 'entity_category': '',
- 'entityid': 'http://sp.pysaml2.testunical.it/saml2/metadata/',
- 'extension_schema': {},
- 'extensions': {},
- 'generate_cert_func': None,
- 'generate_cert_info': None,
- 'key_file': '/home/wert/DEV3/Django-Identity/djangosaml2_sp/djangosaml2_sp/certificates/shibidp/sp.pysaml2.testunical.it-key.pem',
- 'logger': None,
- 'logout_requests_signed': None,
- 'metadata': <saml2.mdstore.MetadataStore object at 0x7f2dbddfc630>,
- 'metadata_key_usage': 'both',
- 'name': None,
- 'name_form': None,
- 'name_id_format': None,
- 'name_id_format_allow_create': None,
- 'name_qualifier': '',
- 'only_use_keys_in_metadata': True,
- 'organization': {'display_name': [('Unical', 'it'), ('Unical', 'en')],
-                  'name': [('Unical', 'it'), ('Unical', 'en')],
-                  'url': [('http://www.unical.it', 'it'),
-                          ('http://www.unical.it', 'en')]},
- 'policy': None,
- 'preferred_binding': {'artifact_resolution_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP'],
-                       'assertion_consumer_service': ['urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                                                      'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                                                      'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact'],
-                       'assertion_id_request_service': ['urn:oasis:names:tc:SAML:2.0:bindings:URI'],
-                       'attribute_consuming_service': ['urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                                                       'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                                                       'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact'],
-                       'attribute_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP'],
-                       'authn_query_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP'],
-                       'authz_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP'],
-                       'manage_name_id_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
-                                                  'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                                                  'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                                                  'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact'],
-                       'name_id_mapping_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP'],
-                       'single_logout_service': ['urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
-                                                 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                                                 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                                                 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact'],
-                       'single_sign_on_service': ['urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                                                  'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                                                  'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact']},
- 'requested_attribute_name_format': 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
- 'scope': '',
- 'secret': None,
- 'serves': ['sp'],
- 'tmp_cert_file': None,
- 'tmp_key_file': None,
- 'valid_for': 8760,
- 'validate_certificate': None,
- 'verify_encrypt_cert_advice': None,
- 'verify_encrypt_cert_assertion': None,
- 'verify_ssl_cert': False,
- 'virtual_organization': None,
- 'vorg': {},
- 'xmlsec_binary': '/usr/bin/xmlsec1',
- 'xmlsec_path': []}
 ````
+
+##### Play with a response objects (it cames from IDP)
+Usefull tests:
+ - https://github.com/IdentityPython/pysaml2/blob/master/tests/test_44_authnresp.py
+ - https://github.com/IdentityPython/pysaml2/blob/master/tests/test_51_client.py
+
+````
+# get Response Objects from response XML
+from saml2.samlp import response_from_string
+response = samlp.response_from_string(authn_response.xmlstr)
+xmlstr = '[put XML response from IDP here]'
+rfs = response_from_string(xmlstr)
+rfs.__dict__
+{'assertion': [],
+ 'consent': None,
+ 'destination': 'http://sp.pysaml2.testunical.it/saml2/acs/',
+ 'encrypted_assertion': [<saml2.saml.EncryptedAssertion at 0x7f53fee5fd68>],
+ 'extension_attributes': {},
+ 'extension_elements': [],
+ 'extensions': None,
+ 'id': '_6df28307ece7b0b44767621f64062750',
+ 'in_response_to': 'id-i3XG8etpeS8JvwlBp',
+ 'issue_instant': '2018-06-28T07:31:16.449Z',
+ 'issuer': <saml2.saml.Issuer at 0x7f53fee5f6d8>,
+ 'signature': <saml2.xmldsig.Signature at 0x7f53fee5fba8>,
+ 'status': <saml2.samlp.Status at 0x7f53fee5f8d0>,
+ 'text': None,
+ 'version': '2.0'}
+````
+
+##### Play with Encrypted assertion
+
+````
+ea = rfs.encrypted_assertion[0]
+
+# cipher_value
+ea.encrypted_data.cipher_data.cipher_value.text
+cipher_value = ea.encrypted_data.cipher_data.cipher_value.text
+
+# encryption_method
+encryption_method = ea.encrypted_data.encryption_method.algorithm
+
+from pprint import pprint
+def print_children(children):
+    for i in children:
+        pprint(i.__dict__)
+
+# children navigations
+for i in ea.encrypted_data.key_info.extension_elements:
+    child = i.children
+    for i in child:
+        if not i.children:
+            print_children(i.children)
+        print()
+        for ii in i.children:
+            print_children(i.children)
+            print_children(ii.children)
+            print()
+
+
+# decrypt data
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA
+from base64 import b64decode
+
+rsa_key = RSA.importKey(open('private.txt', "rb").read())
+verifier = PKCS1_v1_5.new(rsa_key)
+raw_cipher_data = b64decode(cipher_value)
+phn = rsa_key.decrypt(raw_cipher_data)
+
+````
+
+##### Very usefull unit tests:
+ - https://github.com/IdentityPython/pysaml2/blob/master/tests/test_51_client.py

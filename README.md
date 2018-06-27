@@ -13,51 +13,8 @@ Components used:
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
 - [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
-## Todo 
+- [python3-saml - Not usable yet in these examples](https://github.com/onelogin/python3-saml)
 
-#### django-saml-idp doesn't filter out attribute policy restrictions. 
-Implement attribute policy restrinctions at line 111 of views.py following pysaml2 approach.
-Actually the only way to filter out attributes for each SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping']. It works but policies with attribute restrictions allow us to introduce regexp filter per for every field.
-
-This is the code that should be extended:
-````
-    # Create Identity dict (SP-specific)
-    sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
-    identity = processor.create_identity(request.user, sp_mapping)
-````
-
-Also this code should be improved. Check what's going on here and do a security assessment of all the IDP Signing capabilities.
-````
-if "SigAlg" in request.session and "Signature" in request.session:
-        _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
-        verified_ok = False
-        for cert in _certs:
-            # TODO implement
-            #if verify_redirect_signature(_info, IDP.sec.sec_backend, cert):
-            #    verified_ok = True
-            #    break
-            pass
-        if not verified_ok:
-            return HttpResponseBadRequest("Message signature verification failure")
-````
-
-- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
-
-- django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
-- [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
-- courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
-- SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
-- pySAML2 AttributeAuthority Server
-
-### Interesting bugs
-- [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
-- [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
-- [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
-- [Cookies encrypted in AES CBC](https://github.com/IdentityPython/pysaml2/issues/453)
-- [empty URI in ServiceName element](https://github.com/IdentityPython/pysaml2/issues/345)
-- [handle_logout_request doesn't sign redirect binding responses as requested](https://github.com/IdentityPython/pysaml2/issues/334)
-- [XXE attack](https://github.com/IdentityPython/pysaml2/issues)
-- [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
 
 ### django-saml-idp (IDP server)
 ````
@@ -129,16 +86,71 @@ pip3 install -r requirements
 # download sp metadata to idp [remote not yet working here]
 wget http://localhost:8000/saml2/metadata/
 
-./manage.py runserver
+./manage.py runserver 0.0.0.0:8000
 ````
 
-### SAML2 security raccomandations
-- Artifact resolution is the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
+### djangosaml2-sp (SP Server) with Shibboleth-IDP
 
-### pySAML2 alternative
+Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
+ - https://github.com/peppelinux/Ansible-Shibboleth-IDP-SP-Debian9
+
+The example file is in **djangosaml2_sp/sp_pysaml2_shibidp.py**.
+
+### SAML2 security assertions
+- Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
+
+## Todo 
+
+#### django-saml-idp doesn't filter out attribute policy restrictions. 
+Implement attribute policy restrinctions at line 111 of views.py following pysaml2 approach.
+Actually the only way to filter out attributes for each SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping']. It works but policies with attribute restrictions allow us to introduce regexp filter per for every field.
+
+This is the code that should be extended:
+````
+    # Create Identity dict (SP-specific)
+    sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
+    identity = processor.create_identity(request.user, sp_mapping)
+````
+
+Also this code should be improved. Check what's going on here and do a security assessment of all the IDP Signing capabilities.
+````
+if "SigAlg" in request.session and "Signature" in request.session:
+        _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
+        verified_ok = False
+        for cert in _certs:
+            # TODO implement
+            #if verify_redirect_signature(_info, IDP.sec.sec_backend, cert):
+            #    verified_ok = True
+            #    break
+            pass
+        if not verified_ok:
+            return HttpResponseBadRequest("Message signature verification failure")
+````
+
+- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
+
+- django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
+- [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
+- courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
+- SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
+- pySAML2 AttributeAuthority Server
+
+### Interesting bugs
+- [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
+- [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
+- [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
+- [Cookies encrypted in AES CBC](https://github.com/IdentityPython/pysaml2/issues/453)
+- [empty URI in ServiceName element](https://github.com/IdentityPython/pysaml2/issues/345)
+- [handle_logout_request doesn't sign redirect binding responses as requested](https://github.com/IdentityPython/pysaml2/issues/334)
+- [XXE attack](https://github.com/IdentityPython/pysaml2/issues)
+- [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
+
+### pySAML2 alternatives
 With less features then pySAML2:
 
-- https://github.com/fangli/django-saml2-auth
+ - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
+ - https://github.com/onelogin/python3-saml
+
 
 ### Other usefull resources
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)

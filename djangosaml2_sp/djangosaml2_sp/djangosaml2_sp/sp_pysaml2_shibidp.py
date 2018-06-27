@@ -9,13 +9,8 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = 'http://sp.pysaml2.testunical.it/saml2'
+BASE_URL = 'http://sp.pysaml2.testunical.it:8000/saml2'
 IDP_URL = 'https://idp.testunical.it/idp'
-
-# Set false if IDP uses selfsigned CERTS
-# TODO:
-# AUTHORITATIVE_IDP_CERTS = False
-# reference: https://github.com/IdentityPython/pysaml2/pull/485
 
 SAML_CONFIG = {
     'debug' : False,
@@ -26,9 +21,25 @@ SAML_CONFIG = {
                                       'saml2_config'),
                                       'attribute-maps'),
 
-    # TEST DEBUG/DOCUMENT THE FOLLOWING
+    # affects saml2.mdstore ->
+    # class MetadataStore(MetaData):
+    # def __init__(self, attrc, config, ca_certs=None, check_validity=True, disable_ssl_certificate_validation=False, filter=None):
+    # only to be used if metadata are downloaded and idp CA is private.
+    # avoids exception: HTTPSConnectionPool(host='idp.testunical.it', port=443): Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
     # 'disable_ssl_certificate_validation': True,
-    # 'ca_certs' : "/certificates/shibidp/testunical.it-cacert.pem",
+    'ca_certs' : os.path.join(BASE_DIR, 'certificates/shibidp', "testunical.it-cacert.pem"),
+
+    # If True produces Exception: 'CertHandler' object has no attribute '_cert_handler_extra_class'
+    # "validate_certificate" : True,
+
+    # to be documented as previous one
+    # "verify_encrypt_cert_advice" : False,
+    # "verify_encrypt_cert_assertion" : False,
+    # "verify_ssl_cert" : False,
+
+    # study/check: saml2.sigver.security_context(conf, debug=None)
+    # 'only_use_keys_in_metadata' : False,
+    
     # THESE DOESN'T SEEMS to WORK properly
     #
     
@@ -65,7 +76,9 @@ SAML_CONFIG = {
                                     'sn',
                                     'cn',
                                     'schacPersonalUniqueID'],
-
+            
+            'allow_unknown_attributes' : True,
+            
             # PR https://github.com/IdentityPython/pysaml2/pull/495
             # requires saml2/config.py patch line 
             # 'authn_requests_signed_alg': 'sha512',
@@ -90,7 +103,7 @@ SAML_CONFIG = {
             # if both set to False pysaml2 will say: The SAML service provider accepts unsigned SAML Responses and Assertions. This configuration is insecure.
             # want_assertions_signed to False will let us work with idp self signed certs, it avoids xmlsec1 exception: func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
             'want_response_signed': True,
-            # 'want_assertions_signed': AUTHORITATIVE_IDP_CERTS, # only for debug purpose, actually will loss attributes!
+            'want_assertions_signed': True, # reference: https://github.com/IdentityPython/pysaml2/pull/485
             
             
             # When set to true, the SP will consume unsolicited SAML Responses,
@@ -138,25 +151,25 @@ SAML_CONFIG = {
         # Uses metadata files, both local and remote, and will talk to whatever IdP that appears in any of the metadata files.
 
         # wget -O idp_metadata.xml https://idp.testunical.it/idp/shibboleth
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
+        # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
         #
         # ondemand
-        # "remote": [{
-            # "url": "{}/shibboleth".format(IDP_URL),
-            # if self-signed
-            # "cert": "/certificates/shibidp/idp-cert.pem"
-            # }]
+        "remote": [{
+            "url": "{}/shibboleth".format(IDP_URL),
+            # if self-signed must be globally defined also 'disable_ssl_certificate_validation': True, 
+            "cert": BASE_DIR + "/certificates/shibidp/idp.testunical.it-cert.pem",
+             }]
             
     },
     
     # Signing
-    'key_file': BASE_DIR + '/certificates/shibidp/sp.pysaml2.testunical.it-key.pem',
-    'cert_file': BASE_DIR + '/certificates/shibidp/sp.pysaml2.testunical.it-cert.pem',
+    'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
+    'cert_file': BASE_DIR + '/certificates/shibidp/sp-cert.pem',
     
     # Encryption
     'encryption_keypairs': [{
-        'key_file': BASE_DIR + '/certificates/shibidp/sp.pysaml2.testunical.it-key.pem',
-        'cert_file': BASE_DIR + '/certificates/shibidp/sp.pysaml2.testunical.it-cert.pem',
+        'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
+        'cert_file': BASE_DIR + '/certificates/shibidp/sp-cert.pem',
     }],
 
     # own metadata settings
@@ -182,10 +195,9 @@ SAML_CONFIG = {
     'valid_for': 365 * 24, 
 }
 
-# OR NAME_ID or MAIN_ATTRIBUTE (not together!)
-
+# NAME_ID or MAIN_ATTRIBUTE (not together!)
 SAML_USE_NAME_ID_AS_USERNAME = False
-SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'matricola'
+SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'username'
 SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 
 SAML_CREATE_UNKNOWN_USER = True
@@ -193,12 +205,12 @@ SAML_CREATE_UNKNOWN_USER = True
 SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO
     # Must also be present in attribute-maps!
-    #'username': ( 'uid', ), this will not works
-    'email': ('mail', ),
-    'first_name': ('cn', ),
-    'last_name': ('sn', ),
-    'matricola': ('uid',),
-    'codice_fiscale': ('schacPersonalUniqueID',),
+    'uid': ('username',), # This doesn't work, do not use it!
+    'mail': ('email',),
+    'givenName': ('first_name',),
+    'sn': ('last_name',),
+    'schacPersonalUniqueID': ('codice_fiscale',),
+    'eduPersonPrincipalName' : ('matricola',),
     #'is_staff': ('is_staff', ),
     #'is_superuser':  ('is_superuser', ),
 }

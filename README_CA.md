@@ -8,7 +8,20 @@ Copy your certificate in PEM format (the format that has ----BEGIN CERTIFICATE--
 
 Then run sudo update-ca-certificates.
 
-Caveats: This installation only affects products that use this certificate store. Some products may use other certificate stores; if you use those products, you'll need to add this CA certificate to those other certificate stores, too. (Firefox Instructions, Chrome Instructions, Java Instructions)
+Caveats: This installation only affects products that use this certificate store.
+Some products may use other certificate stores; if you use those products, you'll need to add this CA certificate to those other certificate stores, too.
+(Firefox Instructions, Chrome Instructions, Java Instructions)
+
+
+#### Installing your OWN CA certificates for Debian Base Distribution
+
+The following instruction will not work!
+Just install ca-certificates then copy ca.crt to /usr/share/ca-certificates and run
+````
+dpkg-reconfigure ca-certificates
+````
+Then select the ca.crt in the list of availables CA and you completed!
+
 
 ##### Reading and converting RSA,CSR and CRT (x509)
 ````
@@ -30,8 +43,6 @@ openssl rsa -in keys/$SP_FQDN.key -text > $SP_FQDN-key.pem
 
 ````
 
-
-
 ##### Testing The CA
 You can verify if this worked by looking for the certificate that you just added in /etc/ssl/certs/ca-certificates.crt (which is just a long list of all of your trusted CA's concatenated together).
 
@@ -39,4 +50,10 @@ You can also use OpenSSL's s_client by trying to connect to a server that you kn
 
 ````
 openssl s_client -connect foo.whatever.com:443 -CApath /etc/ssl/certs
+
+
 ````
+
+##### Pythonics
+
+https://www.pythonsheets.com/notes/python-crypto.html
