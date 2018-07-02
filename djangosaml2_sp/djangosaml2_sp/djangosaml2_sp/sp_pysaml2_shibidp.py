@@ -40,9 +40,6 @@ SAML_CONFIG = {
     # study/check: saml2.sigver.security_context(conf, debug=None)
     # 'only_use_keys_in_metadata' : False,
     
-    # THESE DOESN'T SEEMS to WORK properly
-    #
-    
     'service': {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
@@ -52,10 +49,9 @@ SAML_CONFIG = {
             # InvalidNameIDPolicy
             # 'name_id_format': [NAMEID_FORMAT_EMAILADDRESS],
 
-            'name_id_format': [NAMEID_FORMAT_TRANSIENT],
+            'name_id_format': [NAMEID_FORMAT_PERSISTENT, NAMEID_FORMAT_PERSISTENT],
                               # [NAMEID_FORMAT_TRANSIENT,
                                # NAMEID_FORMAT_PERSISTENT],
-
             
             'name_id_format_allow_create': True,
             
@@ -77,7 +73,7 @@ SAML_CONFIG = {
                                     'cn',
                                     'schacPersonalUniqueID'],
             
-            'allow_unknown_attributes' : True,
+            # 'allow_unknown_attributes' : True,
             
             # PR https://github.com/IdentityPython/pysaml2/pull/495
             # requires saml2/config.py patch line 
@@ -92,7 +88,7 @@ SAML_CONFIG = {
 
             # Indicates if the Authentication Requests sent by this SP should be signed by default.
             # default value is True (POST METHOD will be used, if false GET method will be used)
-            # Shibboleth SP send this not signed and in GET method by default
+            # Shibboleth SP send this not signed trough GET method by default
             'authn_requests_signed': False,
 
             # doesn't seems to be really loaded:
@@ -174,15 +170,15 @@ SAML_CONFIG = {
 
     # own metadata settings
     'contact_person': [
-      {'given_name': 'Giuseppe',
-       'sur_name': 'De Marco',
-       'company': 'Universita della Calabria',
-       'email_address': 'giuseppe.demarco@unical.it',
+      {'given_name': 'YourName',
+       'sur_name': 'YourSurname',
+       'company': 'YourComapnyName',
+       'email_address': 'user@email.com',
        'contact_type': 'technical'},
-      {'given_name': 'Giuseppe',
-       'sur_name': 'De Marco',
-       'company': 'Universita della Calabria',
-       'email_address': 'giuseppe.demarco@unical.it',
+      {'given_name': 'otheruser',
+       'sur_name': 'YourSurname',
+       'company': 'YourComapnyName',
+       'email_address': 'user@email.com',
        'contact_type': 'technical'},
       ],
     # you can set multilanguage information here
@@ -205,7 +201,7 @@ SAML_CREATE_UNKNOWN_USER = True
 SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO
     # Must also be present in attribute-maps!
-    'uid': ('username',), # This doesn't work, do not use it!
+    'uid': ('username',),
     'mail': ('email',),
     'givenName': ('first_name',),
     'sn': ('last_name',),
