@@ -19,5 +19,5 @@ from .views import *
 app_name="custom_accounts"
 urlpatterns = [
     # path(r'^login/$', Login, name='login'),
-    path('logout', Logout, name='logout'),    
+    # path('logout', Logout, name='logout'),    
 ]
