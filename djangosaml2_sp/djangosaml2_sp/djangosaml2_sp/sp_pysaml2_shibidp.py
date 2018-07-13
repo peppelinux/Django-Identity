@@ -89,7 +89,7 @@ SAML_CONFIG = {
             # Indicates if the Authentication Requests sent by this SP should be signed by default.
             # default value is True (POST METHOD will be used, if false GET method will be used)
             # Shibboleth SP send this not signed trough GET method by default
-            'authn_requests_signed': False,
+            'authn_requests_signed': True,
 
             # doesn't seems to be really loaded:
             "logout_requests_signed": True,
