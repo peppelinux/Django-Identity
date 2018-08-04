@@ -49,10 +49,10 @@ SAML_CONFIG = {
             # InvalidNameIDPolicy
             # 'name_id_format': [NAMEID_FORMAT_EMAILADDRESS],
 
-            'name_id_format': [NAMEID_FORMAT_PERSISTENT, NAMEID_FORMAT_PERSISTENT],
-                              # [NAMEID_FORMAT_TRANSIENT,
-                               # NAMEID_FORMAT_PERSISTENT],
-            
+            'name_id_format': [NAMEID_FORMAT_PERSISTENT, NAMEID_FORMAT_TRANSIENT],
+
+
+
             'name_id_format_allow_create': True,
             
             'endpoints': {
@@ -88,16 +88,16 @@ SAML_CONFIG = {
 
             # Indicates if the Authentication Requests sent by this SP should be signed by default.
             # default value is True (POST METHOD will be used, if false GET method will be used)
-            # Shibboleth SP send this not signed trough GET method by default
+            # Shibboleth SP send this not signed through GET method by default
             'authn_requests_signed': True,
 
-            # doesn't seems to be really loaded:
+
             "logout_requests_signed": True,
             
             # Indicates that Authentication Responses to this SP must be signed.
             # If set to True, the SP will not consume any SAML Responses that are not signed.
             # if both set to False pysaml2 will say: The SAML service provider accepts unsigned SAML Responses and Assertions. This configuration is insecure.
-            # want_assertions_signed to False will let us work with idp self signed certs, it avoids xmlsec1 exception: func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
+
             'want_response_signed': True,
             'want_assertions_signed': True, # reference: https://github.com/IdentityPython/pysaml2/pull/485
             
