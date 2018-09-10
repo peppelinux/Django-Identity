@@ -130,7 +130,6 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
 
 - django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
-- [Is pysaml2 affected by CVE-2017-11427?](https://github.com/IdentityPython/pysaml2/issues/497)
 - courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 - pySAML2 AttributeAuthority Server
