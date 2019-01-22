@@ -150,6 +150,11 @@ With less features then pySAML2:
  - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
  - https://github.com/onelogin/python3-saml
 
+### Auth proxyes
+
+- https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
+- https://github.com/IdentityPython/satosa-developer
+
 ### Pythonic implementations 
 Resources about topic like large-metadata, wayf and dicovery-service.
 
@@ -157,6 +162,10 @@ Resources about topic like large-metadata, wayf and dicovery-service.
 - https://github.com/knaperek/djangosaml2/issues/73
 - https://github.com/opennode/waldur-auth-saml2
 - https://github.com/knaperek/djangosaml2/issues/113
+
+#### Discovery service experiences
+- http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
+- https://github.com/IdentityPython/SATOSA/issues/140
 
 ### Other usefull resources
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
