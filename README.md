@@ -150,12 +150,18 @@ With less features then pySAML2:
  - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
  - https://github.com/onelogin/python3-saml
 
+### Pythonic implementations 
+Resources about topic like large-metadata, wayf and dicovery-service.
+
+- https://github.com/uktrade/staff-sso
+- https://github.com/knaperek/djangosaml2/issues/73
+- https://github.com/opennode/waldur-auth-saml2
+- https://github.com/knaperek/djangosaml2/issues/113
 
 ### Other usefull resources
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
 - http://djangosaml2idp.readthedocs.io/en/latest/
 - https://github.com/IdentityPython
-- https://github.com/fangli/django-saml2-auth
 - https://addons.mozilla.org/en-US/firefox/addon/saml-tracer/ (debug)
 - https://github.com/SAMLRaider/SAMLRaider (pentest)
 - https://wiki.oasis-open.org/security/FrontPage (stdlib source)
