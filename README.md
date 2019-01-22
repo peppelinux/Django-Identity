@@ -155,15 +155,12 @@ With less features then pySAML2:
 - https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
 - https://github.com/IdentityPython/satosa-developer
 
-### Pythonic implementations 
-Resources about topic like large-metadata, wayf and dicovery-service.
+### large-metadata, wayf and dicovery-service.
 
 - https://github.com/uktrade/staff-sso
 - https://github.com/knaperek/djangosaml2/issues/73
 - https://github.com/opennode/waldur-auth-saml2
 - https://github.com/knaperek/djangosaml2/issues/113
-
-#### Discovery service experiences
 - http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
 - https://github.com/IdentityPython/SATOSA/issues/140
 
