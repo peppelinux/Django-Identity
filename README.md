@@ -94,7 +94,7 @@ wget http://localhost:8000/saml2/metadata/
 Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
  - https://github.com/peppelinux/Ansible-Shibboleth-IDP-SP-Debian9
 
-The example file is in **djangosaml2_sp/sp_pysaml2_shibidp.py**.
+The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
 ### SAML2 security assertions
 - Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
@@ -150,12 +150,12 @@ With less features then pySAML2:
  - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
  - https://github.com/onelogin/python3-saml
 
-### Auth proxyes
+### Auth proxies
 
 - https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
 - https://github.com/IdentityPython/satosa-developer
 
-### large-metadata, wayf and dicovery-service.
+### large-metadata, wayf and dicovery-service
 
 - https://github.com/uktrade/staff-sso
 - https://github.com/knaperek/djangosaml2/issues/73
