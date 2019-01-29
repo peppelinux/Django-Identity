@@ -179,6 +179,7 @@ Hopefully a Discovery service will:
 - Otherwise, the service will display a page containing a dropdown list of the known IdPs
 
 Additional resources:
+- https://discovery.refeds.org/guide/
 - https://www.switch.ch/aai/support/tools/wayf/
 - https://github.com/uktrade/staff-sso
 - https://github.com/knaperek/djangosaml2/issues/73
