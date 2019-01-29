@@ -155,14 +155,31 @@ With less features then pySAML2:
 - https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
 - https://github.com/IdentityPython/satosa-developer
 
-### large-metadata, wayf and dicovery-service
+### large-metadata
+- https://github.com/knaperek/djangosaml2/issues/113
 
+### wayf and dicovery-service
+IdP Discovery Service flow described in the specification (http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf?) is made of the following steps:
+
+- SP is configured to use a remote IdP Discovery Service to determine the IdP to be used for the Federation SSO operation
+- The SP redirects the user to the IdP Discovery Service via a 302 HTTP redirect and provides the following parameters in the query string
+- entityID: the Issuer/ProviderID of OIF/SP
+- returnIDParam: the name of the query string parameter that the service needs to use for the parameter containing the IdP - ProviderID value, when redirecting the user back to OIF/SP
+- return: the URL to use to redirect the user to OIF/SP
+- The service determines the IdP to use
+- The service redirects the user to OIF/SP via a 302 HTTP redirect based on the query parameter "return" specified by the SP and provides the following parameters in the query string
+- A query parameter containing the the IdP ProviderID value; the name of that query parameter is specified by the SP in the returnIDParam query parameter.
+
+Additional resources:
+- https://www.switch.ch/aai/support/tools/wayf/
 - https://github.com/uktrade/staff-sso
 - https://github.com/knaperek/djangosaml2/issues/73
 - https://github.com/opennode/waldur-auth-saml2
-- https://github.com/knaperek/djangosaml2/issues/113
-- http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
 - https://github.com/IdentityPython/SATOSA/issues/140
+
+Interesting third-party discovery services:
+- https://github.com/hu-berlin-cms/django-shibboleth-eds
+ 
 
 ### Other usefull resources
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
