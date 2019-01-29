@@ -187,6 +187,8 @@ Additional resources:
 - https://github.com/IdentityPython/SATOSA/issues/140
 
 Interesting third-party discovery services:
+- http://discojuice.org/getting-started/ - awesome to develop a django app (django-discojuice?)!
+- https://www.accountchooser.com/learnmore.html (OpenID)
 - https://github.com/hu-berlin-cms/django-shibboleth-eds
  
 
