@@ -101,11 +101,10 @@ The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com
 
 ## Todo 
 
-#### django-saml-idp doesn't filter out attribute policy restrictions. 
-Implement attribute policy restrinctions at line 111 of views.py following pysaml2 approach.
-Actually the only way to filter out attributes for each SP is omitting fields in SAML_IDP_SPCONFIG[SPNAME]['attribute_mapping']. It works but policies with attribute restrictions allow us to introduce regexp filter per for every field.
+#### django-saml-idp attribute policy restrictions. 
+[pySAML2 IDP Example](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy)
 
-This is the code that should be extended:
+Interesting code at views.py#111:
 ````
     # Create Identity dict (SP-specific)
     sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
@@ -128,9 +127,8 @@ if "SigAlg" in request.session and "Signature" in request.session:
 ````
 
 - Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
-
-- django production grade approach, improving security posture of pysaml2 implementation [more hacks here](https://github.com/IdentityPython/pysaml2/issues/333)
-- courious analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
+- Eye on django production grade approach, improving security posture of [pysaml2 implementation](https://github.com/IdentityPython/pysaml2/issues/333)
+- better analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 - pySAML2 AttributeAuthority Server
 
