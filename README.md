@@ -13,7 +13,7 @@ Components used:
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
 - [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
-#### not developed anymore
+#### Not developed anymore
 - [python3-saml - Not usable yet in these examples](https://github.com/onelogin/python3-saml)
 
 
