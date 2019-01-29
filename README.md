@@ -97,9 +97,10 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
-## Todo 
+## Work in progress
+Tasks that may be implemented in a production ready release.
 
-#### django-saml-idp attribute policy restrictions. 
+#### django-saml-idp attribute policy restrictions
 [pySAML2 IDP Attribute Policy](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy) on official doc.
 
 Interesting code at views.py#111:
@@ -158,7 +159,7 @@ With less features then pySAML2:
 - https://github.com/knaperek/djangosaml2/issues/113
 
 ### wayf and dicovery-service
-IdP Discovery Service flow described in the specification (http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf?) is made of the following steps:
+IdP Discovery Service flow described in [SAML2 specifications](http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf?) is made of the following steps:
 
 - SP is configured to use a remote IdP Discovery Service to determine the IdP to be used for the Federation SSO operation
 - The SP redirects the user to the IdP Discovery Service via a 302 HTTP redirect and provides the following parameters in the query string
