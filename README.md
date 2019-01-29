@@ -131,7 +131,7 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 - pySAML2 AttributeAuthority Server
 
-### Interesting bugs
+### Interesting pySAML2 bugs
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
 - [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
@@ -142,8 +142,7 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
 
 ### pySAML2 alternatives
-With less features then pySAML2:
-
+All of them have less features then pySAML2:
  - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
  - https://github.com/onelogin/python3-saml
 
@@ -151,7 +150,6 @@ With less features then pySAML2:
 - Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
 
 ### Auth proxies
-
 - https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
 - https://github.com/IdentityPython/satosa-developer
 
