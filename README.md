@@ -170,6 +170,14 @@ IdP Discovery Service flow described in the specification (http://docs.oasis-ope
 - The service redirects the user to OIF/SP via a 302 HTTP redirect based on the query parameter "return" specified by the SP and provides the following parameters in the query string
 - A query parameter containing the the IdP ProviderID value; the name of that query parameter is specified by the SP in the returnIDParam query parameter.
 
+Hopefully a Discovery service will:
+- Be aware of a list of known IdPs, referenced by the ProviderID/Issuer identifiers
+- Let the user select the IdP to use from a drop down list
+- Save the user's choice in a cookie called IDPDiscService
+- At runtime, the service will check if the IDPDiscService is present:
+- If present and contains a valid IdP, then the service will automatically redirect the user back to the SP with the IdP's - - ProviderID/Issuer: no user interaction will take place
+- Otherwise, the service will display a page containing a dropdown list of the known IdPs
+
 Additional resources:
 - https://www.switch.ch/aai/support/tools/wayf/
 - https://github.com/uktrade/staff-sso
