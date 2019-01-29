@@ -156,7 +156,7 @@ All of them have less features then pySAML2:
 ### large-metadata
 - https://github.com/knaperek/djangosaml2/issues/113
 
-### wayf and dicovery-service
+### WAYF and Discovery-service
 IdP Discovery Service flow described in [SAML2 specifications](http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf?) is made of the following steps:
 
 - SP is configured to use a remote IdP Discovery Service to determine the IdP to be used for the Federation SSO operation
