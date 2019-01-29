@@ -13,6 +13,7 @@ Components used:
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
 - [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
+#### not developed anymore
 - [python3-saml - Not usable yet in these examples](https://github.com/onelogin/python3-saml)
 
 
@@ -96,13 +97,10 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
-### SAML2 security assertions
-- Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
-
 ## Todo 
 
 #### django-saml-idp attribute policy restrictions. 
-[pySAML2 IDP Example](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy)
+[pySAML2 IDP Attribute Policy](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy) on official doc.
 
 Interesting code at views.py#111:
 ````
@@ -147,6 +145,9 @@ With less features then pySAML2:
 
  - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
  - https://github.com/onelogin/python3-saml
+
+### SAML2 security assertions
+- Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
 
 ### Auth proxies
 
