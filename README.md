@@ -176,6 +176,9 @@ Hopefully a Discovery service will:
 - If present and contains a valid IdP, then the service will automatically redirect the user back to the SP with the IdP's - - ProviderID/Issuer: no user interaction will take place
 - Otherwise, the service will display a page containing a dropdown list of the known IdPs
 
+Attribute Authorities
+- https://www.cesnet.cz/wp-content/uploads/2013/12/saml-aa-shibboleth.pdf
+
 Additional resources:
 - https://discovery.refeds.org/guide/
 - https://www.switch.ch/aai/support/tools/wayf/
