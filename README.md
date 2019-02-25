@@ -151,6 +151,7 @@ All of them have less features then pySAML2:
 
 ### Auth proxies
 - https://github.com/IdentityPython/SATOSA/blob/master/doc/one-to-many.md
+- https://github.com/IdentityPython/SATOSA/wiki
 - https://github.com/IdentityPython/satosa-developer
 
 ### large-metadata
