@@ -1,5 +1,5 @@
 # Django-Identity
-Development panel that aims to bring AAI technologies to Django context in a secure and standard way. 
+Development panel that aims to bring AAI technologies to Django context in a secure and standard way.
 Actually started from a SAML2 IDP and SP implementation built on pysaml2, this project will implement also OIDC/oAuth2 and other AAI features.
 
 In this repository we can find quite tested Applications and also general purpose Code and python Resources related to AAI deployment.
@@ -19,7 +19,7 @@ Components used:
 
 ### django-saml-idp (IDP server)
 ````
-sudo apt install xmlsec1 mariadb-server libmariadbclient-dev python3-dev python3-pip libssl-dev
+sudo apt install xmlsec1 mariadb-server libmariadbclient-dev python3-dev python3-pip libssl-dev libmariadb-dev-compat
 pip3 install virtualenv
 
 mkdir django-saml2-idp
@@ -35,12 +35,13 @@ source django-saml2-idp.env/bin/activate
 export USER='django-saml2-idp'
 export PASS='django-saml2-idp78'
 export HOST='%'
-export DB='django-saml2-idp'
+export DB='djangosaml2idp'
 
+# tested on Debian 10
 sudo mysql -u root -e "\
-CREATE USER ${USER}@'${HOST}' IDENTIFIED BY '${PASS}';\
-CREATE DATABASE ${DB} CHARACTER SET utf8 COLLATE utf8_general_ci;\
-GRANT ALL PRIVILEGES ON ${DB}.* TO ${USER}@'${HOST}';"
+CREATE USER IF NOT EXISTS '${USER}'@'${HOST}' IDENTIFIED BY '${PASS}';\
+CREATE DATABASE IF NOT EXISTS ${DB} CHARACTER SET = 'utf8' COLLATE = 'utf8_general_ci';\
+GRANT ALL PRIVILEGES ON ${DB}.* TO '${USER}'@'${HOST}';"
 
 # try the example app here
 cd django_saml2_idp
@@ -71,8 +72,8 @@ export HOST='%'
 export DB='djangosaml2_sp'
 
 sudo mysql -u root -e "\
-CREATE USER ${USER}@'${HOST}' IDENTIFIED BY '${PASS}';\
-CREATE DATABASE ${DB} CHARACTER SET utf8 COLLATE utf8_general_ci;\
+CREATE USER IF NOT EXISTS '${USER}'@'${HOST}' IDENTIFIED BY '${PASS}';\
+CREATE DATABASE IF NOT EXISTS ${DB} CHARACTER SET = 'utf8' COLLATE = 'utf8_general_ci';\
 GRANT ALL PRIVILEGES ON ${DB}.* TO ${USER}@'${HOST}';"
 
 # try the example app here
@@ -81,11 +82,13 @@ cd djangosaml2_sp
 pip3 install -r requirements
 ./manage.py migrate
 
+# cd djangosaml2_sp/saml2_sp/saml2_config
 # download idp metadata to sp, not needed if remote options is enabled
-# wget http://localhost:9000/idp/metadata/
+# wget http://idp1.testunical.it:9000/idp/metadata/ -O idp_metadata.xml
 
+# cd django_saml2_idp/idp/saml2_config
 # download sp metadata to idp [remote not yet working here]
-wget http://localhost:8000/saml2/metadata/
+wget http://sp1.testunical.it:8000/saml2/metadata/ -O sp_metadata.xml
 
 ./manage.py runserver 0.0.0.0:8000
 ````
@@ -192,7 +195,7 @@ Interesting third-party discovery services:
 - http://discojuice.org/getting-started/ - awesome to develop a django app (django-discojuice?). See [this php implementation](https://github.com/andreassolberg/DiscoJuice)
 - https://www.accountchooser.com/learnmore.html (OpenID)
 - https://github.com/hu-berlin-cms/django-shibboleth-eds
- 
+
 
 ### Other usefull resources
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)

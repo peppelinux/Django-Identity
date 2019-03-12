@@ -1,4 +1,4 @@
-django>2.0,<2.1
+django>2.1,<2.2
 mysqlclient
 uwsgi
 ipython
@@ -9,6 +9,3 @@ cffi
 
 # django saml2 SP
 git+https://github.com/knaperek/djangosaml2
-
-# for custom_accounts
-django_countries

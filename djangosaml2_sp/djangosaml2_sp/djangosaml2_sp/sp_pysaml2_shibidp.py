@@ -39,7 +39,7 @@ SAML_CONFIG = {
 
     # study/check: saml2.sigver.security_context(conf, debug=None)
     # 'only_use_keys_in_metadata' : False,
-    
+
     'service': {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
@@ -50,11 +50,8 @@ SAML_CONFIG = {
             # 'name_id_format': [NAMEID_FORMAT_EMAILADDRESS],
 
             'name_id_format': [NAMEID_FORMAT_PERSISTENT, NAMEID_FORMAT_TRANSIENT],
-
-
-
             'name_id_format_allow_create': True,
-            
+
             'endpoints': {
                 #'artifact_resolution_service': []
                 'assertion_consumer_service': [
@@ -72,17 +69,17 @@ SAML_CONFIG = {
                                     'sn',
                                     'cn',
                                     'schacPersonalUniqueID'],
-            
+
             # 'allow_unknown_attributes' : True,
-            
+
             # PR https://github.com/IdentityPython/pysaml2/pull/495
-            # requires saml2/config.py patch line 
+            # requires saml2/config.py patch line
             # 'authn_requests_signed_alg': 'sha512',
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
             "force_authn": True,
-            
+
             # attributes that may be useful to have but not required
             'optional_attributes': ['eduPersonAffiliation'],
 
@@ -91,17 +88,14 @@ SAML_CONFIG = {
             # Shibboleth SP send this not signed through GET method by default
             'authn_requests_signed': True,
 
-
             "logout_requests_signed": True,
-            
             # Indicates that Authentication Responses to this SP must be signed.
             # If set to True, the SP will not consume any SAML Responses that are not signed.
             # if both set to False pysaml2 will say: The SAML service provider accepts unsigned SAML Responses and Assertions. This configuration is insecure.
-
             'want_response_signed': True,
             'want_assertions_signed': True, # reference: https://github.com/IdentityPython/pysaml2/pull/485
-            
-            
+
+
             # When set to true, the SP will consume unsolicited SAML Responses,
             # i.e. SAML Responses for which it has not sent a respective SAML Authentication Request.
             # example, a page refresh after a POST from IDP, as unsolicitated will work
@@ -110,20 +104,19 @@ SAML_CONFIG = {
             # This kind of functionality is required for the eIDAS SAML profile.
             # eIDAS-Connectors SHOULD NOT provide AssertionConsumerServiceURL.
             # "hide_assertion_consumer_service": True,
-            
+
             # Since this is a very simple SP it only needs to know about
             # one IdP, therefore there is really no need for a metadata
             # file or a WAYF-function or anything like that.
             # It needs the URL of the IdP and that’s all.:
             #"idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
-            
+
             # in this section the list of IdPs we talk to are defined
             'idp': {
-
               # we do not need a WAYF service since there is
               # only an IdP defined here. This IdP should be
               # present in our metadata
-            
+
               # the keys of this dictionary are entity ids
               '{}/shibboleth'.format(IDP_URL): {
                   'single_sign_on_service': {
@@ -134,11 +127,10 @@ SAML_CONFIG = {
                         },
                         },
                     }, # end idp federation
-            
+
             }, # end sp
 
     },
-
     # where the remote metadata is stored
     'metadata': {
         # To verify the authenticity of the file downloaded from the net, the local copy of the public key should be used.
@@ -152,16 +144,15 @@ SAML_CONFIG = {
         # ondemand
         "remote": [{
             "url": "{}/shibboleth".format(IDP_URL),
-            # if self-signed must be globally defined also 'disable_ssl_certificate_validation': True, 
+            # if self-signed must be globally defined also 'disable_ssl_certificate_validation': True,
             "cert": BASE_DIR + "/certificates/shibidp/idp.testunical.it-cert.pem",
              }]
-            
     },
-    
+
     # Signing
     'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
     'cert_file': BASE_DIR + '/certificates/shibidp/sp-cert.pem',
-    
+
     # Encryption
     'encryption_keypairs': [{
         'key_file': BASE_DIR + '/certificates/shibidp/sp-key.pem',
@@ -188,7 +179,7 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    'valid_for': 365 * 24, 
+    'valid_for': 365 * 24,
 }
 
 # NAME_ID or MAIN_ATTRIBUTE (not together!)

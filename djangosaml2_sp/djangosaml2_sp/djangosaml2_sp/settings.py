@@ -24,25 +24,24 @@ SECRET_KEY = 'btl-x0ja09$zqer3h^n^_ic!9h+1q0g!-wqzj&&zio@(@5p*no'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sp.pysaml2.testunical.it',]
+ALLOWED_HOSTS = ['*',]
 
 # Application definition
 
 INSTALLED_APPS = [
     # custom user model
     'custom_accounts',
-    
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # SAML2 SP
     'djangosaml2',
     'saml2_sp',
-
 ]
 
 MIDDLEWARE = [
@@ -131,17 +130,17 @@ STATIC_URL = '/static/'
 
 
 if 'djangosaml2' in INSTALLED_APPS:
-    # from . import sp_pysaml2
-    from . import sp_pysaml2_shibidp as sp_pysaml2
-    
+    from . import sp_pysaml2
+    # from . import sp_pysaml2_shibidp as sp_pysaml2
+
     # pySAML2 SP mandatory
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-    
+
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
         'djangosaml2.backends.Saml2Backend',
     )
-    
+
     LOGIN_URL = '/saml2/login/'
     LOGOUT_URL = '/logout/'
     LOGIN_REDIRECT_URL = '/'
@@ -150,7 +149,7 @@ if 'djangosaml2' in INSTALLED_APPS:
     BASE_URL = sp_pysaml2.BASE_URL
 
     # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
-    # SAML_USE_NAME_ID_AS_USERNAME = sp_pysaml2.SAML_USE_NAME_ID_AS_USERNAME 
+    # SAML_USE_NAME_ID_AS_USERNAME = sp_pysaml2.SAML_USE_NAME_ID_AS_USERNAME
 
     SAML_DJANGO_USER_MAIN_ATTRIBUTE = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE
     SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP
@@ -158,7 +157,7 @@ if 'djangosaml2' in INSTALLED_APPS:
     SAML_CREATE_UNKNOWN_USER = sp_pysaml2.SAML_CREATE_UNKNOWN_USER
     SAML_CONFIG = sp_pysaml2.SAML_CONFIG
     SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING
-    
+
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,

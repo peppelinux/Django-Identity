@@ -1,6 +1,5 @@
 import os
 import saml2
-#from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
 from saml2.saml import NAMEID_FORMAT_TRANSIENT, NAMEID_FORMAT_PERSISTENT
 from saml2.saml import NAME_FORMAT_URI
 
@@ -12,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGIN_URL = '/login/'
 
 # idp protocol:fqdn:port
-HOST = 'localhost'
+HOST = 'idp1.testunical.it'
 PORT = 9000
 HTTPS = False
 if HTTPS: BASE = "https://%s:%s" % (HOST, PORT)
@@ -38,15 +37,15 @@ SAML_IDP_CONFIG = {
                 ],
             },
             'name_id_format': [NAMEID_FORMAT_TRANSIENT,
-                               NAMEID_FORMAT_PERSISTENT], #[NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED],
-                               
+                               NAMEID_FORMAT_PERSISTENT],
+
             'sign_response': True,
             'sign_assertion': True,
-            
+
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
             # policy with django-saml2-idp seems not!
-            
+
             # "policy": {
                 # "default": {
                     # "lifetime": {"minutes":15},
@@ -57,12 +56,12 @@ SAML_IDP_CONFIG = {
                         # "password": None, # it's not readable but do not show by default
                         # "id": None,
                         # "user_permissions": None,
-                        
+
                         # ## only these will be showed
                         # 'username': None,
                         # 'first_name': None,
                         # 'last_name': None,
-                        # 
+                        #
                         ## Here only mail addresses that end with ".umu.se" will be returned.
                         # 'email': None,
                         # #'email': [".*\.umu\.se$"],
@@ -70,19 +69,19 @@ SAML_IDP_CONFIG = {
                     # },
                     # "name_form": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
                 # },
-                
+
                 # SP_METADATA_URL: {
                     # "lifetime": {"minutes": 5},
                     # "attribute_restrictions":{
                         # "givenName": None,
                         # "surName": None,
-# 
+#
                         ## By default there is no restrictions as to which attributes should be return. Instead all the attributes and values that are gathered by the database backends will be returned if nothing else is stated. In the example above the SP with the entity identifier "urn:mace:umu.se:saml:roland:sp" has an attribute restriction: only the attributes 'givenName' and 'surName' are to be returned. There is no limitations as to what values on these attributes that can be returned.
                         # 'username': None,
                         # 'first_name': None,
                         # 'last_name': [".*\.umu\.se$"],
                         # 'email': [".*\.umu\.se$"],
-# 
+#
                     # }
                 # }
             # } # end attribute policy
@@ -106,7 +105,7 @@ SAML_IDP_CONFIG = {
         'key_file': BASE_DIR + '/certificates/private_key.pem',
         'cert_file': BASE_DIR + '/certificates/public_key.pem',
     }],
-    
+
     # How many hours this configuration is expected to be accurate.
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
     'valid_for': 24,

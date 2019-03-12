@@ -25,7 +25,7 @@ SECRET_KEY = 'lrx(fg&+2e=$l=y8$!+l68_=-lm3*n+myg%r3z!yjm(lg*l%-z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'djangosaml2idp',
     'idp',
 ]
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'django_saml2_idp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django-saml2-idp',
+        'NAME': 'djangosaml2idp',
         'HOST': 'localhost',
         'USER': 'django-saml2-idp',
         'PASSWORD': 'django-saml2-idp78',
@@ -127,12 +127,11 @@ STATIC_URL = '/static/'
 
 if 'djangosaml2idp' in INSTALLED_APPS:
     from . import idp_pysaml2
-    
+
     # pySAML2 IDP
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-    
+
     LOGIN_URL = idp_pysaml2.LOGIN_URL
     BASE_URL = idp_pysaml2.BASE_URL
     SAML_IDP_CONFIG = idp_pysaml2.SAML_IDP_CONFIG
     SAML_IDP_SPCONFIG = idp_pysaml2.SAML_IDP_SPCONFIG
-    
