@@ -6,7 +6,8 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = 'http://sp1.testunical.it:8000/saml2'
+BASE = 'http://sp1.testunical.it:8000'
+BASE_URL = '{}/saml2'.format(BASE)
 IDP_URL = 'http://idp1.testunical.it:9000/idp'
 
 SAML_CONFIG = {
@@ -29,10 +30,10 @@ SAML_CONFIG = {
                 'assertion_consumer_service': [
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
                     ],
-                'single_logout_service': [
-                    ('%s/ls/' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
-                    ('%s/ls/post' % BASE_URL, saml2.BINDING_HTTP_POST),
-                    ],
+                "single_logout_service": [
+                    ("%s/slo/post" % BASE, saml2.BINDING_HTTP_POST),
+                    ("%s/slo/redirect" % BASE, saml2.BINDING_HTTP_REDIRECT),
+                ],
                 }, # end endpoints
 
             # Mandates that the identity provider MUST authenticate the
@@ -57,35 +58,41 @@ SAML_CONFIG = {
             # a respective SAML Authentication Request.
             'allow_unsolicited': False,
 
+            # idp definition will be only in the metadata...
+
             # Since this is a very simple SP it only needs to know about
-            #one IdP, therefore there is really no need for a metadata file
-            #or a WAYF-function or anything like that. It needs the URL of the IdP and that’s all.:
-            #"idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
+            # one IdP, therefore there is really no need for a metadata file
+            # or a WAYF-function or anything like that. It needs the URL of the IdP and that’s all.:
+            # "idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
 
             # in this section the list of IdPs we talk to are defined
-            'idp': {
+            # 'idp': {
               # we do not need a WAYF service since there is
               # only an IdP defined here. This IdP should be
               # present in our metadata
 
               # the keys of this dictionary are entity ids
-              '{}/metadata'.format(IDP_URL): {
-                  'single_sign_on_service': {
-                        saml2.BINDING_HTTP_REDIRECT: '{}/login/process/'.format(IDP_URL),
-                        },
-                  'single_logout_service': {
-                        saml2.BINDING_HTTP_REDIRECT: '{}/logout'.format(IDP_URL),
-                        },
-                        },
-                    }, # end idp federation
+              # '{}/metadata'.format(IDP_URL): {
+                  # 'single_sign_on_service': {
+                        # saml2.BINDING_HTTP_REDIRECT: '{}/sso/redirect'.format(IDP_URL),
+                        # saml2.BINDING_HTTP_POST: '{}/sso/post'.format(IDP_URL),
+                        # },
+                  # 'single_logout_service': {
+                        # saml2.BINDING_HTTP_REDIRECT: '{}/logout'.format(IDP_URL),
+                        # },
+                        # },
+              # }, # end idp federation
 
             }, # end sp
 
     },
 
-    # where the remote metadata is stored
+    # many metadata, many idp...
     'metadata': {
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
+        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  'saml2_config'), 'idp_metadata.xml'),
+                  # other here...
+                  ],
         #
         # "remote": [{
             # "url":"{}/metadata/".format(IDP_URL),
@@ -110,7 +117,7 @@ SAML_CONFIG = {
        'sur_name': 'De Marco',
        'company': 'Universita della Calabria',
        'email_address': 'giuseppe.demarco@unical.it',
-       'contact_type': 'technical'},
+       'contact_type': 'administrative'},
       {'given_name': 'Giuseppe',
        'sur_name': 'De Marco',
        'company': 'Universita della Calabria',
@@ -123,6 +130,7 @@ SAML_CONFIG = {
       'display_name': [('Unical', 'it'), ('Unical', 'en')],
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
+
     'valid_for': 365 * 24,
 }
 
@@ -132,6 +140,9 @@ SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
 SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 
 SAML_CREATE_UNKNOWN_USER = True
+
+# logout
+SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_REDIRECT
 
 SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO

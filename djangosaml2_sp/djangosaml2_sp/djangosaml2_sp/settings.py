@@ -130,11 +130,12 @@ STATIC_URL = '/static/'
 
 
 if 'djangosaml2' in INSTALLED_APPS:
-    from . import sp_pysaml2
+    from . sp_pysaml2 import *
     # from . import sp_pysaml2_shibidp as sp_pysaml2
 
     # pySAML2 SP mandatory
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+    SESSION_COOKIE_AGE = 60 * 60 # an hour
 
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
@@ -146,17 +147,17 @@ if 'djangosaml2' in INSTALLED_APPS:
     LOGIN_REDIRECT_URL = '/'
     LOGOUT_REDIRECT_URL = '/'
 
-    BASE_URL = sp_pysaml2.BASE_URL
+    # BASE_URL = sp_pysaml2.BASE_URL
 
     # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
     # SAML_USE_NAME_ID_AS_USERNAME = sp_pysaml2.SAML_USE_NAME_ID_AS_USERNAME
 
-    SAML_DJANGO_USER_MAIN_ATTRIBUTE = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE
-    SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP
+    # SAML_DJANGO_USER_MAIN_ATTRIBUTE = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE
+    # SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = sp_pysaml2.SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP
 
-    SAML_CREATE_UNKNOWN_USER = sp_pysaml2.SAML_CREATE_UNKNOWN_USER
-    SAML_CONFIG = sp_pysaml2.SAML_CONFIG
-    SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING
+    # SAML_CREATE_UNKNOWN_USER = sp_pysaml2.SAML_CREATE_UNKNOWN_USER
+    # SAML_CONFIG = sp_pysaml2.SAML_CONFIG
+    # SAML_ATTRIBUTE_MAPPING = sp_pysaml2.SAML_ATTRIBUTE_MAPPING
 
     LOGGING = {
         'version': 1,

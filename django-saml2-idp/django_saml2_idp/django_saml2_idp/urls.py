@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('logout/', LogoutView.as_view(),
+         {'next_page': settings.LOGOUT_REDIRECT_URL},
+         name='logout'),
 ]
 
 if 'djangosaml2idp' in settings.INSTALLED_APPS:

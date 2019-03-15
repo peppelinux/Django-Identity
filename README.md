@@ -84,11 +84,11 @@ pip3 install -r requirements
 
 # cd djangosaml2_sp/saml2_sp/saml2_config
 # download idp metadata to sp, not needed if remote options is enabled
-# wget http://idp1.testunical.it:9000/idp/metadata/ -O idp_metadata.xml
+wget http://idp1.testunical.it:9000/idp/metadata/ -O djangosaml2_sp/saml2_sp/saml2_config/idp_metadata.xml
 
 # cd django_saml2_idp/idp/saml2_config
 # download sp metadata to idp [remote not yet working here]
-wget http://sp1.testunical.it:8000/saml2/metadata/ -O sp_metadata.xml
+wget http://sp1.testunical.it:8000/saml2/metadata/ -O django_saml2_idp/idp/saml2_config/sp_metadata.xml
 
 ./manage.py runserver 0.0.0.0:8000
 ````

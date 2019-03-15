@@ -126,12 +126,40 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 if 'djangosaml2idp' in INSTALLED_APPS:
-    from . import idp_pysaml2
+    from . idp_pysaml2 import *
 
     # pySAML2 IDP
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+    SESSION_COOKIE_AGE = 60 * 60 # an hour
 
-    LOGIN_URL = idp_pysaml2.LOGIN_URL
-    BASE_URL = idp_pysaml2.BASE_URL
-    SAML_IDP_CONFIG = idp_pysaml2.SAML_IDP_CONFIG
-    SAML_IDP_SPCONFIG = idp_pysaml2.SAML_IDP_SPCONFIG
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            },
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+            'djangosaml2': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+        }
+    }
