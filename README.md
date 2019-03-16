@@ -101,7 +101,7 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
-#### django-saml-idp attribute policy restrictions
+## djangosaml2idp topics
 [pySAML2 IDP Attribute Policy](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy) on official doc.
 
 Interesting code at views.py#111:
@@ -126,14 +126,14 @@ if "SigAlg" in request.session and "Signature" in request.session:
             return HttpResponseBadRequest("Message signature verification failure")
 ````
 
-### Interesting pySAML2 thins, improvements and bugs
+## pySAML2 things, improvements and bugs
 - Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP.
 - Eye on django production grade approach, improving security posture of [pysaml2 implementation](https://github.com/IdentityPython/pysaml2/issues/333)
 - better analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 - pySAML2 AttributeAuthority Server
 
-#### pySAML2 Bugs
+### pySAML2 Bugs
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
 - [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
@@ -142,6 +142,9 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - [handle_logout_request doesn't sign redirect binding responses as requested](https://github.com/IdentityPython/pysaml2/issues/334)
 - [XXE attack](https://github.com/IdentityPython/pysaml2/issues/508)
 - [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
+
+## Advanced Topics
+Resources and examples about advanced SAML2 implementations and use cases.
 
 ### SAML2 security assertions
 - Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
@@ -191,7 +194,7 @@ Interesting third-party discovery services:
 - https://github.com/hu-berlin-cms/django-shibboleth-eds
 
 
-### Other usefull resources
+## Resources
 - SAML2 Primer on [Wikipedia](https://en.m.wikipedia.org/wiki/SAML_2.0)
 - SAML2 Primer for Research & Scholarship on [SAFIRE](https://safire.ac.za/safire/publications/saml-primer/)
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
