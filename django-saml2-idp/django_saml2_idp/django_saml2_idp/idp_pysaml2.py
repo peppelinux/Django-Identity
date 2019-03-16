@@ -44,6 +44,7 @@ SAML_IDP_CONFIG = {
                     ('%s/sso/redirect' % BASE_URL, BINDING_HTTP_REDIRECT),
                     ("%s/sso/art" % BASE, BINDING_HTTP_ARTIFACT),
                 ],
+                # TODO the following endpoints need to be implemented in django view
                 "assertion_consumer_service": [
                     ("%s/acs/post" % BASE, BINDING_HTTP_POST),
                     ("%s/acs/redirect" % BASE, BINDING_HTTP_REDIRECT),
@@ -169,7 +170,7 @@ SAML_IDP_CONFIG = {
               ('http://www.unical.it', 'en')],
       },
 
-    # TODO: put idp logs in a separate file too
+    # TODO: put idp logs in a separate file
     # "logger": {
         # "rotating": {
             # "filename": "idp.log",
