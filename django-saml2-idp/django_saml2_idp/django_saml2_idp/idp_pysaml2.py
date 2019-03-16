@@ -12,15 +12,14 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOGIN_URL = '/login/'
-
-# idp protocol:fqdn:port
-HOST = 'idp1.testunical.it'
-PORT = 9000
+# IDP fqdn and url, needed for metadata production
+FQDN = 'idp1.testunical.it'
+HTTP_PORT = 9000
 HTTPS = False
 BASE = "{}://{}:{}".format('https' if HTTPS else 'http',
-                           HOST, PORT)
+                           FQDN, HTTP_PORT)
 BASE_URL = '{}/idp'.format(BASE)
+#
 
 SAML_IDP_CONFIG = {
     'debug' : True,
@@ -38,7 +37,7 @@ SAML_IDP_CONFIG = {
             # },
         # },
         'idp': {
-            'name': 'Django localhost IdP',
+            'name': '{} Django SAML2 IdP'.format(FQDN),
             'endpoints': {
                 'single_sign_on_service': [
                     ('%s/sso/post' % BASE_URL, BINDING_HTTP_POST),
@@ -69,7 +68,7 @@ SAML_IDP_CONFIG = {
 
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
-            # policy with django-saml2-idp seems not!
+            # policy with django-saml2-idp works better with custom Processors.
 
             "policy": {
                 "default": {
@@ -149,7 +148,6 @@ SAML_IDP_CONFIG = {
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
     'valid_for': 365 * 24,
 
-
     # own metadata settings
     'contact_person': [
       {'given_name': 'Giuseppe',
@@ -180,9 +178,7 @@ SAML_IDP_CONFIG = {
         # },
         # "loglevel": "debug",
     # }
-
 }
-
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
