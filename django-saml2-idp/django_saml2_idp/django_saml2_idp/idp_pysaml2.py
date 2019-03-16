@@ -81,12 +81,22 @@ SAML_IDP_CONFIG = {
             "policy": {
                 "default": {
                     "lifetime": {"minutes": 15},
-
-                    # if the sp is not conform to entity_categories the attributes will not be released
-                    #"entity_categories": ["swamid", "edugain"],
-
+                    
+                    # It is used to manipulate attribute release. Attributes released as grouped in entity categories
+                    # refeds: http://refeds.org/category/research-and-scholarship
+                    # edugain: http://www.geant.net/uri/dataprotection-code-of-conduct/v1
+                    #"entity_categories": ["refeds", "edugain"],
+                    
                     "name_form": NAME_FORMAT_URI,
                     # "name_form": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    # X.500 procedures require that every attribute type be identified with a unique OBJECT IDENTIFIER
+                    # To construct attribute names, the URN oid namespace described 
+                    # in IETF RFC 3061 [RFC3061] is used. In this approach the Name XML attribute
+                    # is based on the OBJECT IDENTIFIER assigned to the directory attribute type. 
+                    # Example: urn:oid:2.5.4.3
+                    
+                    # pySAML2 globals, see SAML_IDP_SPCONFIG for per SP policy
+                    # see also Custom Processors for more powerfull appproaches
                     # "attribute_restrictions": {
                         # ## defaults Django User Account attributes (better do not show)
                         # "date_joined": None,
@@ -144,7 +154,8 @@ SAML_IDP_CONFIG = {
 
     # How many hours this configuration is expected to be accurate.
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
-    'valid_for': 24,
+    'valid_for': 365 * 24,
+
 
     # own metadata settings
     'contact_person': [
