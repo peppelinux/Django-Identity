@@ -1,21 +1,22 @@
 # Django-Identity
 Development panel that aims to bring AAI technologies to Django context in a secure and standard way.
-Actually started from a SAML2 IDP and SP implementation built on pysaml2, this project will implement also OIDC/oAuth2 and other AAI features.
+It started from a SAML2 IDP and a SP implementation built on pysaml2, this project will implement also OIDC/oAuth2 and other AAI features.
 
-In this repository we can find quite tested Applications and also general purpose Code and python Resources related to AAI deployment.
+In this repository ther are quite tested Applications and also general purpose Code and python Resources related to AAI deployment.
 
 ## Bootstrap code examples
-Each one for targeted projects, they will be migrated to project's Readme files.
+Each one for targeted projects, they will be migrated to related project Readme files in the future.
 These are workng examples of an IDP and a SP made with Django.
-Components used:
+Application used:
 
 - [pysaml2](https://github.com/IdentityPython/pysaml2)
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
 - [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
-#### Not developed anymore
-- [python3-saml - Not usable yet in these examples](https://github.com/onelogin/python3-saml)
-
+### pySAML2 alternatives
+All of them have less features then pySAML2:
+ - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
+ - https://github.com/onelogin/python3-saml
 
 ### django-saml-idp (IDP server)
 ````
@@ -93,15 +94,12 @@ wget http://sp1.testunical.it:8000/saml2/metadata/ -O django_saml2_idp/idp/saml2
 ./manage.py runserver 0.0.0.0:8000
 ````
 
-### djangosaml2-sp (SP Server) with Shibboleth-IDP
+### djangosaml2 SP with Shibboleth as IDP
 
 Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
  - https://github.com/peppelinux/Ansible-Shibboleth-IDP-SP-Debian9
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
-
-## Work in progress
-Tasks that may be implemented in a production ready release.
 
 #### django-saml-idp attribute policy restrictions
 [pySAML2 IDP Attribute Policy](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy) on official doc.
@@ -128,13 +126,14 @@ if "SigAlg" in request.session and "Signature" in request.session:
             return HttpResponseBadRequest("Message signature verification failure")
 ````
 
-- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP. __This is a common problem of all the SP, once they stored the userdata they won't change these even if they changes IDP side__!
+### Interesting pySAML2 thins, improvements and bugs
+- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP.
 - Eye on django production grade approach, improving security posture of [pysaml2 implementation](https://github.com/IdentityPython/pysaml2/issues/333)
 - better analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
 - SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
 - pySAML2 AttributeAuthority Server
 
-### Interesting pySAML2 bugs
+#### pySAML2 Bugs
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
 - [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
@@ -143,11 +142,6 @@ if "SigAlg" in request.session and "Signature" in request.session:
 - [handle_logout_request doesn't sign redirect binding responses as requested](https://github.com/IdentityPython/pysaml2/issues/334)
 - [XXE attack](https://github.com/IdentityPython/pysaml2/issues/508)
 - [SSRF](https://github.com/IdentityPython/pysaml2/issues/510)
-
-### pySAML2 alternatives
-All of them have less features then pySAML2:
- - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
- - https://github.com/onelogin/python3-saml
 
 ### SAML2 security assertions
 - Artifact resolution should be the best auth method in several bandwidth and security aspects. Read [this](https://stackoverflow.com/questions/13616169/what-is-the-purpose-of-a-saml-artifact)
@@ -198,6 +192,8 @@ Interesting third-party discovery services:
 
 
 ### Other usefull resources
+- SAML2 Primer on [Wikipedia](https://en.m.wikipedia.org/wiki/SAML_2.0)
+- SAML2 Primer for Research & Scholarship on [SAFIRE](https://safire.ac.za/safire/publications/saml-primer/)
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
 - http://djangosaml2idp.readthedocs.io/en/latest/
 - https://github.com/IdentityPython
