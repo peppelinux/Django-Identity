@@ -1,5 +1,4 @@
 import os
-import saml2
 from saml2 import (BINDING_HTTP_POST,
                    BINDING_SOAP,
                    BINDING_HTTP_ARTIFACT,
