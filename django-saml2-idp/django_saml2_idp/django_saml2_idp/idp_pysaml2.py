@@ -6,9 +6,8 @@ from saml2 import (BINDING_HTTP_POST,
                    BINDING_HTTP_REDIRECT,
                    BINDING_PAOS)
 from saml2.saml import (NAMEID_FORMAT_TRANSIENT,
-                        NAMEID_FORMAT_PERSISTENT)
-from saml2.saml import NAME_FORMAT_URI
-
+                        NAMEID_FORMAT_PERSISTENT,
+                        NAME_FORMAT_URI)
 from saml2.sigver import get_xmlsec_binary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -20,14 +19,9 @@ LOGIN_URL = '/login/'
 HOST = 'idp1.testunical.it'
 PORT = 9000
 HTTPS = False
-if HTTPS:
-    BASE = "https://%s:%s" % (HOST, PORT)
-else:
-    BASE = "http://%s:%s" % (HOST, PORT)
+BASE = "{}://{}:{}".format('https' if HTTPS else 'http',
+                           HOST, PORT)
 BASE_URL = '{}/idp'.format(BASE)
-# end
-
-SP_METADATA_URL = 'http://sp1.testunical.it:8000/saml2/metadata/'
 
 SAML_IDP_CONFIG = {
     'debug' : True,
@@ -132,7 +126,7 @@ SAML_IDP_CONFIG = {
         # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'),
                   # 'saml2_config'), 'sp_metadata.xml')],
         #"remote": [{
-            #"url": SP_METADATA_URL,
+            #"url": 'http://sp1.testunical.it:8000/saml2/metadata/',
             # "cert":"idp_https_cert.pem"}]
             #}]
 
