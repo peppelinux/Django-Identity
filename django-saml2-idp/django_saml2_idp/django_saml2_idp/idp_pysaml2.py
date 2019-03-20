@@ -68,6 +68,12 @@ SAML_IDP_CONFIG = {
 
             'sign_response': True,
             'sign_assertion': True,
+            'logout_requests_signed': True,
+            'validate_certificate': True,
+            'verify_encrypt_cert_advice': True,
+            'verify_encrypt_cert_assertion': True,
+            # this is default
+            'only_use_keys_in_metadata': True,
 
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
