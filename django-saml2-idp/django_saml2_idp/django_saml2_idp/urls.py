@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 
@@ -28,6 +29,7 @@ urlpatterns = [
 if 'djangosaml2idp' in settings.INSTALLED_APPS:
     import djangosaml2idp.urls
     urlpatterns += path('', include((djangosaml2idp.urls, 'djangosaml2idp',))),
+    urlpatterns += path('login/', auth_views.LoginView.as_view(template_name='idp/login.html'), name='login'),
 
 if 'idp' in settings.INSTALLED_APPS:
     import idp.urls

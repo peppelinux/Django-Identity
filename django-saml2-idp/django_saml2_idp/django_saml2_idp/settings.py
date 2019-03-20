@@ -157,7 +157,7 @@ if 'djangosaml2idp' in INSTALLED_APPS:
                 'level': 'ERROR',
                 'propagate': True,
             },
-            'djangosaml2': {
+            'djangosaml2idp': {
                 'handlers': ['console'],
                 'level': 'DEBUG',
             },

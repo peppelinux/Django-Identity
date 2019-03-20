@@ -8,7 +8,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
-IDP_URL = 'http://idp1.testunical.it:9000/idp'
+
+# needed only if metadata are downloaded remotely
+# IDP_URL = 'http://idp1.testunical.it:9000/idp'
 
 SAML_CONFIG = {
     'debug' : True,
@@ -31,8 +33,8 @@ SAML_CONFIG = {
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
                     ],
                 "single_logout_service": [
-                    ("%s/slo/post" % BASE, saml2.BINDING_HTTP_POST),
-                    ("%s/slo/redirect" % BASE, saml2.BINDING_HTTP_REDIRECT),
+                    ("%s/ls/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ("%s/ls/" % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                 ],
                 }, # end endpoints
 
@@ -131,7 +133,7 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    'valid_for': 365 * 24,
+    'valid_for': 24 * 10,
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
@@ -142,7 +144,7 @@ SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 SAML_CREATE_UNKNOWN_USER = True
 
 # logout
-SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_REDIRECT
+SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
 
 SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO

@@ -36,6 +36,7 @@ SAML_IDP_CONFIG = {
     'description': 'Example IdP setup',
 
     'service': {
+        # TODO
         # "aa": {
             # "endpoints": {
                 # "attribute_service": [
@@ -50,22 +51,24 @@ SAML_IDP_CONFIG = {
                 'single_sign_on_service': [
                     ('%s/sso/post' % BASE_URL, BINDING_HTTP_POST),
                     ('%s/sso/redirect' % BASE_URL, BINDING_HTTP_REDIRECT),
-                    ("%s/sso/art" % BASE, BINDING_HTTP_ARTIFACT),
+                    # TODO
+                    # ("%s/sso/art" % BASE, BINDING_HTTP_ARTIFACT),
                 ],
-                "assertion_consumer_service": [
-                    ("%s/acs/post" % BASE, BINDING_HTTP_POST),
-                    ("%s/acs/redirect" % BASE, BINDING_HTTP_REDIRECT),
-                    ("%s/acs/artifact" % BASE, BINDING_HTTP_ARTIFACT),
-                    #("%s/acs/soap" % BASE, BINDING_SOAP),
-                    ("%s/ecp" % BASE, BINDING_PAOS)
-                ],
-                "artifact_resolution_service":[
-                    ("%s/ars" % BASE, BINDING_SOAP)
-                ],
+                # TODO
+                # "assertion_consumer_service": [
+                    # ("%s/acs/post" % BASE, BINDING_HTTP_POST),
+                    # ("%s/acs/redirect" % BASE, BINDING_HTTP_REDIRECT),
+                    # ("%s/acs/artifact" % BASE, BINDING_HTTP_ARTIFACT),
+                    # ("%s/acs/soap" % BASE, BINDING_SOAP),
+                    # ("%s/ecp" % BASE, BINDING_PAOS)
+                # ],
+                # "artifact_resolution_service":[
+                    # ("%s/ars" % BASE, BINDING_SOAP)
+                # ],
                 "single_logout_service": [
-                    ("%s/slo/soap" % BASE, BINDING_SOAP),
                     ("%s/slo/post" % BASE, BINDING_HTTP_POST),
                     ("%s/slo/redirect" % BASE, BINDING_HTTP_REDIRECT)
+                    # ("%s/slo/soap" % BASE, BINDING_SOAP),
                 ],
             },
             'name_id_format': [NAMEID_FORMAT_TRANSIENT,
@@ -127,7 +130,8 @@ SAML_IDP_CONFIG = {
             #}]
 
         "class": "saml2.mdstore.MetaDataFile",
-        "metadata": [(os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'),
+        "metadata": [
+                     (os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'),
                       'saml2_config'), 'sp_metadata.xml'), ),
                      # (full_path("metadata_sp_2.xml"), ),
                      # (full_path("vo_metadata.xml"), )
@@ -144,7 +148,7 @@ SAML_IDP_CONFIG = {
 
     # How many hours this configuration is expected to be accurate.
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
-    'valid_for': 24,
+    'valid_for': 24 * 10,
 
     # own metadata settings
     'contact_person': [
@@ -192,8 +196,8 @@ SAML_IDP_SPCONFIG = {
             'username': 'username',
             'is_staff': 'is_staff',
             'is_superuser':  'is_superuser',
-            'user_permissions': 'user_permissions',
-            'groups': 'groups',
+            # 'user_permissions': 'user_permissions',
+            # 'groups': 'groups',
         },
     }
 }
