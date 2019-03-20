@@ -8,9 +8,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
-
 # needed only if metadata are downloaded remotely
 # IDP_URL = 'http://idp1.testunical.it:9000/idp'
+
 
 SAML_CONFIG = {
     'debug' : True,

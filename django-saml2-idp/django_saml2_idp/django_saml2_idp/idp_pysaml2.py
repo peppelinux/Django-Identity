@@ -1,33 +1,25 @@
 import os
-import saml2
 from saml2 import (BINDING_HTTP_POST,
                    BINDING_SOAP,
                    BINDING_HTTP_ARTIFACT,
                    BINDING_HTTP_REDIRECT,
                    BINDING_PAOS)
 from saml2.saml import (NAMEID_FORMAT_TRANSIENT,
-                        NAMEID_FORMAT_PERSISTENT)
-from saml2.saml import NAME_FORMAT_URI
-
+                        NAMEID_FORMAT_PERSISTENT,
+                        NAME_FORMAT_URI)
 from saml2.sigver import get_xmlsec_binary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOGIN_URL = '/login/'
-
-# idp protocol:fqdn:port
-HOST = 'idp1.testunical.it'
-PORT = 9000
+# IDP fqdn and url, needed for metadata production
+FQDN = 'idp1.testunical.it'
+HTTP_PORT = 9000
 HTTPS = False
-if HTTPS:
-    BASE = "https://%s:%s" % (HOST, PORT)
-else:
-    BASE = "http://%s:%s" % (HOST, PORT)
+BASE = "{}://{}:{}".format('https' if HTTPS else 'http',
+                           FQDN, HTTP_PORT)
 BASE_URL = '{}/idp'.format(BASE)
-# end
-
-SP_METADATA_URL = 'http://sp1.testunical.it:8000/saml2/metadata/'
+#
 
 SAML_IDP_CONFIG = {
     'debug' : True,
@@ -46,7 +38,7 @@ SAML_IDP_CONFIG = {
             # },
         # },
         'idp': {
-            'name': 'Django localhost IdP',
+            'name': '{} Django SAML2 IdP'.format(FQDN),
             'endpoints': {
                 'single_sign_on_service': [
                     ('%s/sso/post' % BASE_URL, BINDING_HTTP_POST),
@@ -79,17 +71,27 @@ SAML_IDP_CONFIG = {
 
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
-            # policy with django-saml2-idp seems not!
+            # policy with django-saml2-idp works better with custom Processors.
 
             "policy": {
                 "default": {
                     "lifetime": {"minutes": 15},
 
-                    # if the sp is not conform to entity_categories the attributes will not be released
-                    #"entity_categories": ["swamid", "edugain"],
+                    # It is used to manipulate attribute release. Attributes released as grouped in entity categories
+                    # refeds: http://refeds.org/category/research-and-scholarship
+                    # edugain: http://www.geant.net/uri/dataprotection-code-of-conduct/v1
+                    #"entity_categories": ["refeds", "edugain"],
 
                     "name_form": NAME_FORMAT_URI,
                     # "name_form": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    # X.500 procedures require that every attribute type be identified with a unique OBJECT IDENTIFIER
+                    # To construct attribute names, the URN oid namespace described
+                    # in IETF RFC 3061 [RFC3061] is used. In this approach the Name XML attribute
+                    # is based on the OBJECT IDENTIFIER assigned to the directory attribute type.
+                    # Example: urn:oid:2.5.4.3
+
+                    # pySAML2 globals, see SAML_IDP_SPCONFIG for per SP policy
+                    # see also Custom Processors for more powerfull appproaches
                     # "attribute_restrictions": {
                         # ## defaults Django User Account attributes (better do not show)
                         # "date_joined": None,
@@ -125,7 +127,7 @@ SAML_IDP_CONFIG = {
         # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'),
                   # 'saml2_config'), 'sp_metadata.xml')],
         #"remote": [{
-            #"url": SP_METADATA_URL,
+            #"url": 'http://sp1.testunical.it:8000/saml2/metadata/',
             # "cert":"idp_https_cert.pem"}]
             #}]
 
@@ -150,6 +152,7 @@ SAML_IDP_CONFIG = {
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
     'valid_for': 24 * 10,
 
+
     # own metadata settings
     'contact_person': [
       {'given_name': 'Giuseppe',
@@ -171,7 +174,7 @@ SAML_IDP_CONFIG = {
               ('http://www.unical.it', 'en')],
       },
 
-    # TODO: put idp logs in a separate file too
+    # TODO: put idp logs in a separate file
     # "logger": {
         # "rotating": {
             # "filename": "idp.log",
@@ -180,9 +183,7 @@ SAML_IDP_CONFIG = {
         # },
         # "loglevel": "debug",
     # }
-
 }
-
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
