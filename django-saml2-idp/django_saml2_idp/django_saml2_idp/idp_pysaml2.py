@@ -1,25 +1,34 @@
 import os
+import saml2
+from django.utils.translation import gettext as _
 from saml2 import (BINDING_HTTP_POST,
                    BINDING_SOAP,
                    BINDING_HTTP_ARTIFACT,
                    BINDING_HTTP_REDIRECT,
                    BINDING_PAOS)
 from saml2.saml import (NAMEID_FORMAT_TRANSIENT,
-                        NAMEID_FORMAT_PERSISTENT,
-                        NAME_FORMAT_URI)
+                        NAMEID_FORMAT_PERSISTENT)
+from saml2.saml import NAME_FORMAT_URI
+
 from saml2.sigver import get_xmlsec_binary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# IDP fqdn and url, needed for metadata production
-FQDN = 'idp1.testunical.it'
-HTTP_PORT = 9000
+LOGIN_URL = '/login/'
+
+# idp protocol:fqdn:port
+HOST = 'idp1.testunical.it'
+PORT = 9000
 HTTPS = False
-BASE = "{}://{}:{}".format('https' if HTTPS else 'http',
-                           FQDN, HTTP_PORT)
+if HTTPS:
+    BASE = "https://%s:%s" % (HOST, PORT)
+else:
+    BASE = "http://%s:%s" % (HOST, PORT)
 BASE_URL = '{}/idp'.format(BASE)
-#
+# end
+
+SP_METADATA_URL = 'http://sp1.testunical.it:8000/saml2/metadata/'
 
 SAML_IDP_CONFIG = {
     'debug' : True,
@@ -38,7 +47,7 @@ SAML_IDP_CONFIG = {
             # },
         # },
         'idp': {
-            'name': '{} Django SAML2 IdP'.format(FQDN),
+            'name': 'Django localhost IdP',
             'endpoints': {
                 'single_sign_on_service': [
                     ('%s/sso/post' % BASE_URL, BINDING_HTTP_POST),
@@ -74,30 +83,24 @@ SAML_IDP_CONFIG = {
             'verify_encrypt_cert_assertion': True,
             # this is default
             'only_use_keys_in_metadata': True,
+            'verify_ssl_cert': True,
+
+            'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
+            'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
 
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
-            # policy with django-saml2-idp works better with custom Processors.
+            # policy with django-saml2-idp seems not!
 
             "policy": {
                 "default": {
                     "lifetime": {"minutes": 15},
 
-                    # It is used to manipulate attribute release. Attributes released as grouped in entity categories
-                    # refeds: http://refeds.org/category/research-and-scholarship
-                    # edugain: http://www.geant.net/uri/dataprotection-code-of-conduct/v1
-                    #"entity_categories": ["refeds", "edugain"],
+                    # if the sp is not conform to entity_categories the attributes will not be released
+                    #"entity_categories": ["swamid", "edugain"],
 
                     "name_form": NAME_FORMAT_URI,
                     # "name_form": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-                    # X.500 procedures require that every attribute type be identified with a unique OBJECT IDENTIFIER
-                    # To construct attribute names, the URN oid namespace described
-                    # in IETF RFC 3061 [RFC3061] is used. In this approach the Name XML attribute
-                    # is based on the OBJECT IDENTIFIER assigned to the directory attribute type.
-                    # Example: urn:oid:2.5.4.3
-
-                    # pySAML2 globals, see SAML_IDP_SPCONFIG for per SP policy
-                    # see also Custom Processors for more powerfull appproaches
                     # "attribute_restrictions": {
                         # ## defaults Django User Account attributes (better do not show)
                         # "date_joined": None,
@@ -133,7 +136,7 @@ SAML_IDP_CONFIG = {
         # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'),
                   # 'saml2_config'), 'sp_metadata.xml')],
         #"remote": [{
-            #"url": 'http://sp1.testunical.it:8000/saml2/metadata/',
+            #"url": SP_METADATA_URL,
             # "cert":"idp_https_cert.pem"}]
             #}]
 
@@ -158,7 +161,6 @@ SAML_IDP_CONFIG = {
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
     'valid_for': 24 * 10,
 
-
     # own metadata settings
     'contact_person': [
       {'given_name': 'Giuseppe',
@@ -180,7 +182,7 @@ SAML_IDP_CONFIG = {
               ('http://www.unical.it', 'en')],
       },
 
-    # TODO: put idp logs in a separate file
+    # TODO: put idp logs in a separate file too
     # "logger": {
         # "rotating": {
             # "filename": "idp.log",
@@ -189,7 +191,26 @@ SAML_IDP_CONFIG = {
         # },
         # "loglevel": "debug",
     # }
+
 }
+
+
+SAML_IDP_SHOW_USER_AGREEMENT_SCREEN = True
+SAML_IDP_USER_AGREEMENT_ATTR_EXCLUDE = []
+# User agreements will be valid for 1 year unless overriden. If this attribute is not used, user agreements will not expire
+SAML_IDP_USER_AGREEMENT_VALID_FOR = 24 * 365
+SAML_IDP_AGREEMENT_MSG = ("Businesses will have to provide the following information to internet users when seeking their consent."
+                          "Who is collecting the data, and how to contact them or their European representative."
+                          "What the personal information are being used for, and the legal basis of the data processing."
+                          "The “legitimate interest” of the user of the data (This refers to a legal basis that may be used by direct marketing companies)."
+                          "With whom the data will be shared."
+                          "Whether the controller intends to transfer data to a third country, and if so has the European Commission deemed this country’s protections adequate or what alternative safeguards or rules are in place."
+                          "The duration of storage, or the criteria used to determine duration."
+                          "That the user has the right to request rectification to mistakes in this personal information."
+                          "That the user has the right to withdraw consent."
+                          "How the user can lodge a complaint with the supervisory authority."
+                          "What the consequences of not giving consent might be."
+                          "In cases of automated decision-making, including profiling, what the logic of this process is, and what the significance of the outcomes may be.")
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
@@ -206,5 +227,11 @@ SAML_IDP_SPCONFIG = {
             # 'user_permissions': 'user_permissions',
             # 'groups': 'groups',
         },
+        #'user_agreement_attr_exclude': ['sp_specific_secret_attr'],
+        # Because we specify display name, that will be shown instead of entity id.
+        'display_name': 'SP Number 1',
+        'display_description': 'This SP does something that\'s probably important',
+        'display_agreement_message': SAML_IDP_AGREEMENT_MSG,
+        'user_agreement_valid_for': 24 * 3650  # User agreements will be valid for 10 years for this SP only
     }
 }

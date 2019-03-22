@@ -8,9 +8,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
+
 # needed only if metadata are downloaded remotely
 # IDP_URL = 'http://idp1.testunical.it:9000/idp'
-
 
 SAML_CONFIG = {
     'debug' : True,
@@ -37,6 +37,9 @@ SAML_CONFIG = {
                     ("%s/ls/" % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                 ],
                 }, # end endpoints
+
+            'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
+            'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
@@ -104,13 +107,13 @@ SAML_CONFIG = {
     },
 
     # Signing
-    'key_file': BASE_DIR + '/certificates/private_key.pem',
-    'cert_file': BASE_DIR + '/certificates/public_key.pem',
+    'key_file': BASE_DIR + '/certificates/private.key',
+    'cert_file': BASE_DIR + '/certificates/public.cert',
 
     # Encryption
     'encryption_keypairs': [{
-        'key_file': BASE_DIR + '/certificates/private_key.pem',
-        'cert_file': BASE_DIR + '/certificates/public_key.pem',
+        'key_file': BASE_DIR + '/certificates/private.key',
+        'cert_file': BASE_DIR + '/certificates/public.cert',
     }],
 
     # own metadata settings

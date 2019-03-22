@@ -45,3 +45,18 @@ sp_md = mds.metadata[sp1_fpath[0]]
 sp_md.entity
 # sp entity_id as string
 sp_entity_id = sp_md.entity_descr.entity_id
+
+
+# metadata checks
+# def check_valid_until(xmlstring):
+
+# see. https://github.com/IdentityPython/pysaml2/blob/master/tests/test_30_mdstore.py
+
+# def test_metadata_file():
+    # sec_config.xmlsec_binary = sigver.get_xmlsec_binary(["/opt/local/bin"])
+    # mds = MetadataStore(ATTRCONV, sec_config,
+                        # disable_ssl_certificate_validation=True)
+
+    # mds.imp(METADATACONF["8"])
+    # print(len(mds.keys()))
+    # assert len(mds.keys()) == 560
