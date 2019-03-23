@@ -26,7 +26,7 @@ class User(AbstractUser):
 
     # for NameID extreme lenghtness
     USERNAME_FIELD = 'username'
-    username = models.CharField(_('Username'), max_length=254,
+    username = models.CharField(_('Username'), max_length=64,
                                   blank=False, null=False, unique=True)
     is_active = models.BooleanField(_('attivo'), default=True)
     email = models.EmailField(_('email address'), blank=True, null=True)
