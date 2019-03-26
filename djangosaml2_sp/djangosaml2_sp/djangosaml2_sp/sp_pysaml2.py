@@ -46,7 +46,9 @@ SAML_CONFIG = {
             "force_authn": True,
 
             # attributes that this project need to identify a user
-            'required_attributes': ['email', 'username'],
+            'required_attributes': ['email', 'username',
+                                    'cn', 'sn', 'uid'
+                                    ],
 
             # attributes that may be useful to have but not required
             'optional_attributes': ['eduPersonAffiliation'],
@@ -140,9 +142,9 @@ SAML_CONFIG = {
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
-SAML_USE_NAME_ID_AS_USERNAME = False
-SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
-SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
+SAML_USE_NAME_ID_AS_USERNAME = True
+# SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
+# SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 
 SAML_CREATE_UNKNOWN_USER = True
 
@@ -152,10 +154,10 @@ SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
 SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO
     # Must also be present in attribute-maps!
-    # 'username': ( 'username', ),
+    # 'uid': ('username', ),
     'email': ('email', ),
-    'first_name': ('first_name', ),
-    'last_name': ('last_name', ),
-    'is_staff': ('is_staff', ),
-    'is_superuser':  ('is_superuser', ),
+    'cn': ('first_name', ),
+    'sn': ('last_name', ),
+    # 'is_staff': ('is_staff', ),
+    # 'is_superuser':  ('is_superuser', ),
 }

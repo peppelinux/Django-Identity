@@ -8,7 +8,9 @@ from saml2 import (BINDING_HTTP_POST,
                    BINDING_PAOS)
 from saml2.saml import (NAMEID_FORMAT_TRANSIENT,
                         NAMEID_FORMAT_PERSISTENT)
-from saml2.saml import NAME_FORMAT_URI
+from saml2.saml import (NAME_FORMAT_URI,
+                        NAME_FORMAT_UNSPECIFIED,
+                        NAME_FORMAT_BASIC)
 
 from saml2.sigver import get_xmlsec_binary
 
@@ -34,6 +36,10 @@ SAML_IDP_CONFIG = {
     'debug' : True,
     'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin', '/usr/bin/xmlsec1']),
     'entityid': '%s/metadata' % BASE_URL,
+    'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR,
+                                                                'idp'),
+                                      'saml2_config'),
+                                      'attribute-maps'),
     'description': 'Example IdP setup',
 
     'service': {
@@ -72,21 +78,24 @@ SAML_IDP_CONFIG = {
                     # ("%s/slo/soap" % BASE, BINDING_SOAP),
                 ],
             },
-            'name_id_format': [NAMEID_FORMAT_TRANSIENT,
-                               NAMEID_FORMAT_PERSISTENT],
+            'name_id_format': [NAMEID_FORMAT_PERSISTENT,
+                               NAMEID_FORMAT_TRANSIENT],
 
             'sign_response': True,
             'sign_assertion': True,
             'logout_requests_signed': True,
             'validate_certificate': True,
-            'verify_encrypt_cert_advice': True,
-            'verify_encrypt_cert_assertion': True,
             # this is default
             'only_use_keys_in_metadata': True,
-            'verify_ssl_cert': True,
 
-            'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
-            'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
+            # this must be a cert, not a boolean
+            #'verify_ssl_cert': None,
+            # 'verify_encrypt_cert_assertion': None,
+            # 'verify_encrypt_cert_advice': None,
+
+            # this works if pysaml2 is installed from peppelinux's fork
+            # 'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
+            # 'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
 
             # attribute policy
             # it seems that only SAML_IDP_SPCONFIG[SP]['attribute_mappings'] work as a filter!
@@ -199,18 +208,26 @@ SAML_IDP_SHOW_USER_AGREEMENT_SCREEN = True
 SAML_IDP_USER_AGREEMENT_ATTR_EXCLUDE = []
 # User agreements will be valid for 1 year unless overriden. If this attribute is not used, user agreements will not expire
 SAML_IDP_USER_AGREEMENT_VALID_FOR = 24 * 365
-SAML_IDP_AGREEMENT_MSG = ("Businesses will have to provide the following information to internet users when seeking their consent."
-                          "Who is collecting the data, and how to contact them or their European representative."
-                          "What the personal information are being used for, and the legal basis of the data processing."
-                          "The “legitimate interest” of the user of the data (This refers to a legal basis that may be used by direct marketing companies)."
-                          "With whom the data will be shared."
-                          "Whether the controller intends to transfer data to a third country, and if so has the European Commission deemed this country’s protections adequate or what alternative safeguards or rules are in place."
-                          "The duration of storage, or the criteria used to determine duration."
-                          "That the user has the right to request rectification to mistakes in this personal information."
-                          "That the user has the right to withdraw consent."
-                          "How the user can lodge a complaint with the supervisory authority."
-                          "What the consequences of not giving consent might be."
-                          "In cases of automated decision-making, including profiling, what the logic of this process is, and what the significance of the outcomes may be.")
+SAML_IDP_AGREEMENT_MSG = """
+                         Businesses will have to provide the following information to internet users when seeking their consent.
+                         Who is collecting the data, and how to contact them or their European representative.
+                         What the personal information are being used for, and the legal basis of the data processing.
+                         The “legitimate interest” of the user of the data This refers to a legal basis that may be used by direct marketing companies).
+                         With whom the data will be shared.
+                         Whether the controller intends to transfer data to a third country, and if so has the European Commission deemed this country’s protections adequate or what alternative safeguards or rules are in place.
+                         The duration of storage, or the criteria used to determine duration.
+                         That the user has the right to request rectification to mistakes in this personal information.
+                         That the user has the right to withdraw consent.
+                         How the user can lodge a complaint with the supervisory authority.
+                         What the consequences of not giving consent might be.
+                         In cases of automated decision-making, including profiling, what the logic of this process is, and what the significance of the outcomes may be.
+                         """
+
+SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA256
+SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA256
+
+# Encrypt authn response
+SAML_ENCRYPT_AUTHN_RESPONSE=False
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
@@ -232,6 +249,8 @@ SAML_IDP_SPCONFIG = {
         'display_name': 'SP Number 1',
         'display_description': 'This SP does something that\'s probably important',
         'display_agreement_message': SAML_IDP_AGREEMENT_MSG,
-        'user_agreement_valid_for': 24 * 3650  # User agreements will be valid for 10 years for this SP only
+        'user_agreement_valid_for': 24 * 3650 , # User agreements will be valid for 10 years for this SP only
+        'signing_algorithm': saml2.xmldsig.SIG_RSA_SHA256,
+        'digest_algorithm': saml2.xmldsig.DIGEST_SHA256,
     }
 }
