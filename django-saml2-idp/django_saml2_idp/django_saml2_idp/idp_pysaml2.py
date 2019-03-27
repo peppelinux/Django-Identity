@@ -244,14 +244,13 @@ SAML_IDP_SPCONFIG = {
             # 'username': 'username',
             # 'is_staff': 'is_staff',
             # 'is_superuser':  'is_superuser',
-            'cn': 'cn',
-            'sn': 'sn',
-            'mail': 'mail',
             'schacPersonalUniqueID': 'schacPersonalUniqueID',
             'eduPersonPrincipalName': 'eduPersonPrincipalName',
             'eduPersonEntitlement': 'eduPersonEntitlement',
             'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
-
+            'cn': 'cn',
+            'sn': 'sn',
+            'mail': 'mail',
         },
         #'user_agreement_attr_exclude': ['sp_specific_secret_attr'],
         # Because we specify display name, that will be shown instead of entity id.

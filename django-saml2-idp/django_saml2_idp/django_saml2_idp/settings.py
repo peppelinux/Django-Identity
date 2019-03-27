@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'djangosaml2idp',
     'idp',
     'ldap_peoples',
-    'rangefilter'
+    'rangefilter',
+
+    'agid_template',
 ]
 
 MIDDLEWARE = [

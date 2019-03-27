@@ -1,0 +1,14 @@
+<!-- Extends default Bootstrap Italia template -->
+{% extends 'bootstrap-italia-base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+    <div class="container">
+        <div class="col-12 py-md-5 bd-content">
+
+            {% block centered_container %}{% endblock %}
+
+        </div>
+    </div>
+{% endblock container %}

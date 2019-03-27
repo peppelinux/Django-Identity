@@ -10,3 +10,6 @@ cffi
 # django saml2 idp
 git+https://github.com/knaperek/djangosaml2.git
 git+https://github.com/peppelinux/djangosaml2idp
+
+# template
+git+https://github.com/UniversitaDellaCalabria/django-bootstrap-italia.git

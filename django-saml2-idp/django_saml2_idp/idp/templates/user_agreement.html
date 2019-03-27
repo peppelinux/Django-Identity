@@ -1,0 +1,71 @@
+<!-- Extends default Bootstrap Italia template -->
+{% extends 'auth_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}
+    {% trans "User Agreement" %}
+{% endblock page_title %}
+
+
+{% block centered_container %}
+    <h4>{{sp_display_name}}</h4>
+    <p>{{sp_display_description}}
+
+    <h4>{% trans "Agreement Screen" %}</h4>
+    <p class="text-justify">
+        {{ sp_display_agreement_message|safe }}
+    </p>
+
+    <h4>This app will receive the following informations:</h4>
+    <div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">{% trans "attribute name" %}</th>
+                <th scope="col">{% trans "value" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for attr, value in attrs_passed_to_sp.items %}
+        <tr>
+            <td>
+                {{ attr }}
+            </td>
+
+            <td>
+                {% if value.capitalize %}
+                    {{ value }}
+                {% else %}
+                    <ul class="list-unstyled">
+                    {% for ele in value %}
+                        <li>{{ ele }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+
+    <div>
+        <p>{% trans "Do you agree to transmit to " %}
+            <b>{{ sp_display_name }}</b>
+            {% trans "the previous personal attributes" %}?</p>
+    </div>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <div>
+            <div>
+                {{ form }}
+            </div>
+        </div>
+
+            <input type="submit" value="{% trans 'Submit' %}"  />
+        </div>
+    </form>
+{% endblock centered_container %}
