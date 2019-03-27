@@ -94,7 +94,7 @@ if 'ldap_peoples' in INSTALLED_APPS:
     LDAP_OU = 'people'
     LDAP_BASEDN = 'dc='+',dc='.join(LDAP_BASE_DOMAIN.split('.'))
     LDAP_CONNECTION_OPTIONS = {ldap.OPT_PROTOCOL_VERSION: 3,
-                               ldap.OPT_DEBUG_LEVEL: 255,
+                               # ldap.OPT_DEBUG_LEVEL: 255,
                                # ldap.OPT_X_TLS_CACERTFILE: LDAP_CACERT,
 
                                # force /etc/ldap.conf configuration.
@@ -196,6 +196,10 @@ if 'djangosaml2idp' in INSTALLED_APPS:
                 'propagate': True,
             },
             'djangosaml2idp': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+            'idp': {
                 'handlers': ['console'],
                 'level': 'DEBUG',
             },

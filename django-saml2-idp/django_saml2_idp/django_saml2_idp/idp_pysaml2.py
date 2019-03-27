@@ -223,26 +223,35 @@ SAML_IDP_AGREEMENT_MSG = """
                          In cases of automated decision-making, including profiling, what the logic of this process is, and what the significance of the outcomes may be.
                          """
 
+#SAML_IDP_DJANGO_USERNAME_FIELD = 'username'
+
 SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA256
 SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA256
 
 # Encrypt authn response
-SAML_ENCRYPT_AUTHN_RESPONSE=False
+SAML_ENCRYPT_AUTHN_RESPONSE = False
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
-        'processor': 'djangosaml2idp.processors.BaseProcessor',
+        #'processor': 'djangosaml2idp.processors.BaseProcessor',
+        'processor': 'idp.processors.LdapAcademiaProcessor',
         'attribute_mapping': {
             # DJANGO: SAML
             # only these attributes from this IDP
-            'email': 'email',
-            'first_name': 'first_name',
-            'last_name': 'last_name',
-            'username': 'username',
-            'is_staff': 'is_staff',
-            'is_superuser':  'is_superuser',
-            # 'user_permissions': 'user_permissions',
-            # 'groups': 'groups',
+            # 'email': 'email',
+            # 'first_name': 'first_name',
+            # 'last_name': 'last_name',
+            # 'username': 'username',
+            # 'is_staff': 'is_staff',
+            # 'is_superuser':  'is_superuser',
+            'cn': 'cn',
+            'sn': 'sn',
+            'mail': 'mail',
+            'schacPersonalUniqueID': 'schacPersonalUniqueID',
+            'eduPersonPrincipalName': 'eduPersonPrincipalName',
+            'eduPersonEntitlement': 'eduPersonEntitlement',
+            'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
+
         },
         #'user_agreement_attr_exclude': ['sp_specific_secret_attr'],
         # Because we specify display name, that will be shown instead of entity id.
