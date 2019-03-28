@@ -208,25 +208,11 @@ SAML_IDP_SHOW_USER_AGREEMENT_SCREEN = True
 SAML_IDP_USER_AGREEMENT_ATTR_EXCLUDE = []
 # User agreements will be valid for 1 year unless overriden. If this attribute is not used, user agreements will not expire
 SAML_IDP_USER_AGREEMENT_VALID_FOR = 24 * 365
-SAML_IDP_AGREEMENT_MSG = """
-                         Businesses will have to provide the following information to internet users when seeking their consent.
-                         Who is collecting the data, and how to contact them or their European representative.
-                         What the personal information are being used for, and the legal basis of the data processing.
-                         The “legitimate interest” of the user of the data This refers to a legal basis that may be used by direct marketing companies).
-                         With whom the data will be shared.
-                         Whether the controller intends to transfer data to a third country, and if so has the European Commission deemed this country’s protections adequate or what alternative safeguards or rules are in place.
-                         The duration of storage, or the criteria used to determine duration.
-                         That the user has the right to request rectification to mistakes in this personal information.
-                         That the user has the right to withdraw consent.
-                         How the user can lodge a complaint with the supervisory authority.
-                         What the consequences of not giving consent might be.
-                         In cases of automated decision-making, including profiling, what the logic of this process is, and what the significance of the outcomes may be.
-                         """
 
 #SAML_IDP_DJANGO_USERNAME_FIELD = 'username'
 
-SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA256
-SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA256
+SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA1
+SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA1
 
 # Encrypt authn response
 SAML_ENCRYPT_AUTHN_RESPONSE = False
@@ -256,9 +242,10 @@ SAML_IDP_SPCONFIG = {
         # Because we specify display name, that will be shown instead of entity id.
         'display_name': 'SP Number 1',
         'display_description': 'This SP does something that\'s probably important',
-        'display_agreement_message': SAML_IDP_AGREEMENT_MSG,
+        # 'display_agreement_message': "ciao mamma",
         'user_agreement_valid_for': 24 * 3650 , # User agreements will be valid for 10 years for this SP only
         'signing_algorithm': saml2.xmldsig.SIG_RSA_SHA256,
         'digest_algorithm': saml2.xmldsig.DIGEST_SHA256,
+        # 'encrypt_saml_responses': True,
     }
 }

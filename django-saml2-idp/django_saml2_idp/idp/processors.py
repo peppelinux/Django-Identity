@@ -6,6 +6,7 @@ from djangosaml2idp.processors import (BaseProcessor,
                                        NameIdBuilder)
 from ldap_peoples.models import LdapAcademiaUser
 
+
 class GroupProcessor(BaseProcessor):
     """
         Example implementation of access control for users:

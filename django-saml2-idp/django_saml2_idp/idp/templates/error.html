@@ -1,14 +1,14 @@
-<!doctype html>
-<html lang="en">
+<!-- Extends default Bootstrap Italia template -->
+{% extends 'auth_base.html' %}
+{% load i18n %}
+{% load static %}
 
-<head>
-    <meta charset="utf-8">
-    <title>ERROR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+{% block page_title %}
+    {% trans "Error" %}
+{% endblock page_title %}
 
-<body>
-    <h2>Error during SAML2 authentication</h2>
+{% block centered_container %}
+    <h4>{% trans "Error during SAML2 authentication" %}</h4>
     {% if exception_type %}
         <p><strong>{{exception_type}}</strong><br>
         {% if exception_msg %}
@@ -18,6 +18,6 @@
     {% if extra_message %}
         <p>{{extra_message}}</p>
     {% endif %}
-</body>
 
 </html>
+{% endblock centered_container %}

@@ -1,0 +1,35 @@
+<!-- Extends default Bootstrap Italia template -->
+{% extends 'auth_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}
+    {% trans "Auth login" %}
+{% endblock page_title %}
+
+{% block centered_container %}
+    <h4>{% trans "Identity Provider" %}</h4>
+    <p>{% trans "Please use your Account Credentials to Login" %}.</p>
+    <form method="post" action="{{ acs_url }}">
+        {% csrf_token %}
+        <div>
+            <table>
+            {{ form.as_table }}
+            </table>
+        <input type="hidden" name="RelayState" value="{{ relay_state }}" />
+        <input type="hidden" name="SAMLResponse" value="{{ saml_response }}" />
+        </div>
+
+        {% if not saml_response %}
+        <input type="submit" value="Submit"/>
+        {% endif %}
+
+    </form>
+    {% if saml_response %}
+    <script type="text/javascript">
+        window.onload = function () {
+            document.forms[0].submit();
+        }
+    </script>
+    {% endif %}
+{% endblock centered_container %}

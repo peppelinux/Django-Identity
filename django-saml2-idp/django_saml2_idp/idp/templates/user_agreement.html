@@ -9,15 +9,32 @@
 
 
 {% block centered_container %}
-    <h4>{{sp_display_name}}</h4>
-    <p>{{sp_display_description}}
+    <h4>Welcome {{ request.user.username }}</h4>
 
-    <h4>{% trans "Agreement Screen" %}</h4>
-    <p class="text-justify">
-        {{ sp_display_agreement_message|safe }}
+    <p><b>{{sp_display_name}}</b>,
+    {% trans "the web service you are coming from, has requested some of your personal information. We therefore ask you to read the information regarding the processing of data and to give your consent if you agree." %}
     </p>
 
-    <h4>This app will receive the following informations:</h4>
+    {% if sp_display_description %}
+    <p class="text-justify">
+        <i>{% trans "Additional informations" %}</i>: {{sp_display_description}}
+    </p>
+    {% endif %}
+
+
+    <h4>{% trans "Data consent" %}</h4>
+    <p class="text-justify">
+        {% if sp_display_agreement_message %}
+            {{ sp_display_agreement_message }}
+        {% else %}
+            {% include "data_consent.html" %}
+        {% endif %}
+    </p>
+
+    <h4>
+        {{sp_display_name}} {% trans "requested the following informations" %}:
+    </h4>
+
     <div>
     <table class="table">
         <thead>
@@ -49,7 +66,6 @@
         </tbody>
     </table>
     </div>
-
 
     <div>
         <p>{% trans "Do you agree to transmit to " %}
