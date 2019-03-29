@@ -219,24 +219,24 @@ SAML_ENCRYPT_AUTHN_RESPONSE = False
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
-        #'processor': 'djangosaml2idp.processors.BaseProcessor',
-        'processor': 'idp.processors.LdapAcademiaProcessor',
+        'processor': 'djangosaml2idp.processors.BaseProcessor',
+        #'processor': 'idp.processors.LdapAcademiaProcessor',
         'attribute_mapping': {
             # DJANGO: SAML
             # only these attributes from this IDP
-            # 'email': 'email',
-            # 'first_name': 'first_name',
-            # 'last_name': 'last_name',
-            # 'username': 'username',
+             'email': 'email',
+             'first_name': 'first_name',
+             'last_name': 'last_name',
+             'username': 'username',
             # 'is_staff': 'is_staff',
             # 'is_superuser':  'is_superuser',
-            'schacPersonalUniqueID': 'schacPersonalUniqueID',
-            'eduPersonPrincipalName': 'eduPersonPrincipalName',
-            'eduPersonEntitlement': 'eduPersonEntitlement',
-            'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
-            'cn': 'cn',
-            'sn': 'sn',
-            'mail': 'mail',
+            #'schacPersonalUniqueID': 'schacPersonalUniqueID',
+            #'eduPersonPrincipalName': 'eduPersonPrincipalName',
+            #'eduPersonEntitlement': 'eduPersonEntitlement',
+            #'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
+            #'cn': 'cn',
+            #'sn': 'sn',
+            #'mail': 'mail',
         },
         #'user_agreement_attr_exclude': ['sp_specific_secret_attr'],
         # Because we specify display name, that will be shown instead of entity id.

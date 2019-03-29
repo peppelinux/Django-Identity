@@ -31,6 +31,7 @@ SAML_CONFIG = {
             'endpoints': {
                 'assertion_consumer_service': [
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ('%s/acsg/' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                     ],
                 "single_logout_service": [
                     ("%s/ls/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
@@ -44,7 +45,7 @@ SAML_CONFIG = {
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
             "force_authn": True,
-
+            
             # attributes that this project need to identify a user
             'required_attributes': ['email', 'username',
                                     'cn', 'sn', 'uid'
@@ -60,6 +61,9 @@ SAML_CONFIG = {
             # any SAML Responses that are not signed.
             'want_assertions_signed': True,
 
+            # prevents saml assertion forgery attack
+            'only_use_keys_in_metadata': True,
+            
             # When set to true, the SP will consume unsolicited SAML
             # Responses, i.e. SAML Responses for which it has not sent
             # a respective SAML Authentication Request.

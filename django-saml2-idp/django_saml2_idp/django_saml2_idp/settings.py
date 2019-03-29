@@ -38,8 +38,8 @@ INSTALLED_APPS = [
 
     'djangosaml2idp',
     'idp',
-    'ldap_peoples',
-    'rangefilter',
+    #'ldap_peoples',
+    #'rangefilter',
 
     'agid_template',
 ]
@@ -89,6 +89,12 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+                            'django.contrib.auth.backends.ModelBackend',
+                            # FIX TODO in Django 2.1
+                            # 'unical_ict.auth.SessionUniqueBackend',
+                          ]
+
 if 'ldap_peoples' in INSTALLED_APPS:
     import ldap
     LDAP_BASE_DOMAIN = 'testunical.it'
@@ -123,14 +129,8 @@ if 'ldap_peoples' in INSTALLED_APPS:
         'CONNECTION_OPTIONS': LDAP_CONNECTION_OPTIONS
      }
     DATABASE_ROUTERS = ['ldapdb.router.Router']
-
-AUTHENTICATION_BACKENDS = [
-                            'idp.ldap_auth.LdapAcademiaAuthBackend',
-                            'django.contrib.auth.backends.ModelBackend',
-                            # FIX TODO in Django 2.1
-                            # 'unical_ict.auth.SessionUniqueBackend',
-                          ]
-
+    AUTHENTICATION_BACKENDS.append('idp.ldap_auth.LdapAcademiaAuthBackend')
+    
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
