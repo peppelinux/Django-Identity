@@ -26,6 +26,7 @@ SAML_CONFIG = {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
 
+            'name_qualifier': BASE,
             # SPID needs NAMEID_FORMAT_TRANSIENT
             'name_id_format': [NAMEID_FORMAT_TRANSIENT],
 
@@ -44,8 +45,8 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": True, # SPID
-            # 'name_id_format_allow_create': False,
+            "force_authn": False, # SPID
+            'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
             'required_attributes': ['spidCode',

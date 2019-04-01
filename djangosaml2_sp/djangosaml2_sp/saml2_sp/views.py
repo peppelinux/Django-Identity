@@ -1,5 +1,6 @@
 import base64
 import logging
+import saml2
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -19,8 +20,8 @@ from djangosaml2.utils import (
     get_idp_sso_supported_bindings, get_location, is_safe_url_compat,
 )
 from saml2 import BINDING_HTTP_REDIRECT, BINDING_HTTP_POST
+from saml2.authn_context import requested_authn_context
 from saml2.metadata import entity_descriptor
-from saml2.xmldsig import SIG_RSA_SHA1, SIG_RSA_SHA256
 
 from .utils import repr_saml
 
@@ -133,16 +134,65 @@ def spid_login(request,
     logger.debug('Redirecting user to the IdP via %s binding.', binding)
     # use the html provided by pysaml2 if no template was specified or it didn't exist
     try:
+        # TODO: TAKE NEEDED ATTRA FROM SP CONFIG!
         location_fixed = 'http://idpspid.testunical.it:8088'
         location = client.sso_location(selected_idp, binding)
-        session_id, request_xml = client.create_authn_request(
-                                                        location_fixed,
-                                                        binding=binding)
 
-        print(repr_saml(request_xml))
-        _req_str = request_xml
-        http_info = client.apply_binding(binding, _req_str, location,
-                                         sign=True, sigalg=SIG_RSA_SHA256)
+        authn_req = saml2.samlp.AuthnRequest()
+        authn_req.destination = location_fixed
+
+        issuer = saml2.saml.Issuer()
+        issuer.name_qualifier = "http://sp1.testunical.it:8000"
+        issuer.text = "http://sp1.testunical.it:8000/saml2/metadata/"
+        issuer.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+        authn_req.issuer = issuer
+
+        # message id
+        authn_req.id = saml2.s_utils.sid()
+        authn_req.version = saml2.VERSION # "2.0"
+        authn_req.issue_instant = saml2.time_util.instant()
+
+        name_id_policy = saml2.samlp.NameIDPolicy()
+        # del(name_id_policy.allow_create)
+        name_id_policy.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+        authn_req.name_id_policy  = name_id_policy
+
+        authn_context = requested_authn_context(class_ref='https://www.spid.gov.it/SpidL1')
+        authn_req.requested_authn_context = authn_context
+
+        authn_req.protocol_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        authn_req.assertion_consumer_service_url = 'http://sp1.testunical.it:8000/saml2/acs/'
+
+        authn_req_signed = client.sign(authn_req, sign_prepare=False,
+                                       sign_alg=saml2.xmldsig.SIG_RSA_SHA256,
+                                       digest_alg=saml2.xmldsig.DIGEST_SHA256)
+        session_id = authn_req.id
+
+        # import pdb; pdb.set_trace()
+        # {'text': None, 'extension_elements': [], 'extension_attributes': {}, 'encrypted_assertion': None, 'issuer': None, 'signature': None, 'extensions': None, 'id': None, 'version': None, 'issue_instant': None, 'destination': None, 'consent': None, 'subject': None, 'name_id_policy': None, 'conditions': None, 'requested_authn_context': None, 'scoping': None, 'force_authn': None, 'is_passive': None, 'protocol_binding': None, 'assertion_consumer_service_index': None, 'assertion_consumer_service_url': None, 'attribute_consuming_service_index': None, 'provider_name': None}
+
+
+        # {'text': None, 'extension_elements': [], 'extension_attributes': {}, 'encrypted_assertion': None, 'issuer': <saml2.saml.Issuer object at 0x7fcc7c76da58>, 'signature': None, 'extensions': None, 'id': 'id-digyRB0m5OkJFlQ9Y', 'version': '2.0',
+        # 'issue_instant': '2019-04-01T15:50:50Z', 'destination': 'http://idpspid.testunical.it:8088', 'consent': None, 'subject': None,
+        # 'name_id_policy': <saml2.samlp.NameIDPolicy object at 0x7fcc7c76da90>, 'conditions': None, 'requested_authn_context': <saml2.samlp.RequestedAuthnContext object at 0x7fcc7c75f5f8>, 'scoping': None, 'force_authn': None, 'is_passive': None, 'protocol_binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST', 'assertion_consumer_service_index': None, 'assertion_consumer_service_url': 'http://sp1.testunical.it:8000/saml2/acs/', 'attribute_consuming_service_index': None, 'provider_name': None}
+
+        # import pdb; pdb.set_trace()
+        # session_id, authn_req_signed = client.create_authn_request(
+                                                        # location_fixed,
+                                                        # binding=binding,
+                                                        # sign_alg=saml2.xmldsig.SIG_RSA_SHA256,
+                                                        # dig_alg=saml2.xmldsig.DIGEST_SHA256,
+                                                        # requested_authn_context=authn_context,
+                                                        # nsprefix={'saml': 'urn:oasis:names:tc:SAML:2.0:assertion',
+                                                                  # 'samlp': 'urn:oasis:names:tc:SAML:2.0:protocol'}
+                                                        # )
+        _req_str = authn_req_signed
+        print(repr_saml(_req_str))
+        http_info = client.apply_binding(binding,
+                                         _req_str, location,
+                                         sign=True,
+                                         sigalg=saml2.xmldsig.SIG_RSA_SHA256)
+
 
     except TypeError as e:
         logger.error('Unable to know which IdP to use')
