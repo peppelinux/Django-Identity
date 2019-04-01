@@ -32,7 +32,8 @@ class LdapAcademiaProcessor(BaseProcessor):
             given mapping of desired user attributes by the SP
         """
         default_mapping = {'username': 'username'}
-        sp_mapping = sp['config'].get('attribute_mapping', default_mapping)
+        sp_mapping = sp['config'].get('attribute_mapping',
+                                      default_mapping)
 
         # get ldap user
         lu = LdapAcademiaUser.objects.filter(eduPersonPrincipalName=user.username).first()

@@ -2,7 +2,10 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.http import HttpResponse
+from django.utils.six import text_type
+from djangosaml2.conf import get_config
 from djangosaml2.signals import pre_user_save
+from saml2.metadata import entity_descriptor
 
 
 def index(request):
@@ -29,3 +32,26 @@ def custom_update_user(sender, instance, attributes, user_modified, **kargs):
         if u:
             setattr(instance, k, u.pop() == u'true')
     return True  # I modified the user object
+
+
+def metadata_spid(request, config_loader_path=None, valid_for=None):
+    """Returns an XML with the SAML 2.0 metadata for this
+    SP as configured in the settings.py file.
+    """
+    conf = get_config(config_loader_path, request)
+    metadata = entity_descriptor(conf)
+
+    # this will renumber acs starting from 0 and set index=0 as is_default
+    cnt = 0
+    for attribute_consuming_service in metadata.spsso_descriptor.attribute_consuming_service:
+        attribute_consuming_service.index = str(cnt)
+        cnt += 1
+
+    cnt = 0
+    for assertion_consumer_service in metadata.spsso_descriptor.assertion_consumer_service:
+        assertion_consumer_service.is_default = 'true' if not cnt else ''
+        assertion_consumer_service.index = str(cnt)
+        cnt += 1
+
+    return HttpResponse(content=text_type(metadata).encode('utf-8'),
+                        content_type="text/xml; charset=utf8")

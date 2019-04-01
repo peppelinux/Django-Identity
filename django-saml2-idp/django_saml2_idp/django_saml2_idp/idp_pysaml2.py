@@ -215,28 +215,28 @@ SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA1
 SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA1
 
 # Encrypt authn response
-SAML_ENCRYPT_AUTHN_RESPONSE = False
+SAML_ENCRYPT_AUTHN_RESPONSE = True
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
-        'processor': 'djangosaml2idp.processors.BaseProcessor',
-        #'processor': 'idp.processors.LdapAcademiaProcessor',
+        #'processor': 'djangosaml2idp.processors.BaseProcessor',
+        'processor': 'idp.processors.LdapAcademiaProcessor',
         'attribute_mapping': {
             # DJANGO: SAML
             # only these attributes from this IDP
-             'email': 'email',
-             'first_name': 'first_name',
-             'last_name': 'last_name',
-             'username': 'username',
+            # 'email': 'email',
+            # 'first_name': 'first_name',
+            # 'last_name': 'last_name',
+            # 'username': 'username',
             # 'is_staff': 'is_staff',
             # 'is_superuser':  'is_superuser',
-            #'schacPersonalUniqueID': 'schacPersonalUniqueID',
-            #'eduPersonPrincipalName': 'eduPersonPrincipalName',
-            #'eduPersonEntitlement': 'eduPersonEntitlement',
-            #'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
-            #'cn': 'cn',
-            #'sn': 'sn',
-            #'mail': 'mail',
+            'schacPersonalUniqueID': 'schacPersonalUniqueID',
+            'eduPersonPrincipalName': 'eduPersonPrincipalName',
+            'eduPersonEntitlement': 'eduPersonEntitlement',
+            'schacPersonalUniqueCode': 'schacPersonalUniqueCode',
+            'cn': 'cn',
+            'sn': 'sn',
+            'mail': 'mail',
         },
         #'user_agreement_attr_exclude': ['sp_specific_secret_attr'],
         # Because we specify display name, that will be shown instead of entity id.
@@ -246,6 +246,6 @@ SAML_IDP_SPCONFIG = {
         'user_agreement_valid_for': 24 * 3650 , # User agreements will be valid for 10 years for this SP only
         'signing_algorithm': saml2.xmldsig.SIG_RSA_SHA256,
         'digest_algorithm': saml2.xmldsig.DIGEST_SHA256,
-        # 'encrypt_saml_responses': True,
+        'encrypt_saml_responses': False,
     }
 }

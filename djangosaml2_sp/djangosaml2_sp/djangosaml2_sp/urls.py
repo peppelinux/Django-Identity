@@ -17,6 +17,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
+from saml2_sp.views import metadata_spid
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
@@ -24,3 +26,5 @@ urlpatterns = [
 if 'saml2_sp' in settings.INSTALLED_APPS:
     import saml2_sp.urls
     urlpatterns += path('', include((saml2_sp.urls, 'sp',))),
+    # patched metadata for spid
+    urlpatterns += path('spid/metadata', metadata_spid, name='spid_metadata'),

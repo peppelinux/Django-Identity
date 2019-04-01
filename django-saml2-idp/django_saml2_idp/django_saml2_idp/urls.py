@@ -32,7 +32,7 @@ if 'djangosaml2idp' in settings.INSTALLED_APPS:
     import djangosaml2idp.urls
     urlpatterns += path('', include((djangosaml2idp.urls, 'djangosaml2idp',))),
     # urlpatterns += path('login/', auth_views.LoginView.as_view(template_name='idp/login.html', extra_context={'form': LoginForm},), name='login'),
-    #urlpatterns += path('login/', LoginAuthView.as_view(), name='login'),
+    urlpatterns += path('login/', LoginAuthView.as_view(), name='login'),
 
 if 'idp' in settings.INSTALLED_APPS:
     import idp.urls

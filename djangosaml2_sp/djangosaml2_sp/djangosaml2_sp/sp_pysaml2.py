@@ -1,6 +1,8 @@
 import os
 import saml2
-from saml2.saml import NAMEID_FORMAT_PERSISTENT, NAMEID_FORMAT_TRANSIENT
+from saml2.saml import (NAMEID_FORMAT_PERSISTENT,
+                        NAMEID_FORMAT_TRANSIENT,
+                        NAMEID_FORMAT_UNSPECIFIED)
 from saml2.sigver import get_xmlsec_binary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -26,12 +28,15 @@ SAML_CONFIG = {
     'service': {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
-            'name_id_format': [NAMEID_FORMAT_PERSISTENT,
-                               NAMEID_FORMAT_TRANSIENT],
+
+            # SPID needs NAMEID_FORMAT_TRANSIENT
+            'name_id_format': [NAMEID_FORMAT_TRANSIENT],
+
+            # 'name_id_format': [NAMEID_FORMAT_PERSISTENT,
+                               # NAMEID_FORMAT_TRANSIENT],
             'endpoints': {
                 'assertion_consumer_service': [
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
-                    ('%s/acsg/' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                     ],
                 "single_logout_service": [
                     ("%s/ls/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
@@ -44,8 +49,9 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": True,
-            
+            "force_authn": False, # SPID
+            'name_id_format_allow_create': True,
+
             # attributes that this project need to identify a user
             'required_attributes': ['email', 'username',
                                     'cn', 'sn', 'uid'
@@ -61,13 +67,14 @@ SAML_CONFIG = {
             # any SAML Responses that are not signed.
             'want_assertions_signed': True,
 
-            # prevents saml assertion forgery attack
-            'only_use_keys_in_metadata': True,
-            
             # When set to true, the SP will consume unsolicited SAML
             # Responses, i.e. SAML Responses for which it has not sent
             # a respective SAML Authentication Request.
             'allow_unsolicited': False,
+
+            # Permits to have attributes not configured in attribute-mappings
+            # otherwise...without OID will be rejected
+            'allow_unknown_attributes': True,
 
             # idp definition will be only in the metadata...
 
@@ -162,6 +169,9 @@ SAML_ATTRIBUTE_MAPPING = {
     'email': ('email', ),
     'cn': ('first_name', ),
     'sn': ('last_name', ),
-    # 'is_staff': ('is_staff', ),
-    # 'is_superuser':  ('is_superuser', ),
+    'mail': ('email',),
+    'schacPersonalUniqueID': ('schacPersonalUniqueID',),
+    'eduPersonPrincipalName': ('eduPersonPrincipalName',),
+    'eduPersonEntitlement': ('eduPersonEntitlement',),
+    'schacPersonalUniqueCode': ('schacPersonalUniqueCode',),
 }
