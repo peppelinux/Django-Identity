@@ -130,7 +130,7 @@ STATIC_URL = '/static/'
 
 
 if 'djangosaml2' in INSTALLED_APPS:
-    from . sp_pysaml2 import *
+    from . sp_pysaml2_spid import *
     # from . import sp_pysaml2_shibidp as sp_pysaml2
 
     # pySAML2 SP mandatory
