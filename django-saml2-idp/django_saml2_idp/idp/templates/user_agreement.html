@@ -1,5 +1,5 @@
 <!-- Extends default Bootstrap Italia template -->
-{% extends 'auth_base.html' %}
+{% extends 'main_page.html' %}
 {% load i18n %}
 {% load static %}
 
@@ -8,80 +8,95 @@
 {% endblock page_title %}
 
 
-{% block centered_container %}
-    <h4>Welcome {{ request.user.username }}</h4>
+{% block content %}
+<div class="u-padding-all-x">
 
-    <p><b>{{sp_display_name}}</b>,
-    {% trans "the web service you are coming from, has requested some of your personal information. We therefore ask you to read the information regarding the processing of data and to give your consent if you agree." %}
-    </p>
+    <div class="mb-4">
+        <h1>
+            {% trans "Welcome" %} {{ request.user.username }}
+        </h1>
 
-    {% if sp_display_description %}
-    <p class="text-justify">
-        <i>{% trans "Additional informations" %}</i>: {{sp_display_description}}
-    </p>
-    {% endif %}
+        <p>
+            <b>
+                {{sp_display_name}}
+            </b>,
+        {% trans "the web service you are coming from, has requested some of your personal information. We therefore ask you to read the information regarding the processing of data and to give your consent if you agree." %}
+        </p>
 
-
-    <h4>{% trans "Data consent" %}</h4>
-    <p class="text-justify">
-        {% if sp_display_agreement_message %}
-            {{ sp_display_agreement_message }}
-        {% else %}
-            {% include "data_consent.html" %}
+        {% if sp_display_description %}
+        <p class="text-justify">
+            <i>{% trans "Additional informations" %}</i>: {{sp_display_description}}
+        </p>
         {% endif %}
-    </p>
-
-    <h4>
-        {{sp_display_name}} {% trans "requested the following informations" %}:
-    </h4>
-
-    <div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">{% trans "attribute name" %}</th>
-                <th scope="col">{% trans "value" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for attr, value in attrs_passed_to_sp.items %}
-        <tr>
-            <td>
-                {{ attr }}
-            </td>
-
-            <td>
-                {% if value.capitalize %}
-                    {{ value }}
-                {% else %}
-                    <ul class="list-unstyled">
-                    {% for ele in value %}
-                        <li>{{ ele }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-        </tbody>
-    </table>
     </div>
 
-    <div>
-        <p>{% trans "Do you agree to transmit to " %}
-            <b>{{ sp_display_name }}</b>
-            {% trans "the previous personal attributes" %}?</p>
+    <div class="mb-4">
+        <h1>
+            {% trans "Data consent" %}
+        </h1>
+        <p class="text-justify">
+            {% if sp_display_agreement_message %}
+                {{ sp_display_agreement_message }}
+            {% else %}
+                {% include "data_consent.html" %}
+            {% endif %}
+        </p>
     </div>
-    <form method="post" action="">
-        {% csrf_token %}
+
+    <div class="mb-4">
+        <p>
+            {{sp_display_name}} {% trans "requested the following informations" %}:
+        </p>
 
         <div>
-            <div>
-                {{ form }}
-            </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{% trans "attribute name" %}</th>
+                    <th scope="col">{% trans "value" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for attr, value in attrs_passed_to_sp.items %}
+            <tr>
+                <td>
+                    {{ attr }}
+                </td>
+
+                <td>
+                    {% if value.capitalize %}
+                        {{ value }}
+                    {% else %}
+                        <ul class="list-unstyled">
+                        {% for ele in value %}
+                            <li>{{ ele }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         </div>
 
-            <input type="submit" value="{% trans 'Submit' %}"  />
+        <div>
+            <p>{% trans "Do you agree to transmit to " %}
+                <b>{{ sp_display_name }}</b>
+                {% trans "the previous personal attributes" %}?</p>
         </div>
-    </form>
-{% endblock centered_container %}
+        <form method="post" action="">
+            {% csrf_token %}
+
+            <div>
+                <div>
+                    {{ form }}
+                </div>
+            </div>
+
+                <input type="submit" value="{% trans 'Submit' %}"  />
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
