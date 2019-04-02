@@ -21,6 +21,10 @@ SP side
 wget http://idpspid.testunical.it:8088/metadata -O saml2_sp/saml2_config/spid/idp_metadata.xml
 ````
 
+### spid saml check
+https://github.com/italia/spid-saml-check
+
+
 CHECK:
 - digest SHA-256 for signing features: *to be implemented in pysaml2*, see [this](https://github.com/IdentityPython/pysaml2/pull/396) -> fixed [here](https://github.com/IdentityPython/pysaml2/pull/597)
 
