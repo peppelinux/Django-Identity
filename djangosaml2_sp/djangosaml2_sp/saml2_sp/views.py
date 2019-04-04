@@ -253,3 +253,4 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
 
     return HttpResponse(content=text_type(metadata).encode('utf-8'),
                         content_type="text/xml; charset=utf8")
+
