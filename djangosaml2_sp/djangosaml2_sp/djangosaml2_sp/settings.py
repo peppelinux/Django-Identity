@@ -142,7 +142,8 @@ if 'djangosaml2' in INSTALLED_APPS:
         'djangosaml2.backends.Saml2Backend',
     )
 
-    LOGIN_URL = '/saml2/login/'
+    LOGIN_URL = '/spid/login/'
+    # LOGIN_URL = '/saml2/login/'
     LOGOUT_URL = '/saml2/logout/'
     LOGIN_REDIRECT_URL = '/'
     LOGOUT_REDIRECT_URL = '/'

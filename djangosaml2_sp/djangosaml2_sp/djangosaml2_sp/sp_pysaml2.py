@@ -67,6 +67,8 @@ SAML_CONFIG = {
             # any SAML Responses that are not signed.
             'want_assertions_signed': True,
 
+            'only_use_keys_in_metadata': True,
+
             # When set to true, the SP will consume unsolicited SAML
             # Responses, i.e. SAML Responses for which it has not sent
             # a respective SAML Authentication Request.

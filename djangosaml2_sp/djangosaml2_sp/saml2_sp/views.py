@@ -134,12 +134,14 @@ def spid_login(request,
     logger.debug('Redirecting user to the IdP via %s binding.', binding)
     # use the html provided by pysaml2 if no template was specified or it didn't exist
     try:
-        # TODO: TAKE NEEDED ATTRA FROM SP CONFIG!
+        # TODO: TAKE NEEDED ATTRS FROM SP CONFIG!
         location_fixed = 'http://idpspid.testunical.it:8088'
         location = client.sso_location(selected_idp, binding)
 
         authn_req = saml2.samlp.AuthnRequest()
         authn_req.destination = location_fixed
+        # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
+        authn_req.attribute_consuming_service_index = "0"
 
         issuer = saml2.saml.Issuer()
         issuer.name_qualifier = "http://sp1.testunical.it:8000"
@@ -226,9 +228,11 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         assertion_consumer_service.index = str(cnt)
         cnt += 1
 
-    # nameformat patch
+    # nameformat patch... tutto questo non rispecchia gli standard OASIS
     for reqattr in metadata.spsso_descriptor.attribute_consuming_service[0].requested_attribute:
-        reqattr.name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+        reqattr.name_format = None #"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+        # reqattr.is_required = None
+        reqattr.friendly_name = None
 
     # remove unecessary encryption and digest algs
     supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
@@ -239,7 +243,7 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         if alg.attributes.get('Algorithm') in supported_algs:
             new_list.append(alg)
     metadata.extensions.extension_elements = new_list
-    # non devo specificare gli algoritmi di firma/criptazione...
+    # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
     metadata.extensions = None
 
     # attribute consuming service service name patch

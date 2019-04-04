@@ -13,10 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import djangosaml2
+
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-
 from saml2_sp.views import metadata_spid, spid_login
 
 urlpatterns = [
@@ -26,6 +27,8 @@ urlpatterns = [
 if 'saml2_sp' in settings.INSTALLED_APPS:
     import saml2_sp.urls
     urlpatterns += path('', include((saml2_sp.urls, 'sp',))),
+    urlpatterns += path('', include((djangosaml2.urls, 'djangosaml2',))),
+
     # patched metadata for spid
     urlpatterns += path('spid/metadata', metadata_spid, name='spid_metadata'),
-    urlpatterns += path('spid/login', spid_login, name='spid_login'),
+    urlpatterns += path('spid/login/', spid_login, name='spid_login'),

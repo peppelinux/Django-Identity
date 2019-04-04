@@ -40,7 +40,7 @@ class User(AbstractUser):
                                       blank=True, null=True)
     gender    = models.CharField(_('Genere'), choices=GENDER,
                                  max_length=12, blank=True, null=True)
-    location = models.CharField(_('Luogo di nascita'), max_length=30,
+    place_of_birth = models.CharField(_('Luogo di nascita'), max_length=30,
                                 blank=True, null=True)
     birth_date = models.DateField(_('Data di nascita'), null=True, blank=True)
 

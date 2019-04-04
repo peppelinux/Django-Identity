@@ -19,8 +19,8 @@ SAML_CONFIG = {
 
     'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR,
                                                                 'saml2_sp'),
-                                      'saml2_config'),
-                                      'spid/attribute-maps'),
+                                      'saml2_config/spid'),
+                                      'attribute-maps'),
 
     'service': {
         'sp': {
@@ -52,23 +52,25 @@ SAML_CONFIG = {
             'required_attributes': ['spidCode',
                                     'name',
                                     'familyName',
-                                    'placeOfBirth',
-                                    'countyOfBirth',
-                                    'dateOfBirth',
                                     'fiscalNumber',
-                                    'mobilePhone',
-                                    'email',
-                                    'address',
-                                    'expirationDate'],
+                                    'email'],
 
+            # 'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
+            # 'name_format': saml2.saml.NAME_FORMAT_BASIC,
 
             # attributes that may be useful to have but not required
-            'optional_attributes': ['gender',
-                                    'companyName',
-                                    'registeredOffice',
-                                    'ivaCode',
-                                    'idCard',
-                                    'digitalAddress'],
+            # 'optional_attributes': ['gender',
+                                    # 'companyName',
+                                    # 'registeredOffice',
+                                    # 'ivaCode',
+                                    # 'idCard',
+                                    # 'digitalAddress',
+                                    # 'placeOfBirth',
+                                    # 'countyOfBirth',
+                                    # 'dateOfBirth',
+                                    # 'address',
+                                    # 'mobilePhone',
+                                    # 'expirationDate'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
@@ -119,6 +121,8 @@ SAML_CONFIG = {
     'metadata': {
         'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   'saml2_config/spid'), 'idp_metadata.xml'),
+                  # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  # 'saml2_config'), 'idp_metadata.xml'),
                   # other here...
                   ],
         #
@@ -165,7 +169,7 @@ SAML_CONFIG = {
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
 SAML_USE_NAME_ID_AS_USERNAME = True
 # SAML_DJANGO_USER_MAIN_ATTRIBUTE = 'email'
-# SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
+SAML_DJANGO_USER_MAIN_ATTRIBUTE_LOOKUP = '__iexact'
 
 SAML_CREATE_UNKNOWN_USER = True
 
@@ -176,12 +180,10 @@ SAML_ATTRIBUTE_MAPPING = {
     # SAML: DJANGO
     # Must also be present in attribute-maps!
     # 'uid': ('username', ),
-    # 'email': ('email', ),
-    # 'cn': ('first_name', ),
-    # 'sn': ('last_name', ),
-    # 'mail': ('email',),
-    # 'schacPersonalUniqueID': ('schacPersonalUniqueID',),
-    # 'eduPersonPrincipalName': ('eduPersonPrincipalName',),
-    # 'eduPersonEntitlement': ('eduPersonEntitlement',),
-    # 'schacPersonalUniqueCode': ('schacPersonalUniqueCode',),
+    'email': ('email', ),
+    'name': ('first_name', ),
+    'familyName': ('last_name', ),
+    'fiscalNumber': ('codice_fiscale',),
+    'placeOfBirth': ('place_of_birth',),
+    #'dateOfBirth': ('birth_date',),
 }
