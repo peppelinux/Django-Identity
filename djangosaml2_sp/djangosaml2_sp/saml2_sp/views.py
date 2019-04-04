@@ -226,9 +226,11 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         assertion_consumer_service.index = str(cnt)
         cnt += 1
 
-    # nameformat patch
+    # nameformat patch... tutto questo non rispecchia gli standard OASIS
     for reqattr in metadata.spsso_descriptor.attribute_consuming_service[0].requested_attribute:
-        reqattr.name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+        reqattr.name_format = None #"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+        # reqattr.is_required = None
+        reqattr.friendly_name = None
 
     # remove unecessary encryption and digest algs
     supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
@@ -239,7 +241,7 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         if alg.attributes.get('Algorithm') in supported_algs:
             new_list.append(alg)
     metadata.extensions.extension_elements = new_list
-    # non devo specificare gli algoritmi di firma/criptazione...
+    # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
     metadata.extensions = None
 
     # attribute consuming service service name patch
@@ -249,3 +251,4 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
 
     return HttpResponse(content=text_type(metadata).encode('utf-8'),
                         content_type="text/xml; charset=utf8")
+
