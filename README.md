@@ -111,21 +111,6 @@ Interesting code at views.py#111:
     identity = processor.create_identity(request.user, sp_mapping)
 ````
 
-Also this code should be improved. Check what's going on here and do a security assessment of all the IDP Signing capabilities.
-````
-if "SigAlg" in request.session and "Signature" in request.session:
-        _certs = IDP.metadata.certs(req_info.message.issuer.text, "any", "signing")
-        verified_ok = False
-        for cert in _certs:
-            # TODO implement
-            #if verify_redirect_signature(_info, IDP.sec.sec_backend, cert):
-            #    verified_ok = True
-            #    break
-            pass
-        if not verified_ok:
-            return HttpResponseBadRequest("Message signature verification failure")
-````
-
 ## pySAML2 things, improvements and bugs
 - Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP.
 - Eye on django production grade approach, improving security posture of [pysaml2 implementation](https://github.com/IdentityPython/pysaml2/issues/333)
