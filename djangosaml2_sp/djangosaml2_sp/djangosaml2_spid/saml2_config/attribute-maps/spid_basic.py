@@ -1,5 +1,7 @@
 MAP = {
-    "identifier": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+    #"identifier": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+    # it should be basic but pySAML2 if this is not specified in SAML response it will handle as uri
+    "identifier":  'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
     "fro": {
         "spidCode":"spidCode",
         "name":"name",

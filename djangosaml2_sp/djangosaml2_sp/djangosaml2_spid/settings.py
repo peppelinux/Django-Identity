@@ -11,6 +11,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
+LOGIN_URL = '/spid/login/'
+LOGOUT_URL = '/saml2/logout/'
+
+SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
+SPID_ENC_ALG = saml2.xmldsig.SIG_RSA_SHA256
+
 SAML_CONFIG = {
     'debug' : True,
     'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin',
@@ -18,8 +24,8 @@ SAML_CONFIG = {
     'entityid': '%s/metadata/' % BASE_URL,
 
     'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR,
-                                                                'saml2_sp'),
-                                      'saml2_config/spid'),
+                                                                'djangosaml2_spid'),
+                                      'saml2_config/'),
                                       'attribute-maps'),
 
     'service': {
@@ -119,8 +125,8 @@ SAML_CONFIG = {
 
     # many metadata, many idp...
     'metadata': {
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  'saml2_config/spid'), 'idp_metadata.xml'),
+        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'djangosaml2_spid'),
+                  'saml2_config'), 'idp_metadata.xml'),
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'idp_metadata.xml'),
                   # other here...

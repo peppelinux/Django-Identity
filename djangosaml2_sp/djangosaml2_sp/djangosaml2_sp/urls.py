@@ -13,12 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import djangosaml2
+from djangosaml2 import views
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
-from saml2_sp.views import metadata_spid, spid_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,9 +26,28 @@ urlpatterns = [
 
 if 'saml2_sp' in settings.INSTALLED_APPS:
     import saml2_sp.urls
-    urlpatterns += path('', include((saml2_sp.urls, 'sp',))),
-    urlpatterns += path('', include((djangosaml2.urls, 'djangosaml2',))),
+    saml2_url_prefix = 'saml2'
 
-    # patched metadata for spid
-    urlpatterns += path('spid/metadata', metadata_spid, name='spid_metadata'),
-    urlpatterns += path('spid/login/', spid_login, name='spid_login'),
+    urlpatterns += path('', include((saml2_sp.urls, 'sp',))),
+    urlpatterns += path('{}/login/'.format(saml2_url_prefix),
+                        views.login, name='saml2_login'),
+    urlpatterns += path('{}/acs/'.format(saml2_url_prefix),
+                        views.assertion_consumer_service, name='saml2_acs'),
+    urlpatterns += path('{}/logout/'.format(saml2_url_prefix),
+                        views.logout, name='saml2_logout'),
+    urlpatterns += path('{}/ls/'.format(saml2_url_prefix),
+                        views.logout_service, name='saml2_ls'),
+    urlpatterns += path('{}/ls/post/'.format(saml2_url_prefix),
+                        views.logout_service_post, name='saml2_ls_post'),
+    urlpatterns += path('{}/metadata/'.format(saml2_url_prefix),
+                        views.metadata, name='saml2_metadata'),
+
+    # system local
+    urlpatterns += path('logout/', LogoutView.as_view(),
+                        {'next_page': settings.LOGOUT_REDIRECT_URL},
+                        name='logout'),
+
+
+if 'djangosaml2_spid' in settings.INSTALLED_APPS:
+    import djangosaml2_spid.urls
+    urlpatterns += path('', include((djangosaml2_spid.urls, 'djangosaml2_spid',))),

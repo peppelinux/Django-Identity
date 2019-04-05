@@ -11,6 +11,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
+LOGIN_URL = '/saml2/login/'
+LOGOUT_URL = '/saml2/logout/'
+
 # needed only if metadata are downloaded remotely
 # IDP_URL = 'http://idp1.testunical.it:9000/idp'
 
@@ -54,8 +57,7 @@ SAML_CONFIG = {
 
             # attributes that this project need to identify a user
             'required_attributes': ['email', 'username',
-                                    'cn', 'sn', 'uid'
-                                    ],
+                                    'cn', 'sn', 'uid'],
 
             # attributes that may be useful to have but not required
             'optional_attributes': ['eduPersonAffiliation'],
