@@ -14,8 +14,11 @@ BASE_URL = '{}/saml2'.format(BASE)
 LOGIN_URL = '/spid/login/'
 LOGOUT_URL = '/saml2/logout/'
 
+SPID_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
 SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
 SPID_ENC_ALG = saml2.xmldsig.SIG_RSA_SHA256
+SPID_NAMEID_FORMAT = NAMEID_FORMAT_TRANSIENT
+SPID_AUTH_CONTEXT = 'https://www.spid.gov.it/SpidL1'
 
 SAML_CONFIG = {
     'debug' : True,
@@ -34,20 +37,17 @@ SAML_CONFIG = {
 
             'name_qualifier': BASE,
             # SPID needs NAMEID_FORMAT_TRANSIENT
-            'name_id_format': [NAMEID_FORMAT_TRANSIENT],
+            'name_id_format': [SPID_NAMEID_FORMAT],
 
             'endpoints': {
                 'assertion_consumer_service': [
-                    ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ('%s/acs/' % BASE_URL, SPID_DEFAULT_BINDING),
                     ],
                 "single_logout_service": [
                     ("%s/ls/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
                     ("%s/ls/" % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                 ],
                 }, # end endpoints
-
-            'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
-            'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
@@ -61,8 +61,10 @@ SAML_CONFIG = {
                                     'fiscalNumber',
                                     'email'],
 
-            # 'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
-            # 'name_format': saml2.saml.NAME_FORMAT_BASIC,
+            # this are formalyl correct but in pySAML4.7 doesn0't make sense because with SPID they doesn't work properly
+            'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
+            'name_format': saml2.saml.NAME_FORMAT_BASIC,
+            #
 
             # attributes that may be useful to have but not required
             # 'optional_attributes': ['gender',

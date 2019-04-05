@@ -4,6 +4,7 @@ import saml2
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -19,6 +20,7 @@ from djangosaml2.utils import (
     available_idps, fail_acs_response, get_custom_setting,
     get_idp_sso_supported_bindings, get_location, is_safe_url_compat,
 )
+from djangosaml2.views import finish_logout, _get_subject_id
 from saml2 import BINDING_HTTP_REDIRECT, BINDING_HTTP_POST
 from saml2.authn_context import requested_authn_context
 from saml2.metadata import entity_descriptor
@@ -160,14 +162,16 @@ def spid_login(request,
 
     name_id_policy = saml2.samlp.NameIDPolicy()
     # del(name_id_policy.allow_create)
-    name_id_policy.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+    name_id_policy.format = settings.SPID_NAMEID_FORMAT
     authn_req.name_id_policy  = name_id_policy
 
-    authn_context = requested_authn_context(class_ref='https://www.spid.gov.it/SpidL1')
+    authn_context = requested_authn_context(class_ref=settings.SPID_AUTH_CONTEXT)
     authn_req.requested_authn_context = authn_context
 
-    authn_req.protocol_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
-    authn_req.assertion_consumer_service_url = 'http://sp1.testunical.it:8000/saml2/acs/'
+    authn_req.protocol_binding = settings.SPID_DEFAULT_BINDING
+
+    assertion_consumer_service_url = client.config._sp_endpoints['assertion_consumer_service'][0][0]
+    authn_req.assertion_consumer_service_url = assertion_consumer_service_url #'http://sp1.testunical.it:8000/saml2/acs/'
 
     authn_req_signed = client.sign(authn_req, sign_prepare=False,
                                    sign_alg=settings.SPID_ENC_ALG,
@@ -185,6 +189,105 @@ def spid_login(request,
     logger.debug('Saving the session_id in the OutstandingQueries cache')
     oq_cache = OutstandingQueriesCache(request.session)
     oq_cache.set(session_id, came_from)
+    return HttpResponse(http_info['data'])
+
+
+@login_required
+def spid_logout(request, config_loader_path=None, **kwargs):
+    """SAML Logout Request initiator
+
+    This view initiates the SAML2 Logout request
+    using the pysaml2 library to create the LogoutRequest.
+    """
+    state = StateCache(request.session)
+    conf = get_config(config_loader_path, request)
+
+    client = Saml2Client(conf, state_cache=state,
+                         identity_cache=IdentityCache(request.session))
+    subject_id = _get_subject_id(request.session)
+    if subject_id is None:
+        logger.warning(
+            'The session does not contain the subject id for user %s',
+            request.user)
+        logger.error("Looks like the user %s is not logged in any IdP/AA", subject_id)
+        return HttpResponseBadRequest("You are not logged in any IdP/AA")
+
+    slo_req = saml2.samlp.LogoutRequest()
+
+    binding = settings.SPID_DEFAULT_BINDING
+    location_fixed = subject_id.name_qualifier
+    location = location_fixed
+    slo_req.destination = location_fixed
+    # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
+    slo_req.attribute_consuming_service_index = "0"
+
+    # import pdb; pdb.set_trace()
+    issuer = saml2.saml.Issuer()
+    issuer.name_qualifier = client.config.entityid
+    issuer.text = client.config.entityid
+    issuer.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+    slo_req.issuer = issuer
+
+    # message id
+    slo_req.id = saml2.s_utils.sid()
+    slo_req.version = saml2.VERSION # "2.0"
+    slo_req.issue_instant = saml2.time_util.instant()
+
+    # oggetto
+    slo_req.name_id = subject_id
+
+
+    session_info = client.users.get_info_from(slo_req.name_id,
+                                              subject_id.name_qualifier,
+                                              False)
+    session_indexes = [session_info['session_index']]
+
+    # aggiungere session index
+    if session_indexes:
+        sis = []
+        for si in session_indexes:
+            if isinstance(si, saml2.samlp.SessionIndex):
+                sis.append(si)
+            else:
+                sis.append(saml2.samlp.SessionIndex(text=si))
+        slo_req.session_index = sis
+
+    slo_req.protocol_binding = binding
+
+    assertion_consumer_service_url = client.config._sp_endpoints['assertion_consumer_service'][0][0]
+    slo_req.assertion_consumer_service_url = assertion_consumer_service_url
+
+    slo_req_signed = client.sign(slo_req, sign_prepare=False,
+                                 sign_alg=settings.SPID_ENC_ALG,
+                                 digest_alg=settings.SPID_DIG_ALG)
+    session_id = slo_req.id
+
+
+    _req_str = slo_req_signed
+    logger.debug('LogoutRequest to {}: {}'.format(subject_id.name_qualifier,
+                                                  repr_saml(_req_str)))
+
+    # get slo from metadata
+    slo_location = None
+    # for k,v in client.metadata.metadata.items():
+        # idp_nq = v.entity.get(subject_id.name_qualifier)
+        # if idp_nq:
+            # slo_location = idp_nq['idpsso_descriptor'][0]['single_logout_service'][0]['location']
+
+    slo_location = client.metadata.single_logout_service(subject_id.name_qualifier,
+                                                         binding,
+                                                         "idpsso")[0]['location']
+    if not slo_location:
+        logger.error('Unable to know SLO endpoint in {}'.format(subject_id.name_qualifier))
+        return HttpResponse(text_type(e))
+
+    http_info = client.apply_binding(binding,
+                                     _req_str,
+                                     slo_location,
+                                     sign=True,
+                                     sigalg=settings.SPID_ENC_ALG)
+
+    state.sync()
     return HttpResponse(http_info['data'])
 
 
@@ -228,11 +331,7 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     # attribute consuming service service name patch
     service_name = metadata.spsso_descriptor.attribute_consuming_service[0].service_name[0]
     service_name.lang = 'it'
-    service_name.text = "Nome del servizio"
+    service_name.text = conf._sp_name
 
     return HttpResponse(content=text_type(metadata).encode('utf-8'),
                         content_type="text/xml; charset=utf8")
-
-
-def spid_logout(request):
-    pass
