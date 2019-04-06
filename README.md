@@ -112,13 +112,7 @@ Interesting code at views.py#111:
 ````
 
 ## pySAML2 things, improvements and bugs
-- Optional feature: Let the user decide how many minutes its data should stay stored on the SP, then clean up them leaving only username for internal objects relationships, page agreement and privacy infomations about their personal attributes stored on the IDP.
-- Eye on django production grade approach, improving security posture of [pysaml2 implementation](https://github.com/IdentityPython/pysaml2/issues/333)
-- better analisys of [this pysaml2 idp example](https://github.com/IdentityPython/pysaml2/blob/master/example/idp2/idp_conf.py.example)
-- SP can actually download on demand IDP metadatas, IDP not. Here should be implemented an approach similar to Shibboleth's FileBackedHTTPMetadataProvider.
-- pySAML2 AttributeAuthority Server
 
-### pySAML2 Bugs
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
 - [_parse_request Refactoring](https://github.com/IdentityPython/pysaml2/issues/456)
