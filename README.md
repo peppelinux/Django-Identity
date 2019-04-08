@@ -176,6 +176,7 @@ Interesting third-party discovery services:
 ## Resources
 - SAML2 Primer on [Wikipedia](https://en.m.wikipedia.org/wiki/SAML_2.0)
 - SAML2 Primer for Research & Scholarship on [SAFIRE](https://safire.ac.za/safire/publications/saml-primer/)
+- https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html
 - [SAML2 Specifications](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
 - http://djangosaml2idp.readthedocs.io/en/latest/
 - https://github.com/IdentityPython
