@@ -156,6 +156,8 @@ Hopefully a Discovery service will:
 - If present and contains a valid IdP, then the service will automatically redirect the user back to the SP with the IdP's - - ProviderID/Issuer: no user interaction will take place
 - Otherwise, the service will display a page containing a dropdown list of the known IdPs
 
+http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
+
 Attribute Authorities
 - https://www.cesnet.cz/wp-content/uploads/2013/12/saml-aa-shibboleth.pdf
 
