@@ -61,24 +61,25 @@ SAML_CONFIG = {
                                     'fiscalNumber',
                                     'email'],
 
-            # this are formalyl correct but in pySAML4.7 doesn0't make sense because with SPID they doesn't work properly
+            # this are formaly correct but in pySAML4.7 it doesn't make sense because with SPID they doesn't work properly
+            # as spid-testenv2 doesn't sent in AuthnRequest the attribute format and pySAML2 manage these as URI!
             'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
             'name_format': saml2.saml.NAME_FORMAT_BASIC,
             #
 
             # attributes that may be useful to have but not required
-            # 'optional_attributes': ['gender',
-                                    # 'companyName',
-                                    # 'registeredOffice',
-                                    # 'ivaCode',
-                                    # 'idCard',
-                                    # 'digitalAddress',
-                                    # 'placeOfBirth',
-                                    # 'countyOfBirth',
-                                    # 'dateOfBirth',
-                                    # 'address',
-                                    # 'mobilePhone',
-                                    # 'expirationDate'],
+            'optional_attributes': ['gender',
+                                    'companyName',
+                                    'registeredOffice',
+                                    'ivaCode',
+                                    'idCard',
+                                    'digitalAddress',
+                                    'placeOfBirth',
+                                    'countyOfBirth',
+                                    'dateOfBirth',
+                                    'address',
+                                    'mobilePhone',
+                                    'expirationDate'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
@@ -185,13 +186,11 @@ SAML_CREATE_UNKNOWN_USER = True
 SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
 
 SAML_ATTRIBUTE_MAPPING = {
-    # SAML: DJANGO
-    # Must also be present in attribute-maps!
-    # 'uid': ('username', ),
+    ## 'uid': ('username', ),
     'email': ('email', ),
     'name': ('first_name', ),
     'familyName': ('last_name', ),
     'fiscalNumber': ('codice_fiscale',),
     'placeOfBirth': ('place_of_birth',),
-    #'dateOfBirth': ('birth_date',),
+    'dateOfBirth': ('birth_date',),
 }

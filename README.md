@@ -94,6 +94,14 @@ wget http://sp1.testunical.it:8000/saml2/metadata/ -O django_saml2_idp/idp/saml2
 ./manage.py runserver 0.0.0.0:8000
 ````
 
+### Run SP and IDP in HTTPs
+````
+pip install gunicorn
+
+# example for sp is
+gunicorn -b0.0.0.0:11000 djangosaml2_sp.wsgi:application --keyfile=./certificates/private.key --certfile=./certificates/public.cert
+````
+
 ### djangosaml2 SP with Shibboleth as IDP
 
 Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:

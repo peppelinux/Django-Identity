@@ -33,10 +33,9 @@ SAML_CONFIG = {
             'name': '%s/metadata/' % BASE_URL,
 
             # SPID needs NAMEID_FORMAT_TRANSIENT
-            'name_id_format': [NAMEID_FORMAT_TRANSIENT],
+            'name_id_format': [NAMEID_FORMAT_PERSISTENT,
+                               NAMEID_FORMAT_TRANSIENT],
 
-            # 'name_id_format': [NAMEID_FORMAT_PERSISTENT,
-                               # NAMEID_FORMAT_TRANSIENT],
             'endpoints': {
                 'assertion_consumer_service': [
                     ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
@@ -47,13 +46,15 @@ SAML_CONFIG = {
                 ],
                 }, # end endpoints
 
+            # these only works using pySAML2 patched with this
+            # https://github.com/IdentityPython/pysaml2/pull/597
             'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
             'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
             "force_authn": False, # SPID
-            'name_id_format_allow_create': True,
+            'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
             'required_attributes': ['email', 'username',
@@ -111,8 +112,13 @@ SAML_CONFIG = {
 
     # many metadata, many idp...
     'metadata': {
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+        'local': [
+
+                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   'saml2_config'), 'idp_metadata.xml'),
+
+                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  'saml2_config'), 'satosa_frontend.xml'),
                   # other here...
                   ],
         #
