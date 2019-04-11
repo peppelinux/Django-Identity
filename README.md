@@ -176,6 +176,7 @@ Additional resources:
 - https://github.com/knaperek/djangosaml2/issues/73
 - https://github.com/opennode/waldur-auth-saml2
 - https://github.com/IdentityPython/SATOSA/issues/140
+- pyFF [Integrated discovery service in part based on RA21.org P3W project](https://pythonhosted.org/pyFF/)
 
 Interesting third-party discovery services:
 - http://discojuice.org/getting-started/ - awesome to develop a django app (django-discojuice?). See [this php implementation](https://github.com/andreassolberg/DiscoJuice)
