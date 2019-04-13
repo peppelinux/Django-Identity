@@ -57,11 +57,13 @@ SAML_CONFIG = {
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
-            'required_attributes': ['email', 'username',
-                                    'cn', 'sn', 'uid'],
+            'required_attributes': ['email', 'cn', 'sn', 'uid'],
 
             # attributes that may be useful to have but not required
-            'optional_attributes': ['eduPersonAffiliation'],
+            'optional_attributes': ['eduPersonAffiliation',
+                                    'eduPersonPrincipalName',
+                                    'schacPersonalUniqueID',
+                                    'schacPersonalUniqueCode'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
