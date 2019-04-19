@@ -137,7 +137,6 @@ def spid_login(request,
 
     logger.debug('Redirecting user to the IdP via %s binding.', binding)
     # use the html provided by pysaml2 if no template was specified or it didn't exist
-
     # SPID want the fqdn of the IDP, not the SSO endpoint
     location_fixed = selected_idp
     location = client.sso_location(selected_idp, binding)

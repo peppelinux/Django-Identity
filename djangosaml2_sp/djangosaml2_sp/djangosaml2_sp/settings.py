@@ -129,7 +129,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 #
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
 SESSION_COOKIE_AGE = 60 * 60 # an hour
@@ -150,7 +149,7 @@ if 'saml2_sp' in INSTALLED_APPS or \
 # TODO: make SAML2 standard and SPID work together in the same django project
 # this is for a standard SAML2 federation
 if 'saml2_sp' in INSTALLED_APPS:
-    from . sp_pysaml2 import *
+    from . sp_pysaml2_satosa import *
     # from . import sp_pysaml2_shibidp as sp_pysaml2
 
 

@@ -57,13 +57,11 @@ SAML_CONFIG = {
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
-            'required_attributes': ['email', 'cn', 'sn', 'uid'],
+            'required_attributes': ['email', 'username',
+                                    'cn', 'sn', 'uid'],
 
             # attributes that may be useful to have but not required
-            'optional_attributes': ['eduPersonAffiliation',
-                                    'eduPersonPrincipalName',
-                                    'schacPersonalUniqueID',
-                                    'schacPersonalUniqueCode'],
+            'optional_attributes': ['eduPersonAffiliation'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
@@ -116,8 +114,8 @@ SAML_CONFIG = {
     'metadata': {
         'local': [
 
-                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  'saml2_config'), 'idp_metadata.xml'),
+                  # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  # 'saml2_config'), 'idp_metadata.xml'),
 
                   os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   'saml2_config'), 'satosa_frontend.xml'),
