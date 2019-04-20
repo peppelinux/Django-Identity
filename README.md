@@ -100,6 +100,10 @@ pip install gunicorn
 
 # example for sp is
 gunicorn -b0.0.0.0:11000 djangosaml2_sp.wsgi:application --keyfile=./certificates/private.key --certfile=./certificates/public.cert
+
+# or using uwsgi
+uwsgi --wsgi-file djangosaml2_sp.wsgi  --https 0.0.0.0:10000,./pki/frontend.cert,./pki/frontend.key --callable application --honour-stdin
+
 ````
 
 ### djangosaml2 SP with Shibboleth as IDP
