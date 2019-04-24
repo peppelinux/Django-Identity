@@ -35,6 +35,7 @@ Mind THAT:
 
 
 Resources:
+- https://idp.spid.gov.it:8080/#/infoidp
 - https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/
 - https://www.spid.gov.it/come-diventare-fornitore-di-servizi-pubblici-e-privati-con-spid
 - https://www.agid.gov.it/sites/default/files/repository_files/circolari/spid-regole_tecniche_v1.pdf
