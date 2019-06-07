@@ -53,7 +53,7 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": False, # SPID
+            "force_authn": False,
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
@@ -63,6 +63,7 @@ SAML_CONFIG = {
             # attributes that may be useful to have but not required
             # 'optional_attributes': ['eduPersonAffiliation'],
 
+            'want_response_signed': True,
             'authn_requests_signed': True,
             'logout_requests_signed': True,
             # Indicates that Authentication Responses to this SP must
