@@ -26,7 +26,7 @@ server {
 }
 
 server {
-    server_name sp1.unical.it;
+    server_name sp1.testunical.it;
     listen 443 ssl;
 
     ssl_certificate /opt/djangosaml2_sp/certificates/public_key.pem;

@@ -8,7 +8,7 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'http://sp1.testunical.it:8000'
+BASE = 'https://sp1.testunical.it'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/saml2/login/'
@@ -119,16 +119,17 @@ SAML_CONFIG = {
                   # 'saml2_config'), 'idp_metadata.xml'),
 
                   os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  'saml2_config'), 'satosa_frontend.xml'),
-                  # other here...
+                  'saml2_config'), 'satosa_metadata.xml'),
                   ],
         #
         # "remote": [{
-            # "url":"{}/metadata/".format(IDP_URL),
-            # "cert":"idp_https_cert.pem"}]
+            # "url": "https://satosa.testunical.it/Saml2IDP/metadata",
+            # "cert": "/opt/satosa-saml2/pki/frontend.cert"
             # }]
 
     },
+    # avoids exception: HTTPSConnectionPool(host='satosa.testunical.it', port=443): Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
+    # 'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
 
     # Signing
     'key_file': BASE_DIR + '/certificates/private.key',
