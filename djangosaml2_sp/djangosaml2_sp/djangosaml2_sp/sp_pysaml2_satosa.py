@@ -197,4 +197,7 @@ SAML_ATTRIBUTE_MAPPING = {
     'fiscalNumber': ('codice_fiscale',),
     'placeOfBirth': ('place_of_birth',),
     'dateOfBirth': ('birth_date',),
+
+    # unical legacy fallback
+    'codice_fiscale': ('codice_fiscale',),
 }
