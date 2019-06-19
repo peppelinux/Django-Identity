@@ -85,8 +85,12 @@ conf = IdPConfig()
 conf.load(copy.deepcopy(settings.SAML_IDP_CONFIG))
 
 mdx = MetaDataMDX("https://ds.testunical.it") 
-sso_loc = mdx.service("https://sp1.testunical.it/saml2/metadata", "spsso_descriptor", 'assertion_consumer_service')
-mdx.certs("https://sp1.testunical.it/saml2/metadata", "spsso", use="signing")
+mdx.service("https://sp1.testunical.it/saml2/metadata/", "spsso_descriptor", 'assertion_consumer_service')
+mdx.certs("https://sp1.testunical.it/saml2/metadata/", "spsso", use="signing")
 
+mdx.single_sign_on_service("https://idp1.testunical.it/idp/metadata")  
 mdx.service("https://idp1.testunical.it/idp/metadata", 'idpsso', 'sso_service')
 mdx.certs("https://idp1.testunical.it/idp/metadata", "idpsso", use="encryption")  
+
+# all metadata as a dict here:
+mdx.entity
