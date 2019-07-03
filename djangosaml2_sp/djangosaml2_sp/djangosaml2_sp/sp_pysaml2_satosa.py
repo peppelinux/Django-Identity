@@ -53,7 +53,7 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": False,
+            "force_authn": True,
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
@@ -118,18 +118,25 @@ SAML_CONFIG = {
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'idp_metadata.xml'),
 
-                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  'saml2_config'), 'satosa_metadata.xml'),
+                  # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  # 'saml2_config'), 'satosa_metadata.xml'),
                   ],
         #
-        # "remote": [{
-            # "url": "https://satosa.testunical.it/Saml2IDP/metadata",
-            # "cert": "/opt/satosa-saml2/pki/frontend.cert"
+        "remote": [{
+            "url": "https://satosa.testunical.it/Saml2IDP/metadata",
+            "cert": "/opt/satosa-saml2/pki/frontend.cert",
+            "disable_ssl_certificate_validation": True,
+            }],
+
+        # "mdq": [{
+            # "url": "https://ds.testunical.it",
+            # "cert": "certficates/others/ds.testunical.it.cert",
+            # "disable_ssl_certificate_validation": True,
             # }]
 
     },
     # avoids exception: HTTPSConnectionPool(host='satosa.testunical.it', port=443): Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
-    # 'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
+    'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
 
     # Signing
     'key_file': BASE_DIR + '/certificates/private.key',
