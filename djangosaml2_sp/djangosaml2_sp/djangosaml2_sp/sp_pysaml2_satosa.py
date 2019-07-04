@@ -1,5 +1,6 @@
 import os
 import saml2
+from saml2.entity_category import refeds, edugain
 from saml2.saml import (NAMEID_FORMAT_PERSISTENT,
                         NAMEID_FORMAT_TRANSIENT,
                         NAMEID_FORMAT_UNSPECIFIED)
@@ -23,12 +24,16 @@ SAML_CONFIG = {
                                         '/usr/bin/xmlsec1']),
     'entityid': '%s/metadata/' % BASE_URL,
 
+    # 'entity_category': [edugain.COCO, # "http://www.geant.net/uri/dataprotection-code-of-conduct/v1"
+                        # refeds.RESEARCH_AND_SCHOLARSHIP],
+
     'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR,
                                                                 'djangosaml2_spid'),
                                       'saml2_config'),
                                       'attribute-maps-satosa'),
-
     'service': {
+
+
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
 
@@ -57,8 +62,9 @@ SAML_CONFIG = {
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
-            # 'required_attributes': ['email', 'username',
-                                    # 'cn', 'sn', 'uid'],
+            # 'required_attributes': ['email', 'givenName',
+                                    # 'eduPersonaPrincipalName', 'sn',
+                                    # 'displayName'],
 
             # attributes that may be useful to have but not required
             # 'optional_attributes': ['eduPersonAffiliation'],
@@ -82,31 +88,6 @@ SAML_CONFIG = {
             # otherwise...without OID will be rejected
             'allow_unknown_attributes': True,
 
-            # idp definition will be only in the metadata...
-
-            # Since this is a very simple SP it only needs to know about
-            # one IdP, therefore there is really no need for a metadata file
-            # or a WAYF-function or anything like that. It needs the URL of the IdP and that’s all.:
-            # "idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
-
-            # in this section the list of IdPs we talk to are defined
-            # 'idp': {
-              # we do not need a WAYF service since there is
-              # only an IdP defined here. This IdP should be
-              # present in our metadata
-
-              # the keys of this dictionary are entity ids
-              # '{}/metadata'.format(IDP_URL): {
-                  # 'single_sign_on_service': {
-                        # saml2.BINDING_HTTP_REDIRECT: '{}/sso/redirect'.format(IDP_URL),
-                        # saml2.BINDING_HTTP_POST: '{}/sso/post'.format(IDP_URL),
-                        # },
-                  # 'single_logout_service': {
-                        # saml2.BINDING_HTTP_REDIRECT: '{}/logout'.format(IDP_URL),
-                        # },
-                        # },
-              # }, # end idp federation
-
             }, # end sp
 
     },
@@ -122,11 +103,17 @@ SAML_CONFIG = {
                   # 'saml2_config'), 'satosa_metadata.xml'),
                   ],
         #
-        "remote": [{
+        "remote": [
+            {
             "url": "https://satosa.testunical.it/Saml2IDP/metadata",
             "cert": "/opt/satosa-saml2/pki/frontend.cert",
             "disable_ssl_certificate_validation": True,
-            }],
+            },
+            # {
+            # "url": "https://idp1.testunical.it/idp/metadata/",
+            # "disable_ssl_certificate_validation": True,
+            # }
+            ],
 
         # "mdq": [{
             # "url": "https://ds.testunical.it",
