@@ -65,7 +65,7 @@ def spid_login(request,
 
     This view initiates the SAML2 Authorization handshake
     using the pysaml2 library to create the AuthnRequest.
-    It uses the SAML 2.0 Http Redirect protocol binding.
+    It uses the SAML 2.0 Http POST protocol binding.
     """
     logger.debug('SPID Login process started')
 
@@ -97,8 +97,7 @@ def spid_login(request,
         else:
             logger.debug('User is already logged in')
             return render(request, authorization_error_template, {
-                    'came_from': came_from,
-                    })
+                    'came_from': came_from})
 
     # this works only if request came from wayf
     selected_idp = request.GET.get('idp', None)
@@ -111,8 +110,7 @@ def spid_login(request,
         logger.debug('A discovery process is needed')
         return render(request, wayf_template, {
                 'available_idps': idps.items(),
-                'came_from': came_from,
-                })
+                'came_from': came_from})
     else:
         # otherwise is the first one
         try:
