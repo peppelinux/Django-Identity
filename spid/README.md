@@ -1,4 +1,5 @@
 https://www.spid.gov.it/come-diventare-fornitore-di-servizi-pubblici-e-privati-con-spid#procedura-amministrativa
+https://www.eid.gov.it/abilita-eidas
 
 ### spid-testenv2
 
