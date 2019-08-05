@@ -8,7 +8,7 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'http://sp1.testunical.it:8000'
+BASE = 'http://sp2.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/spid/login/'
@@ -16,7 +16,7 @@ LOGOUT_URL = '/saml2/logout/'
 
 SPID_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
 SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
-SPID_ENC_ALG = saml2.xmldsig.SIG_RSA_SHA256
+SPID_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA256
 SPID_NAMEID_FORMAT = NAMEID_FORMAT_TRANSIENT
 SPID_AUTH_CONTEXT = 'https://www.spid.gov.it/SpidL1'
 
@@ -63,23 +63,23 @@ SAML_CONFIG = {
 
             # this are formaly correct but in pySAML4.7 it doesn't make sense because with SPID they doesn't work properly
             # as spid-testenv2 doesn't sent in AuthnRequest the attribute format and pySAML2 manage these as URI!
-            'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
-            'name_format': saml2.saml.NAME_FORMAT_BASIC,
+            #'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
+            #'name_format': saml2.saml.NAME_FORMAT_BASIC,
             #
 
             # attributes that may be useful to have but not required
-            'optional_attributes': ['gender',
-                                    'companyName',
-                                    'registeredOffice',
-                                    'ivaCode',
-                                    'idCard',
-                                    'digitalAddress',
-                                    'placeOfBirth',
-                                    'countyOfBirth',
-                                    'dateOfBirth',
-                                    'address',
-                                    'mobilePhone',
-                                    'expirationDate'],
+            # 'optional_attributes': ['gender',
+                                    # 'companyName',
+                                    # 'registeredOffice',
+                                    # 'ivaCode',
+                                    # 'idCard',
+                                    # 'digitalAddress',
+                                    # 'placeOfBirth',
+                                    # 'countyOfBirth',
+                                    # 'dateOfBirth',
+                                    # 'address',
+                                    # 'mobilePhone',
+                                    # 'expirationDate'],
 
             'authn_requests_signed': True,
             'logout_requests_signed': True,
@@ -128,18 +128,17 @@ SAML_CONFIG = {
 
     # many metadata, many idp...
     'metadata': {
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'djangosaml2_spid'),
-                  'saml2_config'), 'idp_metadata.xml'),
+        # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'djangosaml2_spid'),
+                  # 'saml2_config'), 'idp_metadata.xml'),
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'idp_metadata.xml'),
                   # other here...
-                  ],
+                  # ],
         #
-        # "remote": [{
-            # "url":"{}/metadata/".format(IDP_URL),
+        "remote": [{
+            "url": "http://localhost:8080/metadata.xml",
             # "cert":"idp_https_cert.pem"}]
-            # }]
-
+            }]
     },
 
     # Signing
@@ -171,8 +170,6 @@ SAML_CONFIG = {
       'display_name': [('Unical', 'it'), ('Unical', 'en')],
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
-
-    'valid_for': 24 * 10,
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)

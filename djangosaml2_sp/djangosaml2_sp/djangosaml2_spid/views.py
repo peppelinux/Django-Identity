@@ -23,7 +23,9 @@ from djangosaml2.utils import (
 from djangosaml2.views import finish_logout, _get_subject_id
 from saml2 import BINDING_HTTP_REDIRECT, BINDING_HTTP_POST
 from saml2.authn_context import requested_authn_context
-from saml2.metadata import entity_descriptor
+from saml2.metadata import entity_descriptor, sign_entity_descriptor
+from saml2.sigver import security_context
+from saml2.validate import valid_instance
 
 from .utils import repr_saml
 
@@ -59,7 +61,7 @@ def custom_update_user(sender, instance, attributes, user_modified, **kargs):
 
 def spid_login(request,
           config_loader_path=None,
-          wayf_template='djangosaml2/wayf.html',
+          wayf_template='spid_wayf.html',
           authorization_error_template='djangosaml2/auth_error.html'):
     """SAML Authorization Request initiator
 
@@ -145,7 +147,6 @@ def spid_login(request,
     # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
     authn_req.attribute_consuming_service_index = "0"
 
-    # import pdb; pdb.set_trace()
     issuer = saml2.saml.Issuer()
     issuer.name_qualifier = client.config.entityid
     issuer.text = client.config.entityid
@@ -171,7 +172,7 @@ def spid_login(request,
     authn_req.assertion_consumer_service_url = assertion_consumer_service_url #'http://sp1.testunical.it:8000/saml2/acs/'
 
     authn_req_signed = client.sign(authn_req, sign_prepare=False,
-                                   sign_alg=settings.SPID_ENC_ALG,
+                                   sign_alg=settings.SPID_SIGN_ALG,
                                    digest_alg=settings.SPID_DIG_ALG)
     session_id = authn_req.id
 
@@ -180,7 +181,7 @@ def spid_login(request,
     http_info = client.apply_binding(binding,
                                      _req_str, location,
                                      sign=True,
-                                     sigalg=settings.SPID_ENC_ALG)
+                                     sigalg=settings.SPID_SIGN_ALG)
 
     # success, so save the session ID and return our response
     logger.debug('Saving the session_id in the OutstandingQueries cache')
@@ -255,7 +256,7 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     slo_req.assertion_consumer_service_url = assertion_consumer_service_url
 
     slo_req_signed = client.sign(slo_req, sign_prepare=False,
-                                 sign_alg=settings.SPID_ENC_ALG,
+                                 sign_alg=settings.SPID_SIGN_ALG,
                                  digest_alg=settings.SPID_DIG_ALG)
     session_id = slo_req.id
 
@@ -314,8 +315,11 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         reqattr.friendly_name = None
 
     # remove unecessary encryption and digest algs
-    supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
-                      'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256']
+    # supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
+                      # 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256']
+
+    supported_algs = [settings.SPID_DIG_ALG, settings.SPID_SIGN_ALG]
+
     new_list = []
     for alg in metadata.extensions.extension_elements:
         # if alg.namespace != 'urn:oasis:names:tc:SAML:metadata:algsupport': continue
@@ -330,5 +334,13 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     service_name.lang = 'it'
     service_name.text = conf._sp_name
 
-    return HttpResponse(content=text_type(metadata).encode('utf-8'),
+    # metadata signature
+    secc = security_context(conf)
+    #
+    eid, xmldoc = sign_entity_descriptor(metadata, None, secc,
+                                         digest_alg=settings.SPID_DIG_ALG,
+                                         sign_alg = settings.SPID_SIGN_ALG)
+
+    valid_instance(eid)
+    return HttpResponse(text_type(xmldoc).encode('utf-8'),
                         content_type="text/xml; charset=utf8")

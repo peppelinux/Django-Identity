@@ -9,7 +9,7 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'https://sp1.testunical.it'
+BASE = 'http://sp2.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/saml2/login/'
@@ -105,9 +105,9 @@ SAML_CONFIG = {
         #
         "remote": [
             {
-            "url": "https://satosa.testunical.it/Saml2IDP/metadata",
-            "cert": "/opt/satosa-saml2/pki/frontend.cert",
-            "disable_ssl_certificate_validation": True,
+            "url": "http://localhost:8080/metadata.xml",
+            #"cert": "/opt/satosa-saml2/pki/frontend.cert",
+            #"disable_ssl_certificate_validation": True,
             },
             # {
             # "url": "https://idp1.testunical.it/idp/metadata/",
@@ -155,7 +155,7 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    'valid_for': 24 * 10,
+    #'valid_for': 24 * 10,
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
