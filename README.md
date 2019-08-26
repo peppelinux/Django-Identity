@@ -7,16 +7,21 @@ In this repository ther are quite tested Applications and also general purpose C
 ## Bootstrap code examples
 Each one for targeted projects, they will be migrated to related project Readme files in the future.
 These are workng examples of an IDP and a SP made with Django.
-Application used:
+
+SAML2 Applications used:
 
 - [pysaml2](https://github.com/IdentityPython/pysaml2)
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
 - [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
 
-### pySAML2 alternatives
-All of them have less features then pySAML2:
- - https://github.com/fangli/django-saml2-auth (now forkend in djangosaml2)
- - https://github.com/onelogin/python3-saml
+A better SAML2 IdP can be found here:
+- https://github.com/UniversitaDellaCalabria/uniAuth 
+
+
+OIDC Applications used:
+...WIP...
+https://github.com/impak-finance/django-oidc-rp/blob/master/oidc_rp/middleware.py
+
 
 ### django-saml-idp (IDP server)
 ````
@@ -113,16 +118,6 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
-## djangosaml2idp topics
-[pySAML2 IDP Attribute Policy](https://pysaml2.readthedocs.io/en/latest/howto/config.html#policy) on official doc.
-
-Interesting code at views.py#111:
-````
-    # Create Identity dict (SP-specific)
-    sp_mapping = sp_config.get('attribute_mapping', {'username': 'username'})
-    identity = processor.create_identity(request.user, sp_mapping)
-````
-
 ## pySAML2 things, improvements and bugs
 
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
@@ -145,10 +140,14 @@ Resources and examples about advanced SAML2 implementations and use cases.
 - https://github.com/IdentityPython/SATOSA/wiki
 - https://github.com/IdentityPython/satosa-developer
 
-### large-metadata
-- https://github.com/knaperek/djangosaml2/issues/113
+My implementation example here:
+- https://github.com/peppelinux/Satosa-saml2saml
 
 ### WAYF and Discovery-service
+
+My implementation here for SPID/Other federation:
+- https://github.com/UniversitaDellaCalabria/unicalDiscoveryService
+
 IdP Discovery Service flow described in [SAML2 specifications](http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf?) is made of the following steps:
 
 - SP is configured to use a remote IdP Discovery Service to determine the IdP to be used for the Federation SSO operation
@@ -167,8 +166,6 @@ Hopefully a Discovery service will:
 - At runtime, the service will check if the IDPDiscService is present:
 - If present and contains a valid IdP, then the service will automatically redirect the user back to the SP with the IdP's - - ProviderID/Issuer: no user interaction will take place
 - Otherwise, the service will display a page containing a dropdown list of the known IdPs
-
-http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
 
 Attribute Authorities
 - https://www.cesnet.cz/wp-content/uploads/2013/12/saml-aa-shibboleth.pdf
