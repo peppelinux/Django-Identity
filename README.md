@@ -19,8 +19,19 @@ A better SAML2 IdP can be found here:
 
 
 OIDC Applications used:
-...WIP...
-https://github.com/impak-finance/django-oidc-rp/blob/master/oidc_rp/middleware.py
+...Work in Progress...
+
+Going to produce a Django app as contribution in:
+- https://github.com/rohe/oidc-op
+
+... this also made on top of:
+- https://github.com/IdentityPython/oidcendpoint
+- https://github.com/openid/JWTConnect-Python-OidcService and OpenID JWT stack.
+
+Follow notes.
+
+There would be the need to implement a middleware for token renew.
+- https://github.com/impak-finance/django-oidc-rp/blob/master/oidc_rp/middleware.py
 
 
 ### django-saml-idp (IDP server)
