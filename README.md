@@ -129,7 +129,7 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
 
-## pySAML2 things, improvements and bugs
+## pySAML2 things, improvements and issues
 
 - [time_utils](https://github.com/IdentityPython/pysaml2/issues/445)
 - [InResponseTo=""](https://github.com/IdentityPython/pysaml2/issues/458)
@@ -155,6 +155,9 @@ My implementation example here:
 - https://github.com/peppelinux/Satosa-saml2saml
 
 ### WAYF and Discovery-service
+
+This is the leading project regarding Discovery Services:
+https://seamlessaccess.org/
 
 My implementation here for SPID/Other federation:
 - https://github.com/UniversitaDellaCalabria/unicalDiscoveryService
