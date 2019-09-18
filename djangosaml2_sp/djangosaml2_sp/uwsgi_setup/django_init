@@ -19,7 +19,7 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 BASEDIR="/opt"
-ENVDIR="$BASEDIR/django-saml2-idp.env"
+ENVDIR="$BASEDIR/django-pysaml2.env"
 APPNAME="djangosaml2_sp"
 APPDIR="$BASEDIR/$APPNAME"
 #DEBUG=""

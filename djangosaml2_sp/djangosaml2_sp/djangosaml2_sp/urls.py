@@ -41,6 +41,8 @@ if 'saml2_sp' in settings.INSTALLED_APPS:
                         views.logout_service_post, name='saml2_ls_post'),
     urlpatterns += path('{}/metadata/'.format(saml2_url_prefix),
                         views.metadata, name='saml2_metadata'),
+    urlpatterns += path('{}/echo_attributes'.format(saml2_url_prefix),
+                        views.echo_attributes, name='saml2_echo_attributes'),
 
     # system local
     urlpatterns += path('logout/', LogoutView.as_view(),

@@ -8,7 +8,7 @@ python setup.py install
 
 # unit tests
 cd tests
-pip install -r test_requirements.txt 
+pip install -r test_requirements.txt
 
 # run tests
 py.test
@@ -46,45 +46,6 @@ echo -n | openssl s_client -connect idp.testunical.it:443 -CAfile /etc/ssl/certs
 echo -n | openssl s_client -connect idp.testunical.it:443 -CAfile /etc/ssl/certs/testunical_ca.crt | grep Verify
 
 ````
-
-
-### Common Errors
-
-##### Self signed certs with xmlsec
-````
-func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=360:obj=x509-store:subj=X509_verify_cert:error=4:crypto library function failed:subj=/CN=idp.testunical.it;err=18;msg=self signed certificate
-func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
-func=xmlSecOpenSSLEvpSignatureVerify:file=signatures.c:line=493:obj=rsa-sha1:subj=EVP_VerifyFinal:error=18:data do not match:signature do not match
-FAIL
-SignedInfo References (ok/all): 1/1
-Manifests References (ok/all): 0/0
-Error: failed to verify file "/tmp/tmpntnzc1mb.xml"
-
-------------------------------------------------------------
-func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=360:obj=x509-store:subj=X509_verify_cert:error=4:crypto library function failed:subj=/CN=idp.testunical.it;err=18;msg=self signed certificate
-func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
-func=xmlSecOpenSSLEvpSignatureVerify:file=signatures.c:line=493:obj=rsa-sha1:subj=EVP_VerifyFinal:error=18:data do not match:signature do not match
-FAIL
-SignedInfo References (ok/all): 1/1
-Manifests References (ok/all): 0/0
-Error: failed to verify file "/tmp/tmpntnzc1mb.xml"
-============================================================
-check_sig: func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=360:obj=x509-store:subj=X509_verify_cert:error=4:crypto library function failed:subj=/CN=idp.testunical.it;err=18;msg=self signed certificate
-func=xmlSecOpenSSLX509StoreVerify:file=x509vfy.c:line=408:obj=x509-store:subj=unknown:error=71:certificate verification failed:err=18;msg=self signed certificate
-func=xmlSecOpenSSLEvpSignatureVerify:file=signatures.c:line=493:obj=rsa-sha1:subj=EVP_VerifyFinal:error=18:data do not match:signature do not match
-FAIL
-SignedInfo References (ok/all): 1/1
-Manifests References (ok/all): 0/0
-Error: failed to verify file "/tmp/tmpntnzc1mb.xml"
-
-````
-Problem: xmlsec1 (OpenSSL) needs to know where self-signed certificates are for security verification.
-
-Test this:
- xmlsec1  --verify --trusted-pem testing/ROOT-CA-CERT.pem ../xmltmpl/appreq_signed.xml 
-
-This warning is not a real problem, just the warning will be printed in stdout.
-If ava dictionary doesn't contain any items means that idp attribute filters doesn't have a policy for this.
 
 
 ### Debug hints

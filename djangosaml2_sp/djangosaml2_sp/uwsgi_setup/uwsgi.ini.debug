@@ -19,8 +19,9 @@ processes   = 4
 
 virtualenv  = %(base)/django-pysaml2.env
 
+honour-stdin = true
 # equivalente a daemonize|logto
-logto = /var/log/uwsgi/%(project).log
+# logto = /var/log/uwsgi/%(project).log
 log-maxsize = 100000000
 log-backupname = /var/log/uwsgi/%(project).old.log
 
@@ -31,7 +32,7 @@ vacuum      = True
 max-requests    = 1000
 
 # respawn processes taking more than takes more then ... seconds
-harakiri    = 20
+harakiri    = 3600
 
 env         = DJANGO_SETTINGS_MODULE = %(project).settings
 

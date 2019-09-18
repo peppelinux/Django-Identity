@@ -1,4 +1,4 @@
-django>2.1,<2.2
+django>2.2
 mysqlclient
 uwsgi
 ipython
@@ -8,4 +8,4 @@ pysaml2
 cffi
 
 # django saml2 SP
-git+https://github.com/knaperek/djangosaml2
+git+https://github.com/peppelinux/djangosaml2.git

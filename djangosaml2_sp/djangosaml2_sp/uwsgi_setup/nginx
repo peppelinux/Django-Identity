@@ -9,11 +9,11 @@ server {
     listen      80;
     # the domain name it will serve for
 
-    server_name sp1.testunical.it;
+    server_name sptest.unical.it;
     # substitute your machine's IP address or FQDN
 
-    access_log /var/log/nginx/djangosaml2.access.log;
-    error_log  /var/log/nginx/djangosaml2.error.log error;
+    access_log /var/log/nginx/djangosaml2_sp.access.log;
+    error_log  /var/log/nginx/djangosaml2_sp.error.log error;
 
     # if ($host = sp1.testunical.it) {
     #     return 301 https://$host$request_uri;
@@ -26,11 +26,11 @@ server {
 }
 
 server {
-    server_name sp1.testunical.it;
+    server_name sptest.unical.it;
     listen 443 ssl;
 
-    ssl_certificate /opt/djangosaml2_sp/certificates/public_key.pem;
-    ssl_certificate_key /opt/djangosaml2_sp/certificates/private_key.pem;
+    ssl_certificate /opt/djangosaml2_sp/certificates/public.cert;
+    ssl_certificate_key /opt/djangosaml2_sp/certificates/private.key;
 
     access_log /var/log/nginx/djangosaml2_sp.log;
     error_log  /var/log/nginx/djangosaml2_sp.log error;

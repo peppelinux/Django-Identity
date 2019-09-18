@@ -9,11 +9,12 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'http://sp2.testunical.it:8000'
+BASE = 'https://sptest.auth.unical.it'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/saml2/login/'
 LOGOUT_URL = '/saml2/logout/'
+LOGIN_REDIRECT_URL = '/saml2/echo_attributes'
 
 # needed only if metadata are downloaded remotely
 # IDP_URL = 'http://idp1.testunical.it:9000/idp'
@@ -65,6 +66,7 @@ SAML_CONFIG = {
             # 'required_attributes': ['email', 'givenName',
                                     # 'eduPersonaPrincipalName', 'sn',
                                     # 'displayName'],
+            #'required_attributes': ['email'],
 
             # attributes that may be useful to have but not required
             # 'optional_attributes': ['eduPersonAffiliation'],
@@ -103,17 +105,20 @@ SAML_CONFIG = {
                   # 'saml2_config'), 'satosa_metadata.xml'),
                   ],
         #
+
         "remote": [
             {
-            "url": "http://localhost:8080/metadata.xml",
+            "url": "https://proxy.auth.unical.it/Saml2IDP/metadata",
             #"cert": "/opt/satosa-saml2/pki/frontend.cert",
             #"disable_ssl_certificate_validation": True,
             },
-            # {
-            # "url": "https://idp1.testunical.it/idp/metadata/",
-            # "disable_ssl_certificate_validation": True,
-            # }
+            {
+             "url": "https://auth.unical.it/idp/metadata/",
+             #"disable_ssl_certificate_validation": True,
+             }
             ],
+
+
 
         # "mdq": [{
             # "url": "https://ds.testunical.it",
@@ -123,7 +128,7 @@ SAML_CONFIG = {
 
     },
     # avoids exception: HTTPSConnectionPool(host='satosa.testunical.it', port=443): Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
-    'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
+    #'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
 
     # Signing
     'key_file': BASE_DIR + '/certificates/private.key',
