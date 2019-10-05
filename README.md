@@ -17,17 +17,19 @@ SAML2 Applications used:
 A better SAML2 IdP can be found here:
 - https://github.com/UniversitaDellaCalabria/uniAuth
 
-OIDC Application:
+OIDC Applications built on top of [jwtconnect.io](https://jwtconnect.io/) stack:
 
-- https://github.com/peppelinux/django-oidc-op
-- https://github.com/rohe/oidc-op
+- [django-oidc-op](https://github.com/peppelinux/django-oidc-op), based on [oidc-op](https://github.com/rohe/oidc-op)
 
-These are made on top of [jwtconnect.io](https://jwtconnect.io/) stack.
+oAuth2:
+
+- [django-oauth-toolkit](https://django-oauth-toolkit.readthedocs.io/en/latest/index.html), See [oAuth2 RFC](https://tools.ietf.org/html/rfc6749#section-4)
 
 
 #### OIDC development notes
-There would be the need to implement a middleware for token renew.
+would it be better to implement a middleware for token renew?
 - https://github.com/impak-finance/django-oidc-rp/blob/master/oidc_rp/middleware.py
+
 
 ### Run SP and IDP in HTTPs
 See Installation examples - README.md - in sp and idp folders.
