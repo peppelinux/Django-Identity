@@ -3,7 +3,6 @@ import requests
 
 
 form_action_regex = '[\s\n.]*action="(?P<action>[a-zA-Z0-9\:\.\_\-\?\&\/]*)"'
-# TODO: make single regexp
 form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
 form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+]*)"[\s\n.]*'
 
@@ -11,8 +10,11 @@ form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+]*)"[\s\n.]*'
 #  <input type="hidden" name="RelayState" value="/"/>
 
 
-class Saml2SPAuth(object):
-    """https://wiki.geant.org/display/eduGAIN/eduGAIN+Connectivity+Check
+class Saml2SPAuthnReq(object):
+    """
+    TODO:
+        - add error handling in conformity of:
+          https://wiki.geant.org/display/eduGAIN/eduGAIN+Connectivity+Check
     """
     def __init__(self, wayf=False, verify=False, debug=False):
         # create an user agent here ;)
@@ -25,6 +27,8 @@ class Saml2SPAuth(object):
 
     def _check_response(self, request):
         print(request.reason)
+        if self.debug:
+            print(request.content)
         assert request.status_code == 200
 
     def _handle_error(self, info):
@@ -71,23 +75,27 @@ class Saml2SPAuth(object):
 
 if __name__ == '__main__':
     import argparse
-    _description = 'test_saml2.py -target "https://peo.unical.it" --check-cert'
+    _description = ('Check if an SP is able to make an Authn Request to an Idp '
+                    'and if this latter accepts it.')
+    _epilog = ('python3 test_saml2_authnreq.py -target "https://peo.unical.it" --check-cert'
+              '\nor\n'
+              'python3 test_saml2_authnreq.py -target "https://sp24-test.garr.it/Shibboleth.sso/Login?SAMLDS=1&target=ss%3Amem%3A4eae3aa14e7d76fa1e78be0bc848b74e84326e83779adf0508f4fcd442a28ba5&entityID=https%3A%2F%2Fauth.unical.it%2Fidp%2Fmetadata%2F" --wayf --check-cert'
+              )
     parser = argparse.ArgumentParser(description=_description,
-                                     epilog='Usage example: ')
+                                     epilog='Usage example: {}'.format(_epilog),
+                                     formatter_class=argparse.RawTextHelpFormatter)
 
     # parameters
     parser.add_argument('-target', required=True,
                         help=("service provider protected resource. "
                               "Used to be redirected to the IdP login page"))
-    parser.add_argument('-u', required=False,
-                        help="username")
-    parser.add_argument('-p', required=False,
-                    help="password")
+    # parser.add_argument('-u', required=False,
+                        # help="username")
+    # parser.add_argument('-p', required=False,
+                    # help="password")
     parser.add_argument('--wayf', action='store_true',
-                        help=("if the url contains the wayf selection, es: "
-                              "https://elearning.unical.it/Shibboleth.sso/Login?"
-                              "providerId=https://idp.unical.it/idp/shibboleth"
-                              "&target=https://elearning.unical.it/auth/shibboleth/index.php"),
+                        help=("if the url contains the wayf selection."
+                              "See usage examples."),
                         required=False,
                         default=False)
     parser.add_argument('--check-cert', action='store_true',
@@ -98,7 +106,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # let's go
-    ua = Saml2SPAuth(wayf=args.wayf, verify=args.check_cert, debug=args.debug)
+    ua = Saml2SPAuthnReq(wayf=args.wayf, verify=args.check_cert, debug=args.debug)
     ua.saml_request(target=args.target)
     if not ua.wayf:
         ua.saml_request_post()
