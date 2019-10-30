@@ -41,7 +41,7 @@ class Saml2SPAuthnReq(object):
         # do a GET, do not verify ssl cert validity
         sp_saml_req_form = self.session.get(target, verify=self.verify)
         if not sp_saml_req_form.ok:
-            raise ('SP SAML Request Failed')
+            raise Exception('SP SAML Request Failed')
 
         html_content =  sp_saml_req_form._content.decode() \
                         if isinstance(sp_saml_req_form._content, bytes) \
