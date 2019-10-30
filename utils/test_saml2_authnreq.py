@@ -16,11 +16,12 @@ class Saml2SPAuthnReq(object):
         - add error handling in conformity of:
           https://wiki.geant.org/display/eduGAIN/eduGAIN+Connectivity+Check
     """
-    def __init__(self, wayf=False, verify=False, debug=False):
+    def __init__(self, wayf=False, verify=False, debug=False, timeout=12):
         # create an user agent here ;)
         self.session = requests.Session()
         self.wayf = wayf
         self.debug = debug
+        self.timeout = timeout
         self.verify = verify
         # to be filled
         self.saml_request_dict = {}
@@ -39,7 +40,8 @@ class Saml2SPAuthnReq(object):
                      form_action_regex=form_action_regex,
                      form_samlreq_regex=form_samlreq_regex):
         # do a GET, do not verify ssl cert validity
-        sp_saml_req_form = self.session.get(target, verify=self.verify)
+        sp_saml_req_form = self.session.get(target, verify=self.verify,
+                                            timeout=self.timeout)
         if not sp_saml_req_form.ok:
             raise Exception('SP SAML Request Failed')
 
@@ -69,7 +71,7 @@ class Saml2SPAuthnReq(object):
         d = {'SAMLRequest': self.saml_request_dict['value'],
              'RelayState': '/'}
         idp_auth_form = self.session.post(self.saml_request_dict['action'],
-                                          data=d)
+                                          data=d, timeout=self.timeout)
         self._check_response(idp_auth_form)
 
 
@@ -101,12 +103,19 @@ if __name__ == '__main__':
     parser.add_argument('--check-cert', action='store_true',
                         help="validate https TLS certificates", required=False,
                         default=False)
+    parser.add_argument('-timeout',
+                        metavar='N',
+                        type=float,
+                        default=5,
+                        required=False,
+                        help="http connection timeout, default: 5 seconds")
     parser.add_argument('-debug', action='store_true',
                         help="print debug informations", required=False)
     args = parser.parse_args()
 
     # let's go
-    ua = Saml2SPAuthnReq(wayf=args.wayf, verify=args.check_cert, debug=args.debug)
+    ua = Saml2SPAuthnReq(wayf=args.wayf, verify=args.check_cert,
+                         debug=args.debug, timeout=args.timeout)
     ua.saml_request(target=args.target)
     if not ua.wayf:
         ua.saml_request_post()
