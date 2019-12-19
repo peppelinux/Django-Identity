@@ -4,7 +4,7 @@ import requests
 
 form_action_regex = '[\s\n.]*action="(?P<action>[a-zA-Z0-9\:\.\_\-\?\&\/]*)"'
 form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
-form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+]*)"[\s\n.]*'
+form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+=]*)"[\s\n.]*'
 
 # TODO: add RelayState
 #  <input type="hidden" name="RelayState" value="/"/>
