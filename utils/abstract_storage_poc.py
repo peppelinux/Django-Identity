@@ -120,9 +120,14 @@ class AbstractStorageSQLAlchemy:
         return 1
 
     def delete(self, v, k='owner'):
+        """
+        return the count of deleted objects
+        """
         table_column = getattr(self.table.c, k)
-        self.session.execute(self.table.delete().where(table_column == v))
-        return 1
+        delquery = self.table.delete().where(table_column == v)
+        n_entries = self.session.query(self.table).filter(table_column == v).count()
+        self.session.execute(delquery)
+        return n_entries
 
     def __contains__(self, k):
         for entry in self():
@@ -134,6 +139,18 @@ class AbstractStorageSQLAlchemy:
 
     def __iter__(self):
         return self.session.query(self.table)
+
+    def __str__(self):
+        entries = []
+        for entry in self():
+            l = []
+            for element in entry:
+                if isinstance(element, datetime.datetime):
+                    l.append(element.isoformat())
+                else:
+                    l.append(element)
+            entries.append(l)
+        return json.dumps(entries, indent=2)
 
         
 configuration_dict = dict(
@@ -178,16 +195,7 @@ class AbstractStorage:
         return self.storage.__contains__(k)
 
     def __str__(self):
-        entries = []
-        for entry in self.storage():
-            l = []
-            for element in entry:
-                if isinstance(element, datetime.datetime):
-                    l.append(element.isoformat())
-                else:
-                    l.append(element)
-            entries.append(l)
-        return json.dumps(entries, indent=2)
+        return self.storage.__str__()
 
     def __iter__(self):
         return iter(self.storage.__iter__())
@@ -205,7 +213,6 @@ class AbstractStorage:
     
 # proof
 absdb = AbstractStorage(configuration_dict)
-
 print(absdb)
 
 # set
@@ -223,7 +230,7 @@ absdb.delete('owner', 'peppe')
 # get all
 absdb()
 
-# set again and see all
+# set again and view all
 rsa_key = new_rsa_key()
 absdb.set('peppe', rsa_key.serialize(private=True))
 absdb()
