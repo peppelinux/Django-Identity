@@ -2,7 +2,7 @@
 __project__ = "Abstract Storage POC"
 __version__ = "0.2.0"
 __author__ = "Giuseppe De Marco (giuseppe.demarco@unical.it)"
-__copyright__ = "(C) 2018 Giuseppe De Marco. GNU GPL 2."
+__copyright__ = "(C) 2020 Giuseppe De Marco. GNU GPL 2."
 __description__ = """
 This is a POC of an AbstractStorage
 
