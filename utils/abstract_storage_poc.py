@@ -178,7 +178,16 @@ class AbstractStorage:
         return self.storage.__contains__(k)
 
     def __str__(self):
-        return json.dumps(self.storage())
+        entries = []
+        for entry in self.storage():
+            l = []
+            for element in entry:
+                if isinstance(element, datetime.datetime):
+                    l.append(element.isoformat())
+                else:
+                    l.append(element)
+            entries.append(l)
+        return json.dumps(entries, indent=2)
 
     def __iter__(self):
         return iter(self.storage.__iter__())
@@ -196,6 +205,8 @@ class AbstractStorage:
     
 # proof
 absdb = AbstractStorage(configuration_dict)
+
+print(absdb)
 
 # set
 rsa_key = new_rsa_key()
