@@ -97,7 +97,7 @@ _key = key_from_jwk_dict(json.loads(session.query(Thing).filter_by(owner='peppe'
 
 class AbstractStorageSQLAlchemy:
     def __init__(self, conf_dict):
-        self.engine = alchemy_db.create_engine('sqlite:///things.sqlite')
+        self.engine = alchemy_db.create_engine(conf_dict['url'])
         self.connection = engine.connect()
 
         self.metadata = alchemy_db.MetaData()
