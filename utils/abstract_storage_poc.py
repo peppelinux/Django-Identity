@@ -4,19 +4,29 @@ __version__ = "0.2.0"
 __author__ = "Giuseppe De Marco (giuseppe.demarco@unical.it)"
 __copyright__ = "(C) 2018 Giuseppe De Marco. GNU GPL 2."
 __description__ = """
-This is a POC of an AbstractStorage
+This is a POC of a simple Abstract Storage System.
+It aim to be pluggable and general purpose, customizable, and easy to be
+plugged in existing applications.
 
-# Setup section show us how to get the database being created and working
+This file have 3 Sections:
 
-# JWK things show us how to use the Database in a traditional way with the ORM 
+# 1
+Setup section show us how to get the database being created and working
 
-# Storage Abstraction Layer
+# 2
+JWK things show us how to use the Database in a traditional way with the ORM 
 
-This is the most important section, it show how configure a database (data storage) 
-and maps a Custom StorageObject in ABSTRACT_STORAGE_DRIVERS dictionary.
+# 3
+Storage Abstraction Layer
 
-The Interface to get, set and generally interacts with data is called AbstractStorage.
-Followings example on the bottom page run the games.
+This is the most important section, it show how to configure a database (data storage) 
+and how to map a Custom StorageObject, in the ABSTRACT_STORAGE_DRIVERS dictionary.
+
+The Interface usable in our application is AbstractStorage where we can
+get, set data and generally interact with them.
+
+Following examples on the bottom page show us the
+end use of the AbstractStorage.
 """
 
 # Setup
