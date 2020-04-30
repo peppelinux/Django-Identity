@@ -2,7 +2,7 @@
 __project__ = "Abstract Storage POC"
 __version__ = "0.2.0"
 __author__ = "Giuseppe De Marco (giuseppe.demarco@unical.it)"
-__copyright__ = "(C) 2020 Giuseppe De Marco. GNU GPL 2."
+__copyright__ = "(C) 2018 Giuseppe De Marco. GNU GPL 2."
 __description__ = """
 This is a POC of an AbstractStorage
 
@@ -119,7 +119,7 @@ class AbstractStorageSQLAlchemy:
         self.session.commit()
         return 1
 
-    def delete(self, k, v):
+    def delete(self, v, k='owner'):
         table_column = getattr(self.table.c, k)
         self.session.execute(self.table.delete().where(table_column == v))
         return 1
@@ -157,7 +157,16 @@ class AbstractStorage:
         return self.storage.set(k, v)
 
     def delete(self, k, v):
-        return self.storage.delete(k, v)
+        return self.storage.delete(v, k=k)
+
+    def __getitem__(self, k):
+        return self.storage.get(k)
+
+    def __setitem__(self, k, v):
+        return self.storage.set(k, v)
+
+    def __delitem__(self, v):
+        return self.storage.delete(v)
 
     def __call__(self):
         return self.storage() 
@@ -175,19 +184,27 @@ class AbstractStorage:
         return iter(self.storage.__iter__())
 
     def flush(self):
-        self.storage.session.flush()
+        """
+        make a decision here ...
+        """
+        try:
+            self.storage.session.commit()
+        except:
+            self.storage.session.flush()
+            self.storage.session.rollback()
 
-    
     
 # proof
 absdb = AbstractStorage(configuration_dict)
 
-# get
-absdb.get('peppe')
-
 # set
 rsa_key = new_rsa_key()
 absdb.set('peppe', rsa_key.serialize(private=True))
+absdb['emy'] = 'dfsdfdsf'
+
+# get
+absdb.get('peppe')
+absdb['emy']  
 
 # delete
 absdb.delete('owner', 'peppe') 
