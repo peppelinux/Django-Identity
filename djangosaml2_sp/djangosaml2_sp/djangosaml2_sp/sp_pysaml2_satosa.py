@@ -59,8 +59,8 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            # "force_authn": True,
-            'name_id_format_allow_create': False,
+            "force_authn": False,
+            #'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
             # 'required_attributes': ['email', 'givenName',

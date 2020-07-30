@@ -12,10 +12,7 @@ SAML2 Applications used:
 
 - [pysaml2](https://github.com/IdentityPython/pysaml2)
 - [djangosaml2](https://github.com/knaperek/djangosaml2)
-- [djangosaml2idp](https://github.com/OTA-Insight/djangosaml2idp)
-
-A better SAML2 IdP can be found here:
-- https://github.com/UniversitaDellaCalabria/uniAuth
+- [uniAuth](https://github.com/UniversitaDellaCalabria/uniAuth)
 
 OIDC Applications built on top of [jwtconnect.io](https://jwtconnect.io/) stack:
 
@@ -26,13 +23,8 @@ oAuth2:
 - [django-oauth-toolkit](https://django-oauth-toolkit.readthedocs.io/en/latest/index.html), See [oAuth2 RFC](https://tools.ietf.org/html/rfc6749#section-4)
 
 
-#### OIDC development notes
-would it be better to implement a middleware for token renew?
-- https://github.com/impak-finance/django-oidc-rp/blob/master/oidc_rp/middleware.py
-
-
 ### Run SP and IDP in HTTPs
-See Installation examples - README.md - in sp and idp folders.
+See Installation examples.
 
 ````
 pip install gunicorn
