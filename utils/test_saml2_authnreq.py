@@ -1,10 +1,11 @@
 import re
 import requests
+import sys
 
 
 form_action_regex = '[\s\n.]*action="(?P<action>[a-zA-Z0-9\:\.\_\-\?\&\/]*)"'
 form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
-form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+]*)"[\s\n.]*'
+form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+=]*)"[\s\n.]*'
 
 # TODO: add RelayState
 #  <input type="hidden" name="RelayState" value="/"/>
@@ -27,10 +28,11 @@ class Saml2SPAuthnReq(object):
         self.saml_request_dict = {}
 
     def _check_response(self, request):
-        print(request.reason)
         if self.debug:
+            print(request.reason)
             print(request.content)
-        assert request.status_code == 200
+        #assert request.status_code == 200
+        return request.status_code
 
     def _handle_error(self, info):
         raise Exception(('Error: Cannot find any saml request '
@@ -44,14 +46,14 @@ class Saml2SPAuthnReq(object):
                                             timeout=self.timeout)
         if not sp_saml_req_form.ok:
             raise Exception('SP SAML Request Failed')
-
         html_content =  sp_saml_req_form._content.decode() \
                         if isinstance(sp_saml_req_form._content, bytes) \
                         else sp_saml_req_form._content
 
         if self.wayf:
             self._check_response(sp_saml_req_form)
-            return
+            return sp_saml_req_form
+            #return html_content
 
         action = re.search(form_action_regex, html_content)
         if not action: self._handle_error(target)
@@ -67,13 +69,26 @@ class Saml2SPAuthnReq(object):
         if self.debug:
             print(self.saml_request_dict)
 
+        return sp_saml_req_form
+        #return html_content
+
     def saml_request_post(self):
         d = {'SAMLRequest': self.saml_request_dict['value'],
              'RelayState': '/'}
-        idp_auth_form = self.session.post(self.saml_request_dict['action'],
-                                          data=d, timeout=self.timeout)
-        self._check_response(idp_auth_form)
+        self.idp_auth_form = self.session.post(self.saml_request_dict['action'],
+                                               data=d, timeout=self.timeout)
+        self._check_response(self.idp_auth_form)
 
+    def auth(self, username, password):
+        csrfmiddlewaretoken = re.findall(b'name="csrfmiddlewaretoken" value="([a-zA-Z0-9_-]*)"',
+                                         self.idp_auth_form.content)
+        d = {'username': username,
+             'password': password}
+        if csrfmiddlewaretoken:
+            d['csrfmiddlewaretoken'] = csrfmiddlewaretoken
+        self.idp_auth = self.session.post(self.idp_auth_form.url,
+                                          data=d, timeout=self.timeout)
+        self._check_response(self.idp_auth)
 
 if __name__ == '__main__':
     import argparse
@@ -91,18 +106,18 @@ if __name__ == '__main__':
     parser.add_argument('-target', required=True,
                         help=("service provider protected resource. "
                               "Used to be redirected to the IdP login page"))
-    # parser.add_argument('-u', required=False,
-                        # help="username")
-    # parser.add_argument('-p', required=False,
-                    # help="password")
+    parser.add_argument('-u', required=False,
+                        help="username")
+    parser.add_argument('-p', required=False,
+                        help="password")
     parser.add_argument('--wayf', action='store_true',
                         help=("if the url contains the wayf selection."
                               "See usage examples."),
                         required=False,
                         default=False)
     parser.add_argument('--check-cert', action='store_true',
-                        help="validate https TLS certificates", required=False,
-                        default=False)
+                        help="validate https TLS certificates",
+                        required=False, default=False)
     parser.add_argument('-timeout',
                         metavar='N',
                         type=float,
@@ -111,11 +126,20 @@ if __name__ == '__main__':
                         help="http connection timeout, default: 5 seconds")
     parser.add_argument('-debug', action='store_true',
                         help="print debug informations", required=False)
-    args = parser.parse_args()
+    opts = parser.parse_args()
 
     # let's go
-    ua = Saml2SPAuthnReq(wayf=args.wayf, verify=args.check_cert,
-                         debug=args.debug, timeout=args.timeout)
-    ua.saml_request(target=args.target)
+    ua = Saml2SPAuthnReq(wayf=opts.wayf, verify=opts.check_cert,
+                         debug=opts.debug, timeout=opts.timeout)
+    ua.saml_request(target=opts.target)
     if not ua.wayf:
         ua.saml_request_post()
+        #  print(ua.idp_auth_form.content)
+
+    if opts.u and opts.p:
+        ua.auth(opts.u, opts.p)
+        if b'SAMLResponse' in ua.idp_auth.content:
+            print('OK')
+            sys.exit(0)
+        else:
+            sys.exit(1)
