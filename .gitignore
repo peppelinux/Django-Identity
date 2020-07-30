@@ -8,3 +8,4 @@ certs/keys/*
 */.~lock*
 django-saml2-idp/django_saml2_idp/saml2
 django-saml2-idp/django_saml2_idp/djangosaml2idp
+*sqlite3.db

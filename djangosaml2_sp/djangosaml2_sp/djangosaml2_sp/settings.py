@@ -53,7 +53,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # SAML session with SameSite = None
+    'djangosaml2.middleware.SamlSessionMiddleware'
 ]
+
+SAML_SESSION_COOKIE_NAME = 'saml_session'
 
 ROOT_URLCONF = 'djangosaml2_sp.urls'
 

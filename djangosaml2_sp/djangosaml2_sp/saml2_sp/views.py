@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import TemplateDoesNotExist
-from django.utils.six import text_type, binary_type
 from djangosaml2.conf import get_config
 from djangosaml2.cache import IdentityCache, OutstandingQueriesCache
 from djangosaml2.cache import StateCache
