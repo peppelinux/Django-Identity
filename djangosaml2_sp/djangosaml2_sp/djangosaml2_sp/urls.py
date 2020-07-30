@@ -32,7 +32,7 @@ if 'saml2_sp' in settings.INSTALLED_APPS:
     urlpatterns += path('{}/login/'.format(saml2_url_prefix),
                         views.login, name='saml2_login'),
     urlpatterns += path('{}/acs/'.format(saml2_url_prefix),
-                        views.assertion_consumer_service, name='saml2_acs'),
+                        views.AssertionConsumerServiceView.as_view(), name='saml2_acs'),
     urlpatterns += path('{}/logout/'.format(saml2_url_prefix),
                         views.logout, name='saml2_logout'),
     urlpatterns += path('{}/ls/'.format(saml2_url_prefix),

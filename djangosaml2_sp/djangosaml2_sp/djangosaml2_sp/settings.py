@@ -80,12 +80,15 @@ WSGI_APPLICATION = 'djangosaml2_sp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangosaml2_sp',
-        'HOST': 'localhost',
-        'USER': 'djangosaml2_sp',
-        'PASSWORD': 'djangosaml2_sp78',
-        'PORT': ''
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'sqlite3.db',
+
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'djangosaml2_sp',
+#        'HOST': 'localhost',
+#        'USER': 'djangosaml2_sp',
+#        'PASSWORD': 'djangosaml2_sp78',
+#        'PORT': ''
     }
 }
 
@@ -148,14 +151,14 @@ if 'saml2_sp' in INSTALLED_APPS or \
 
 # TODO: make SAML2 standard and SPID work together in the same django project
 # this is for a standard SAML2 federation
-# if 'saml2_sp' in INSTALLED_APPS:
-    # from . sp_pysaml2_satosa import *
+if 'saml2_sp' in INSTALLED_APPS:
+    from . sp_pysaml2_satosa import *
     # from . import sp_pysaml2_shibidp as sp_pysaml2
 
 
-if 'djangosaml2_spid' in INSTALLED_APPS:
-    from djangosaml2_spid.settings import *
-    LOGOUT_URL = '/spid/logout'
+# if 'djangosaml2_spid' in INSTALLED_APPS:
+    # from djangosaml2_spid.settings import *
+    # LOGOUT_URL = '/spid/logout'
 
 
 LOGGING = {

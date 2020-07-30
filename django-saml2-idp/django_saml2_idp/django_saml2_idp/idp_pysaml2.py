@@ -168,7 +168,7 @@ SAML_IDP_CONFIG = {
 
     # How many hours this configuration is expected to be accurate.
     # This of course is only used by make_metadata.py. The server will not stop working when this amount of time has elapsed :-).
-    'valid_for': 24 * 10,
+    #'valid_for': 24 * 10,
 
     # own metadata settings
     'contact_person': [
@@ -219,8 +219,8 @@ SAML_ENCRYPT_AUTHN_RESPONSE = True
 
 SAML_IDP_SPCONFIG = {
     '{}'.format(SP_METADATA_URL): {
-        #'processor': 'djangosaml2idp.processors.BaseProcessor',
-        'processor': 'idp.processors.LdapAcademiaProcessor',
+        'processor': 'djangosaml2idp.processors.BaseProcessor',
+        #'processor': 'idp.processors.LdapAcademiaProcessor',
         'attribute_mapping': {
             # DJANGO: SAML
             # only these attributes from this IDP

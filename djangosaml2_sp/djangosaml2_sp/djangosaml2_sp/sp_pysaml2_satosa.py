@@ -9,7 +9,7 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'https://sptest.auth.unical.it'
+BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/saml2/login/'
@@ -59,7 +59,7 @@ SAML_CONFIG = {
 
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": True,
+            # "force_authn": True,
             'name_id_format_allow_create': False,
 
             # attributes that this project need to identify a user
@@ -98,25 +98,33 @@ SAML_CONFIG = {
     'metadata': {
         'local': [
 
-                  # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  # 'saml2_config'), 'idp_metadata.xml'),
+                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  'saml2_config'), 'idp.testunical.it.xml'),
 
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'satosa_metadata.xml'),
                   ],
-        #
+        #  #
 
-        "remote": [
-            {
-            "url": "https://proxy.auth.unical.it/Saml2IDP/metadata",
+        #  "remote": [
+            # {
+            # "url": "https://proxy.auth.unical.it/Saml2IDP/metadata",
             #"cert": "/opt/satosa-saml2/pki/frontend.cert",
             #"disable_ssl_certificate_validation": True,
-            },
-            {
-             "url": "https://auth.unical.it/idp/metadata/",
+            # },
+            # {
+             # "url": "https://auth.unical.it/idp/metadata/",
              #"disable_ssl_certificate_validation": True,
-             }
-            ],
+             # },
+            #  {
+             #  "url": "https://idp.testunical.it/idp/shibboleth",
+             #  "disable_ssl_certificate_validation": True,
+             #  },
+            #  {
+             #  "url": "http://idp1.testunical.it:9000/idp/metadata",
+             #  "disable_ssl_certificate_validation": True,
+             #  }
+            #  ],
 
 
 

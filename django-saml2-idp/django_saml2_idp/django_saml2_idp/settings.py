@@ -26,6 +26,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,10 +41,10 @@ INSTALLED_APPS = [
 
     'djangosaml2idp',
     'idp',
-    'ldap_peoples',
+#    'ldap_peoples',
     'rangefilter',
 
-    'agid_template',
+#    'bootstrap_italia_template',
 ]
 
 MIDDLEWARE = [
@@ -78,14 +81,21 @@ WSGI_APPLICATION = 'django_saml2_idp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'djangosaml2idp',
+#        'HOST': 'localhost',
+#        'USER': 'django-saml2-idp',
+#        'PASSWORD': 'django-saml2-idp78',
+#        'PORT': ''
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangosaml2idp',
-        'HOST': 'localhost',
-        'USER': 'django-saml2-idp',
-        'PASSWORD': 'django-saml2-idp78',
-        'PORT': ''
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -125,11 +135,12 @@ if 'ldap_peoples' in INSTALLED_APPS:
     DATABASE_ROUTERS = ['ldapdb.router.Router']
 
 AUTHENTICATION_BACKENDS = [
-                            'idp.ldap_auth.LdapAcademiaAuthBackend',
                             'django.contrib.auth.backends.ModelBackend',
                             # FIX TODO in Django 2.1
                             # 'unical_ict.auth.SessionUniqueBackend',
                           ]
+if 'ldap_peoples' in INSTALLED_APPS:
+    AUTHENTICATION_BACKENDS.append('idp.ldap_auth.LdapAcademiaAuthBackend')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
