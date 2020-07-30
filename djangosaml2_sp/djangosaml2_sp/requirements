@@ -8,4 +8,6 @@ pysaml2
 cffi
 
 # django saml2 SP
-git+https://github.com/peppelinux/djangosaml2.git
+djangosaml2
+
+# git+https://github.com/peppelinux/djangosaml2.git
