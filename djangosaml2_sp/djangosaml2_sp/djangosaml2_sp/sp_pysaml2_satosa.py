@@ -3,14 +3,15 @@ import saml2
 from saml2.entity_category import refeds, edugain
 from saml2.saml import (NAMEID_FORMAT_PERSISTENT,
                         NAMEID_FORMAT_TRANSIENT,
-                        NAMEID_FORMAT_UNSPECIFIED)
+                        NAMEID_FORMAT_UNSPECIFIED,
+                        NAMEID_FORMAT_EMAILADDRESS)
 from saml2.sigver import get_xmlsec_binary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE = 'http://sp1.example.it:8000'
-#  BASE = 'http://sp1.testunical.it:8000'
+#BASE = 'http://sp1.example.it:8000'
+BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/saml2/login/'
@@ -39,9 +40,14 @@ SAML_CONFIG = {
         'sp': {
             'name': '%s/metadata/' % BASE_URL,
 
-            # SPID needs NAMEID_FORMAT_TRANSIENT
-            'name_id_format': [NAMEID_FORMAT_PERSISTENT,
-                               NAMEID_FORMAT_TRANSIENT],
+            # that's for metadata
+            'name_id_format': [
+                               #  NAMEID_FORMAT_EMAILADDRESS,
+                               NAMEID_FORMAT_PERSISTENT,
+                               NAMEID_FORMAT_TRANSIENT
+                               ],
+            # that's for authn request
+            'name_id_policy_format': NAMEID_FORMAT_TRANSIENT,
 
             'endpoints': {
                 'assertion_consumer_service': [
@@ -97,17 +103,17 @@ SAML_CONFIG = {
 
     # many metadata, many idp...
     'metadata': {
-        'local': [
+        #  'local': [
 
-                  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  'saml2_config'), 'idp.testunical.it.xml'),
+                  #  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                  #  'saml2_config'), 'idp.testunical.it.xml'),
 
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'satosa_metadata.xml'),
-                  ],
+                  #  ],
         #  #
 
-        #  "remote": [
+        "remote": [
             # {
             # "url": "https://proxy.auth.unical.it/Saml2IDP/metadata",
             #"cert": "/opt/satosa-saml2/pki/frontend.cert",
@@ -121,13 +127,11 @@ SAML_CONFIG = {
              #  "url": "https://idp.testunical.it/idp/shibboleth",
              #  "disable_ssl_certificate_validation": True,
              #  },
-            #  {
-             #  "url": "http://idp1.testunical.it:9000/idp/metadata",
+            {
+             "url": "http://idp1.testunical.it:9000/idp/metadata/",
              #  "disable_ssl_certificate_validation": True,
-             #  }
-            #  ],
-
-
+             }
+            ],
 
         # "mdq": [{
             # "url": "https://ds.testunical.it",
