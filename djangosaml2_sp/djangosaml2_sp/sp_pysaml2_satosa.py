@@ -51,11 +51,11 @@ SAML_CONFIG = {
 
             'endpoints': {
                 'assertion_consumer_service': [
-                    ('%s/acs/' % BASE_URL, saml2.BINDING_HTTP_POST),
+                    (f'{BASE_URL}/acs/', saml2.BINDING_HTTP_POST, 0),
                     ],
                 "single_logout_service": [
-                    ("%s/ls/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
-                    ("%s/ls/" % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
+                    (f"{BASE_URL}/ls/post/", saml2.BINDING_HTTP_POST),
+                    (f"{BASE_URL}/ls/", saml2.BINDING_HTTP_REDIRECT),
                 ],
                 }, # end endpoints
 
