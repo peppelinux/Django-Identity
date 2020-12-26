@@ -15,7 +15,7 @@ from djangosaml2.conf import get_config
 from djangosaml2.overrides import Saml2Client
 from djangosaml2.signals import post_authenticated, pre_user_save
 from djangosaml2.utils import (
-    available_idps, fail_acs_response, get_custom_setting,
+    available_idps, get_custom_setting,
     get_idp_sso_supported_bindings, get_location
 )
 from saml2 import BINDING_HTTP_REDIRECT, BINDING_HTTP_POST

@@ -51,7 +51,7 @@ SAML_CONFIG = {
 
             'endpoints': {
                 'assertion_consumer_service': [
-                    (f'{BASE_URL}/acs/', saml2.BINDING_HTTP_POST, 0),
+                    (f'{BASE_URL}/acs/', saml2.BINDING_HTTP_POST),
                     ],
                 "single_logout_service": [
                     (f"{BASE_URL}/ls/post/", saml2.BINDING_HTTP_POST),
@@ -140,7 +140,8 @@ SAML_CONFIG = {
             # }]
 
     },
-    # avoids exception: HTTPSConnectionPool(host='satosa.testunical.it', port=443): Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
+    # avoids exception: HTTPSConnectionPool(host='satosa.testunical.it', port=443): 
+    # Max retries exceeded with url: /idp/shibboleth (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')],)",),))
     #'ca_certs' : "/opt/satosa-saml2/pki/http_certificates/ca.crt",
 
     # Signing
@@ -175,6 +176,8 @@ SAML_CONFIG = {
 
     #'valid_for': 24 * 10,
 }
+
+CONFIG = SAML_CONFIG
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)
 SAML_USE_NAME_ID_AS_USERNAME = True
