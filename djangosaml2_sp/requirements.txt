@@ -2,7 +2,7 @@ django>3.0<4.0
 ipython
 
 # hint before: pip install -U setuptools
-pysaml2==6.4.1
+pysaml2==6.5.0
 cffi
 
 # django saml2 SP
