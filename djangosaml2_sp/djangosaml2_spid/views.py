@@ -1,6 +1,8 @@
 import base64
 import logging
+import random
 import saml2
+import string
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -178,10 +180,12 @@ def spid_login(request,
 
     _req_str = authn_req_signed
     logger.debug('AuthRequest to {}: {}'.format(selected_idp, (_req_str)))
+    relay_state = ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
     http_info = client.apply_binding(binding,
                                      _req_str, location,
                                      sign=True,
-                                     sigalg=settings.SPID_ENC_ALG)
+                                     sigalg=settings.SPID_ENC_ALG,
+                                     relay_state = relay_state)
 
     # success, so save the session ID and return our response
     logger.debug('Saving the session_id in the OutstandingQueries cache')
