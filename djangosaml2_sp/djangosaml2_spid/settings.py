@@ -81,6 +81,9 @@ SAML_CONFIG = {
                                     'mobilePhone',
                                     'expirationDate'],
 
+            'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
+            'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
+            
             'authn_requests_signed': True,
             'logout_requests_signed': True,
             # Indicates that Authentication Responses to this SP must
@@ -97,73 +100,48 @@ SAML_CONFIG = {
             # otherwise...without OID will be rejected
             'allow_unknown_attributes': True,
 
-            # idp definition will be only in the metadata...
-
-            # Since this is a very simple SP it only needs to know about
-            # one IdP, therefore there is really no need for a metadata file
-            # or a WAYF-function or anything like that. It needs the URL of the IdP and that’s all.:
-            # "idp_url" : "{}/idp/SSOService.php".format(IDP_URL),
-
-            # in this section the list of IdPs we talk to are defined
-            # 'idp': {
-              # we do not need a WAYF service since there is
-              # only an IdP defined here. This IdP should be
-              # present in our metadata
-
-              # the keys of this dictionary are entity ids
-              # '{}/metadata'.format(IDP_URL): {
-                  # 'single_sign_on_service': {
-                        # saml2.BINDING_HTTP_REDIRECT: '{}/sso/redirect'.format(IDP_URL),
-                        # saml2.BINDING_HTTP_POST: '{}/sso/post'.format(IDP_URL),
-                        # },
-                  # 'single_logout_service': {
-                        # saml2.BINDING_HTTP_REDIRECT: '{}/logout'.format(IDP_URL),
-                        # },
-                        # },
-              # }, # end idp federation
-
             }, # end sp
 
     },
 
     # many metadata, many idp...
     'metadata': {
-        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'djangosaml2_spid'),
-                  'saml2_config'), 'idp_metadata.xml'),
+        # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'djangosaml2_spid'),
+                  # 'saml2_config'), 'idp_metadata.xml'),
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'idp_metadata.xml'),
                   # other here...
-                  ],
+                  # ],
         #
-        # "remote": [{
-            # "url":"{}/metadata/".format(IDP_URL),
-            # "cert":"idp_https_cert.pem"}]
-            # }]
-
+        "remote": [{
+            "url":"http://localhost:8080/metadata.xml",
+            }]
     },
 
     # Signing
-    'key_file': BASE_DIR + '/certificates/private.key',
-    'cert_file': BASE_DIR + '/certificates/public.cert',
+    'key_file': f'{BASE_DIR}/certificates/private.key',
+    'cert_file': f'{BASE_DIR}/certificates/public.cert',
 
     # Encryption
     'encryption_keypairs': [{
-        'key_file': BASE_DIR + '/certificates/private.key',
-        'cert_file': BASE_DIR + '/certificates/public.cert',
+        'key_file': f'{BASE_DIR}/certificates/private.key',
+        'cert_file': f'{BASE_DIR}/certificates/public.cert',
     }],
 
     # own metadata settings
     'contact_person': [
-      {'given_name': 'Giuseppe',
+      {
+       # 'given_name': 'Giuseppe',
        'sur_name': 'De Marco',
-       'company': 'Universita della Calabria',
+       # 'company': 'Universita della Calabria',
        'email_address': 'giuseppe.demarco@unical.it',
-       'contact_type': 'administrative'},
-      {'given_name': 'Giuseppe',
+       'contact_type': 'other'},
+      {
+       # 'given_name': 'Giuseppe',
        'sur_name': 'De Marco',
-       'company': 'Universita della Calabria',
+       # 'company': 'Universita della Calabria',
        'email_address': 'giuseppe.demarco@unical.it',
-       'contact_type': 'technical'},
+       'contact_type': 'other'},
       ],
     # you can set multilanguage information here
     'organization': {
@@ -172,7 +150,7 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    'valid_for': 24 * 10,
+    # 'valid_for': 24 * 10,
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)

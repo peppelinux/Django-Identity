@@ -10,7 +10,6 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-#BASE = 'http://sp1.example.it:8000'
 BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
@@ -18,8 +17,6 @@ LOGIN_URL = '/saml2/login/'
 LOGOUT_URL = '/saml2/logout/'
 LOGIN_REDIRECT_URL = '/saml2/echo_attributes'
 
-# needed only if metadata are downloaded remotely
-# IDP_URL = 'http://idp1.testunical.it:9000/idp'
 
 SAML_CONFIG = {
     'debug' : True,
@@ -51,7 +48,7 @@ SAML_CONFIG = {
 
             'endpoints': {
                 'assertion_consumer_service': [
-                    (f'{BASE_URL}/acs/', saml2.BINDING_HTTP_POST),
+                    (f'{BASE_URL}/acs/', saml2.BINDING_HTTP_POST, 1),
                     ],
                 "single_logout_service": [
                     (f"{BASE_URL}/ls/post/", saml2.BINDING_HTTP_POST),

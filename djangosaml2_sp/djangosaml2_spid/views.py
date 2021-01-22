@@ -17,12 +17,14 @@ from djangosaml2.overrides import Saml2Client
 from djangosaml2.signals import post_authenticated, pre_user_save
 from djangosaml2.utils import (
     available_idps, get_custom_setting,
-    get_idp_sso_supported_bindings, get_location
+    get_idp_sso_supported_bindings, get_location,
+    validate_referral_url
 )
 from djangosaml2.views import finish_logout, _get_subject_id
 from saml2 import BINDING_HTTP_REDIRECT, BINDING_HTTP_POST
 from saml2.authn_context import requested_authn_context
-from saml2.metadata import entity_descriptor
+from saml2.metadata import entity_descriptor, sign_entity_descriptor
+from saml2.sigver import security_context
 
 from .utils import repr_saml
 
@@ -74,7 +76,7 @@ def spid_login(request,
         came_from = settings.LOGIN_REDIRECT_URL
 
     # Ensure the user-originating redirection url is safe.
-    if not is_safe_url_compat(url=came_from, allowed_hosts={request.get_host()}):
+    if not validate_referral_url(request, came_from):
         came_from = settings.LOGIN_REDIRECT_URL
 
     # if the user is already authenticated that maybe because of two reasons:
@@ -144,7 +146,7 @@ def spid_login(request,
     # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
     authn_req.attribute_consuming_service_index = "0"
 
-    # import pdb; pdb.set_trace()
+    # breakpoint()
     issuer = saml2.saml.Issuer()
     issuer.name_qualifier = client.config.entityid
     issuer.text = client.config.entityid
@@ -321,13 +323,29 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         if alg.attributes.get('Algorithm') in supported_algs:
             new_list.append(alg)
     metadata.extensions.extension_elements = new_list
+    
     # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
-    metadata.extensions = None
+    # metadata.extensions = None
 
     # attribute consuming service service name patch
     service_name = metadata.spsso_descriptor.attribute_consuming_service[0].service_name[0]
     service_name.lang = 'it'
     service_name.text = conf._sp_name
+    
+    # breakpoint()
+    
+    # avviso 29 - TODO : Organization and Contacts ...
+    # https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29-specifiche_sp_pubblici_e_privati.pdf
+    metadata.organization.extensions
 
-    return HttpResponse(content=text_type(metadata).encode('utf-8'),
+    # metadata signature
+    secc = security_context(conf)
+    #
+    
+    sign_dig_algs = dict(sign_alg = conf._sp_signing_algorithm,
+                         digest_alg = conf._sp_digest_algorithm)
+    eid, xmldoc = sign_entity_descriptor(metadata, None, secc, **sign_dig_algs)
+
+
+    return HttpResponse(content=str(xmldoc).encode('utf-8'),
                         content_type="text/xml; charset=utf8")
