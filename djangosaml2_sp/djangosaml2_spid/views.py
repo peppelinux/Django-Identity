@@ -47,17 +47,86 @@ def index(request):
         return HttpResponse("LOGGED OUT: <a href={0}>LOGIN</a>".format(settings.LOGIN_URL))
 
 
-# TODO fix this in IdP side?
-@receiver(pre_user_save, sender=User)
-def custom_update_user(sender, instance, attributes, user_modified, **kargs):
-    """ Default behaviour does not play nice with booleans encoded in SAML as u'true'/u'false'.
-        This will convert those attributes to real booleans when saving.
-    """
-    for k, v in attributes.items():
-        u = set.intersection(set(v), set([u'true', u'false']))
-        if u:
-            setattr(instance, k, u.pop() == u'true')
-    return True  # I modified the user object
+# @receiver(pre_user_save, sender=User)
+# def custom_update_user(sender, instance, attributes, user_modified, **kargs):
+    # """ Default behaviour does not play nice with booleans encoded in SAML as u'true'/u'false'.
+        # This will convert those attributes to real booleans when saving.
+    # """
+    # for k, v in attributes.items():
+        # u = set.intersection(set(v), set([u'true', u'false']))
+        # if u:
+            # setattr(instance, k, u.pop() == u'true')
+    # return True  # I modified the user object
+
+
+def spid_sp_authn_request(conf, selected_idp, binding, 
+                          name_id_format, authn_context, 
+                          sig_alg, dig_alg):
+    client = Saml2Client(conf)
+
+    logger.debug(f'Redirecting user to the IdP via {binding} binding.')
+    # use the html provided by pysaml2 if no template was specified or it didn't exist
+    # SPID want the fqdn of the IDP, not the SSO endpoint
+    location_fixed = selected_idp
+    location = client.sso_location(selected_idp, binding)
+
+    authn_req = saml2.samlp.AuthnRequest()
+    authn_req.destination = location_fixed
+    # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
+    authn_req.attribute_consuming_service_index = "0"
+
+    # issuer
+    issuer = saml2.saml.Issuer()
+    issuer.name_qualifier = client.config.entityid
+    issuer.text = client.config.entityid
+    issuer.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+    authn_req.issuer = issuer
+
+    # message id
+    authn_req.id = saml2.s_utils.sid()
+    authn_req.version = saml2.VERSION # "2.0"
+    authn_req.issue_instant = saml2.time_util.instant()
+
+    name_id_policy = saml2.samlp.NameIDPolicy()
+    # del(name_id_policy.allow_create)
+    name_id_policy.format = name_id_format # settings.SPID_NAMEID_FORMAT
+    authn_req.name_id_policy  = name_id_policy
+
+    # settings.SPID_AUTH_CONTEXT
+    authn_context = requested_authn_context(class_ref=authn_context)
+    authn_req.requested_authn_context = authn_context
+
+    # force_auth = true only if SpidL >= 2
+    # if 'SpidL1' in authn_context.authn_context_class_ref[0].text:
+        # force_authn = 'false'
+    # else:
+    force_authn = 'true'
+    authn_req.force_authn = force_authn
+    # end force authn
+    
+    # settings.SPID_DEFAULT_BINDING
+    authn_req.protocol_binding = binding
+
+    assertion_consumer_service_url = client.config._sp_endpoints['assertion_consumer_service'][0][0]
+    authn_req.assertion_consumer_service_url = assertion_consumer_service_url
+
+    authn_req_signed = client.sign(authn_req, sign_prepare=False,
+                                   sign_alg=sig_alg, 
+                                   digest_alg=dig_alg,
+    )
+    logger.debug(f'AuthRequest to {selected_idp}: {authn_req_signed}')
+    choices = random.choices(string.ascii_uppercase + string.digits, k=12)
+    relay_state = ''.join(choices)
+    http_info = client.apply_binding(binding,
+                                     authn_req_signed, location,
+                                     sign=True,
+                                     sigalg=sig_alg,
+                                     relay_state = relay_state)
+    return dict(http_response = http_info,
+                authn_request = authn_req_signed,
+                relay_state = relay_state,
+                session_id = authn_req.id
+    )
 
 
 def spid_login(request,
@@ -81,16 +150,6 @@ def spid_login(request,
     if not validate_referral_url(request, came_from):
         came_from = settings.LOGIN_REDIRECT_URL
 
-    # if the user is already authenticated that maybe because of two reasons:
-    # A) He has this URL in two browser windows and in the other one he
-    #    has already initiated the authenticated session.
-    # B) He comes from a view that (incorrectly) send him here because
-    #    he does not have enough permissions. That view should have shown
-    #    an authorization error in the first place.
-    # We can only make one thing here and that is configurable with the
-    # SAML_IGNORE_AUTHENTICATED_USERS_ON_LOGIN setting. If that setting
-    # is True (default value) we will redirect him to the came_from view.
-    # Otherwise, we will show an (configurable) authorization error.
     if callable(request.user.is_authenticated):
         redirect_authenticated_user = getattr(settings,
                                               'SAML_IGNORE_AUTHENTICATED_USERS_ON_LOGIN',
@@ -101,7 +160,7 @@ def spid_login(request,
             logger.debug('User is already logged in')
             return render(request, authorization_error_template, {
                     'came_from': came_from})
-
+    
     # this works only if request came from wayf
     selected_idp = request.GET.get('idp', None)
 
@@ -133,65 +192,25 @@ def spid_login(request,
     if binding != BINDING_HTTP_POST:
             raise UnsupportedBinding('IDP %s does not support %s or %s',
                                      selected_idp, BINDING_HTTP_POST, BINDING_HTTP_REDIRECT)
-
-    client = Saml2Client(conf)
-
-    logger.debug('Redirecting user to the IdP via %s binding.', binding)
-    # use the html provided by pysaml2 if no template was specified or it didn't exist
-    # SPID want the fqdn of the IDP, not the SSO endpoint
-    location_fixed = selected_idp
-    location = client.sso_location(selected_idp, binding)
-    # ...hope to see the SSO endpoint soon in spid-testenv2
-
-    authn_req = saml2.samlp.AuthnRequest()
-    authn_req.destination = location_fixed
-    # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
-    authn_req.attribute_consuming_service_index = "0"
-
-    # breakpoint()
-    issuer = saml2.saml.Issuer()
-    issuer.name_qualifier = client.config.entityid
-    issuer.text = client.config.entityid
-    issuer.format = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
-    authn_req.issuer = issuer
-
-    # message id
-    authn_req.id = saml2.s_utils.sid()
-    authn_req.version = saml2.VERSION # "2.0"
-    authn_req.issue_instant = saml2.time_util.instant()
-
-    name_id_policy = saml2.samlp.NameIDPolicy()
-    # del(name_id_policy.allow_create)
-    name_id_policy.format = settings.SPID_NAMEID_FORMAT
-    authn_req.name_id_policy  = name_id_policy
-
-    authn_context = requested_authn_context(class_ref=settings.SPID_AUTH_CONTEXT)
-    authn_req.requested_authn_context = authn_context
-
-    authn_req.protocol_binding = settings.SPID_DEFAULT_BINDING
-
-    assertion_consumer_service_url = client.config._sp_endpoints['assertion_consumer_service'][0][0]
-    authn_req.assertion_consumer_service_url = assertion_consumer_service_url #'http://sp1.testunical.it:8000/saml2/acs/'
-
-    authn_req_signed = client.sign(authn_req, sign_prepare=False,
-                                   sign_alg=settings.SPID_ENC_ALG,
-                                   digest_alg=settings.SPID_DIG_ALG)
-    session_id = authn_req.id
-
-    _req_str = authn_req_signed
-    logger.debug('AuthRequest to {}: {}'.format(selected_idp, (_req_str)))
-    relay_state = ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
-    http_info = client.apply_binding(binding,
-                                     _req_str, location,
-                                     sign=True,
-                                     sigalg=settings.SPID_ENC_ALG,
-                                     relay_state = relay_state)
-
+    
+    # SPID things here
+    login_response = spid_sp_authn_request(conf, 
+                                           selected_idp, 
+                                           binding, 
+                                           settings.SPID_NAMEID_FORMAT,
+                                           settings.SPID_AUTH_CONTEXT,
+                                           settings.SPID_SIG_ALG,
+                                           settings.SPID_DIG_ALG
+    )
+    
+    session_id = login_response['session_id']
+    http_response = login_response['http_response']
+    
     # success, so save the session ID and return our response
-    logger.debug('Saving the session_id in the OutstandingQueries cache')
+    logger.debug(f'Saving session-id {session_id} in the OutstandingQueries cache')
     oq_cache = OutstandingQueriesCache(request.session)
     oq_cache.set(session_id, came_from)
-    return HttpResponse(http_info['data'])
+    return HttpResponse(http_response['data'])
 
 
 @login_required
@@ -287,8 +306,8 @@ def spid_logout(request, config_loader_path=None, **kwargs):
                                      _req_str,
                                      slo_location,
                                      sign=True,
-                                     sigalg=settings.SPID_ENC_ALG)
-
+                                     sigalg=settings.SPID_ENC_ALG
+    )
     state.sync()
     return HttpResponse(http_info['data'])
 
@@ -312,21 +331,20 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         assertion_consumer_service.index = str(cnt)
         cnt += 1
 
-    # nameformat patch... tutto questo non rispecchia gli standard OASIS
+    # nameformat patch... non proprio standard
     for reqattr in metadata.spsso_descriptor.attribute_consuming_service[0].requested_attribute:
         reqattr.name_format = None #"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
         # reqattr.is_required = None
         reqattr.friendly_name = None
 
     # remove unecessary encryption and digest algs
-    supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
-                      'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256']
-    new_list = []
-    for alg in metadata.extensions.extension_elements:
-        # if alg.namespace != 'urn:oasis:names:tc:SAML:metadata:algsupport': continue
-        if alg.attributes.get('Algorithm') in supported_algs:
-            new_list.append(alg)
-    metadata.extensions.extension_elements = new_list
+    # supported_algs = ['http://www.w3.org/2009/xmldsig11#dsa-sha256',
+    #                   'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256']
+    # new_list = []
+    # for alg in metadata.extensions.extension_elements:
+        # if alg.attributes.get('Algorithm') in supported_algs:
+            # new_list.append(alg)
+    # metadata.extensions.extension_elements = new_list
     metadata.extensions = None
     
     # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
@@ -337,21 +355,31 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     service_name.lang = 'it'
     service_name.text = conf._sp_name
     
-    # avviso 29 - v3 - TODO : Organization and Contacts ...
+    ##############
+    # avviso 29 v3
+    #
     # https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati_0.pdf
     # metadata.organization.extensions
     saml2.md.SamlBase.register_prefix(settings.SPID_PREFIXES)
-    spid_extensions = saml2.ExtensionElement('Extensions', 
-                                             namespace='urn:oasis:names:tc:SAML:2.0:metadata')
-
-    for k,v in settings.SPID_CONTACT_PERSON_DICT.items():
-        ext = saml2.ExtensionElement(k, 
-                                     namespace=settings.SPID_PREFIXES['spid'],
-                                     text=v)
-        spid_extensions.children.append(ext)
     
-    metadata.contact_person[0].extensions = spid_extensions
+    contact_map = zip(metadata.contact_person, settings.SPID_CONTACTS_LIST)
+    cnt = 0
+    for contact in contact_map:
+        if contact[0].contact_type == 'other':
+            spid_extensions = saml2.ExtensionElement('Extensions', 
+                                                     namespace='urn:oasis:names:tc:SAML:2.0:metadata')
+            for k,v in contact[1].items():
+                ext = saml2.ExtensionElement(k, 
+                                             namespace=settings.SPID_PREFIXES['spid'],
+                                             text=v)
+                spid_extensions.children.append(ext)
+            metadata.contact_person[cnt].extensions = spid_extensions
+            cnt += 1
+        elif contact[0].contact_type == 'billing':
+            raise Exception('contact_type "billing" not implemented yet')
+    #
     # fine avviso 29v3
+    ###################
     
     # metadata signature
     secc = security_context(conf)

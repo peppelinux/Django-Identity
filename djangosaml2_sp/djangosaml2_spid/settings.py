@@ -17,17 +17,22 @@ LOGOUT_URL = '/saml2/logout/'
 
 SPID_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
 SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
-SPID_ENC_ALG = saml2.xmldsig.SIG_RSA_SHA256
+SPID_SIG_ALG = saml2.xmldsig.SIG_RSA_SHA256
 SPID_NAMEID_FORMAT = NAMEID_FORMAT_TRANSIENT
 SPID_AUTH_CONTEXT = 'https://www.spid.gov.it/SpidL1'
 
 # Avviso 29v3
-SPID_PREFIXES = dict(spid = "https://spid.gov.it/saml-extensions")
-SPID_CONTACT_PERSON_DICT = {
+SPID_PREFIXES = dict(
+    spid = "https://spid.gov.it/saml-extensions",
+    fpa = "https://spid.gov.it/invoicing-extensions"
+)
+SPID_CONTACTS_LIST = [
+    {
     'VATNumber': 'IT12345678901',
     'FiscalCode': 'XYZABCAAMGGJ000W',
     'Private': ''
-}
+    },
+]
 
 SAML_CONFIG = {
     'debug' : True,
@@ -140,7 +145,7 @@ SAML_CONFIG = {
     # own metadata settings
     'contact_person': [
       {
-       'telephoneNumber': '+39 8475634785',
+       'telephone_number': '+39 8475634785',
        'email_address': 'giuseppe.demarco@example.org',
        'contact_type': 'other'},
     ],
