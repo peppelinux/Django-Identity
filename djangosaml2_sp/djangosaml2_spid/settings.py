@@ -1,5 +1,6 @@
 import os
 import saml2
+from saml2.md import SamlBase
 from saml2.saml import (NAMEID_FORMAT_PERSISTENT,
                         NAMEID_FORMAT_TRANSIENT,
                         NAMEID_FORMAT_UNSPECIFIED)
@@ -19,6 +20,14 @@ SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
 SPID_ENC_ALG = saml2.xmldsig.SIG_RSA_SHA256
 SPID_NAMEID_FORMAT = NAMEID_FORMAT_TRANSIENT
 SPID_AUTH_CONTEXT = 'https://www.spid.gov.it/SpidL1'
+
+# Avviso 29v3
+SPID_PREFIXES = dict(spid = "https://spid.gov.it/saml-extensions")
+SPID_CONTACT_PERSON_DICT = {
+    'VATNumber': 'IT12345678901',
+    'FiscalCode': 'XYZABCAAMGGJ000W',
+    'Private': ''
+}
 
 SAML_CONFIG = {
     'debug' : True,
@@ -131,18 +140,10 @@ SAML_CONFIG = {
     # own metadata settings
     'contact_person': [
       {
-       # 'given_name': 'Giuseppe',
-       'sur_name': 'De Marco',
-       # 'company': 'Universita della Calabria',
-       'email_address': 'giuseppe.demarco@unical.it',
+       'telephoneNumber': '+39 8475634785',
+       'email_address': 'giuseppe.demarco@example.org',
        'contact_type': 'other'},
-      {
-       # 'given_name': 'Giuseppe',
-       'sur_name': 'De Marco',
-       # 'company': 'Universita della Calabria',
-       'email_address': 'giuseppe.demarco@unical.it',
-       'contact_type': 'other'},
-      ],
+    ],
     # you can set multilanguage information here
     'organization': {
       'name': [('Unical', 'it'), ('Unical', 'en')],
@@ -150,7 +151,6 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    # 'valid_for': 24 * 10,
 }
 
 # OR NAME_ID or MAIN_ATTRIBUTE (not together!)

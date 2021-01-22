@@ -327,6 +327,7 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         if alg.attributes.get('Algorithm') in supported_algs:
             new_list.append(alg)
     metadata.extensions.extension_elements = new_list
+    metadata.extensions = None
     
     # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
     # metadata.extensions = None
@@ -336,16 +337,24 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     service_name.lang = 'it'
     service_name.text = conf._sp_name
     
-    # breakpoint()
-    
-    # avviso 29 - TODO : Organization and Contacts ...
-    # https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29-specifiche_sp_pubblici_e_privati.pdf
-    metadata.organization.extensions
+    # avviso 29 - v3 - TODO : Organization and Contacts ...
+    # https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati_0.pdf
+    # metadata.organization.extensions
+    saml2.md.SamlBase.register_prefix(settings.SPID_PREFIXES)
+    spid_extensions = saml2.ExtensionElement('Extensions', 
+                                             namespace='urn:oasis:names:tc:SAML:2.0:metadata')
 
+    for k,v in settings.SPID_CONTACT_PERSON_DICT.items():
+        ext = saml2.ExtensionElement(k, 
+                                     namespace=settings.SPID_PREFIXES['spid'],
+                                     text=v)
+        spid_extensions.children.append(ext)
+    
+    metadata.contact_person[0].extensions = spid_extensions
+    # fine avviso 29v3
+    
     # metadata signature
     secc = security_context(conf)
-    #
-    
     sign_dig_algs = dict(sign_alg = conf._sp_signing_algorithm,
                          digest_alg = conf._sp_digest_algorithm)
     eid, xmldoc = sign_entity_descriptor(metadata, None, secc, **sign_dig_algs)
