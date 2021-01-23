@@ -26,11 +26,40 @@ SPID_PREFIXES = dict(
     spid = "https://spid.gov.it/saml-extensions",
     fpa = "https://spid.gov.it/invoicing-extensions"
 )
-SPID_CONTACTS_LIST = [
+
+# other or billing, not together at the same time!
+SPID_CONTACTS = [
+    # {
+    # 'contact_type': 'other',
+    # 'telephone_number': '+39 8475634785',
+    # 'email_address': 'tech-info@example.org',
+    # 'VATNumber': 'IT12345678901',
+    # 'FiscalCode': 'XYZABCAAMGGJ000W',
+    # 'Private': ''
+    # },
+    # {
+    # 'contact_type': 'other',
+    # 'telephone_number': '+39 84756344785',
+    # 'email_address': 'info@example.org',
+    # 'VATNumber': 'IT12345678901',
+    # 'FiscalCode': 'XYasdasdadasdGGJ000W',
+    # 'Private': ''
+    # },
     {
-    'VATNumber': 'IT12345678901',
-    'FiscalCode': 'XYZABCAAMGGJ000W',
-    'Private': ''
+    'contact_type': 'billing',
+    'telephone_number': '+39 84756344785',
+    'email_address': 'info@example.org',
+    'company': 'example s.p.a.',
+    # 'CodiceFiscale': 'NGLMRA80A01D086T',
+    'IdCodice': '983745349857',
+    'IdPaese': 'IT',
+    'Denominazione': 'Destinatario Fatturazione',
+    'Indirizzo': 'via tante cose',
+    'NumeroCivico': '12',
+    'CAP': '87100',
+    'Comune': 'Cosenza',
+    'Provincia': 'CS',
+    'Nazione': 'IT',
     },
 ]
 
@@ -142,18 +171,11 @@ SAML_CONFIG = {
         'cert_file': f'{BASE_DIR}/certificates/public.cert',
     }],
 
-    # own metadata settings
-    'contact_person': [
-      {
-       'telephone_number': '+39 8475634785',
-       'email_address': 'giuseppe.demarco@example.org',
-       'contact_type': 'other'},
-    ],
     # you can set multilanguage information here
     'organization': {
-      'name': [('Unical', 'it'), ('Unical', 'en')],
-      'display_name': [('Unical', 'it'), ('Unical', 'en')],
-      'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
+      'name': [('Example', 'it'), ('Example', 'en')],
+      'display_name': [('Example', 'it'), ('Example', 'en')],
+      'url': [('http://www.example.it', 'it'), ('http://www.example.it', 'en')],
       },
 
 }

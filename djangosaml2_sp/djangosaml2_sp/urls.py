@@ -50,9 +50,9 @@ if 'saml2_sp' in settings.INSTALLED_APPS:
                         name='logout'),
 
 
-if 'djangosaml2' in settings.INSTALLED_APPS:
-    import djangosaml2.urls
-    urlpatterns += path('', include((djangosaml2.urls, 'djangosaml2',))),
+# if 'djangosaml2' in settings.INSTALLED_APPS:
+    # import djangosaml2.urls
+    # urlpatterns += path('', include((djangosaml2.urls, 'djangosaml2',))),
 
 if 'djangosaml2_spid' in settings.INSTALLED_APPS:
     import djangosaml2_spid.urls

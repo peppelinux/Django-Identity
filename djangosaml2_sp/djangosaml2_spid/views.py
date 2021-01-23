@@ -242,7 +242,6 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     # spid-testenv2 preleva l'attribute consumer service dalla authnRequest (anche se questo sta già nei metadati...)
     slo_req.attribute_consuming_service_index = "0"
 
-    # import pdb; pdb.set_trace()
     issuer = saml2.saml.Issuer()
     issuer.name_qualifier = client.config.entityid
     issuer.text = client.config.entityid
@@ -256,7 +255,6 @@ def spid_logout(request, config_loader_path=None, **kwargs):
 
     # oggetto
     slo_req.name_id = subject_id
-
 
     session_info = client.users.get_info_from(slo_req.name_id,
                                               subject_id.name_qualifier,
@@ -282,7 +280,6 @@ def spid_logout(request, config_loader_path=None, **kwargs):
                                  sign_alg=settings.SPID_ENC_ALG,
                                  digest_alg=settings.SPID_DIG_ALG)
     session_id = slo_req.id
-
 
     _req_str = slo_req_signed
     logger.debug('LogoutRequest to {}: {}'.format(subject_id.name_qualifier,
@@ -312,11 +309,7 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     return HttpResponse(http_info['data'])
 
 
-def metadata_spid(request, config_loader_path=None, valid_for=None):
-    """Returns an XML with the SAML 2.0 metadata for this
-    SP as configured in the settings.py file.
-    """
-    conf = get_config(config_loader_path, request)
+def spid_sp_metadata(conf):
     metadata = entity_descriptor(conf)
 
     # this will renumber acs starting from 0 and set index=0 as is_default
@@ -345,10 +338,9 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
         # if alg.attributes.get('Algorithm') in supported_algs:
             # new_list.append(alg)
     # metadata.extensions.extension_elements = new_list
-    metadata.extensions = None
     
     # ... Piuttosto non devo specificare gli algoritmi di firma/criptazione...
-    # metadata.extensions = None
+    metadata.extensions = None
 
     # attribute consuming service service name patch
     service_name = metadata.spsso_descriptor.attribute_consuming_service[0].service_name[0]
@@ -359,24 +351,97 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     # avviso 29 v3
     #
     # https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati_0.pdf
-    # metadata.organization.extensions
     saml2.md.SamlBase.register_prefix(settings.SPID_PREFIXES)
     
-    contact_map = zip(metadata.contact_person, settings.SPID_CONTACTS_LIST)
+    contact_map = settings.SPID_CONTACTS
     cnt = 0
+    metadata.contact_person = []
     for contact in contact_map:
-        if contact[0].contact_type == 'other':
-            spid_extensions = saml2.ExtensionElement('Extensions', 
-                                                     namespace='urn:oasis:names:tc:SAML:2.0:metadata')
-            for k,v in contact[1].items():
-                ext = saml2.ExtensionElement(k, 
-                                             namespace=settings.SPID_PREFIXES['spid'],
-                                             text=v)
+        spid_contact = saml2.md.ContactPerson()
+        spid_contact.contact_type = contact['contact_type']
+        contact_kwargs = {
+            'email_address' : [contact['email_address']],
+            'telephone_number' : [contact['telephone_number']]
+        }
+        if contact['contact_type'] == 'other':
+            spid_contact.loadd(contact_kwargs)
+            contact_kwargs['contact_type'] = contact['contact_type']
+            spid_extensions = saml2.ExtensionElement(
+                'Extensions', 
+                namespace='urn:oasis:names:tc:SAML:2.0:metadata'
+            )
+            for k,v in contact.items():
+                if k in contact_kwargs: continue
+                ext = saml2.ExtensionElement(
+                        k, 
+                        namespace=settings.SPID_PREFIXES['spid'],
+                        text=v
+                )
                 spid_extensions.children.append(ext)
-            metadata.contact_person[cnt].extensions = spid_extensions
-            cnt += 1
-        elif contact[0].contact_type == 'billing':
-            raise Exception('contact_type "billing" not implemented yet')
+        
+        elif contact['contact_type'] == 'billing':
+            contact_kwargs['company'] = contact['company']
+            spid_contact.loadd(contact_kwargs)
+            spid_extensions = saml2.ExtensionElement(
+                'Extensions', 
+                namespace='urn:oasis:names:tc:SAML:2.0:metadata'
+            )
+            
+            elements = {}
+            for k,v in contact.items():
+                if k in contact_kwargs: continue
+                ext = saml2.ExtensionElement(
+                        k, 
+                        namespace=settings.SPID_PREFIXES['fpa'],
+                        text=v
+                )
+                elements[k] = ext
+            
+            # DatiAnagrafici
+            IdFiscaleIVA = saml2.ExtensionElement(
+                'IdFiscaleIVA', 
+                namespace=settings.SPID_PREFIXES['fpa'],
+            )
+            Anagrafica = saml2.ExtensionElement(
+                'Anagrafica', 
+                namespace=settings.SPID_PREFIXES['fpa'],
+            )
+            Anagrafica.children.append(elements['Denominazione'])
+            
+            IdFiscaleIVA.children.append(elements['IdPaese'])
+            IdFiscaleIVA.children.append(elements['IdCodice'])
+            DatiAnagrafici = saml2.ExtensionElement(
+                'DatiAnagrafici', 
+                namespace=settings.SPID_PREFIXES['fpa'],
+            )
+            if elements.get('CodiceFiscale'):
+                DatiAnagrafici.children.append(elements['CodiceFiscale'])
+            DatiAnagrafici.children.append(IdFiscaleIVA)
+            DatiAnagrafici.children.append(Anagrafica)
+            CessionarioCommittente = saml2.ExtensionElement(
+                'CessionarioCommittente', 
+                namespace=settings.SPID_PREFIXES['fpa'],
+            )
+            CessionarioCommittente.children.append(DatiAnagrafici)
+            
+            # Sede
+            Sede = saml2.ExtensionElement(
+                'Sede', 
+                namespace=settings.SPID_PREFIXES['fpa'],
+            )
+            Sede.children.append(elements['Indirizzo'])
+            Sede.children.append(elements['NumeroCivico'])
+            Sede.children.append(elements['CAP'])
+            Sede.children.append(elements['Comune'])
+            Sede.children.append(elements['Provincia'])
+            Sede.children.append(elements['Nazione'])
+            CessionarioCommittente.children.append(Sede)
+            
+            spid_extensions.children.append(CessionarioCommittente)
+
+        spid_contact.extensions = spid_extensions
+        metadata.contact_person.append(spid_contact)
+        cnt += 1
     #
     # fine avviso 29v3
     ###################
@@ -386,7 +451,14 @@ def metadata_spid(request, config_loader_path=None, valid_for=None):
     sign_dig_algs = dict(sign_alg = conf._sp_signing_algorithm,
                          digest_alg = conf._sp_digest_algorithm)
     eid, xmldoc = sign_entity_descriptor(metadata, None, secc, **sign_dig_algs)
+    return xmldoc
 
 
+def metadata_spid(request, config_loader_path=None, valid_for=None):
+    """Returns an XML with the SAML 2.0 metadata for this
+    SP as configured in the settings.py file.
+    """
+    conf = get_config(config_loader_path, request)
+    xmldoc = spid_sp_metadata(conf)
     return HttpResponse(content=str(xmldoc).encode('utf-8'),
                         content_type="text/xml; charset=utf8")
