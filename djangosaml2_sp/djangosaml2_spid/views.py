@@ -11,6 +11,7 @@ from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import TemplateDoesNotExist
+from django.urls import reverse
 from djangosaml2.conf import get_config
 from djangosaml2.cache import IdentityCache, OutstandingQueriesCache
 from djangosaml2.cache import StateCache
@@ -61,7 +62,7 @@ def index(request):
 
 def spid_sp_authn_request(conf, selected_idp, binding, 
                           name_id_format, authn_context, 
-                          sig_alg, dig_alg):
+                          sig_alg, dig_alg, next_url=''):
     client = Saml2Client(conf)
 
     logger.debug(f'Redirecting user to the IdP via {binding} binding.')
@@ -115,8 +116,7 @@ def spid_sp_authn_request(conf, selected_idp, binding,
                                    digest_alg=dig_alg,
     )
     logger.debug(f'AuthRequest to {selected_idp}: {authn_req_signed}')
-    choices = random.choices(string.ascii_uppercase + string.digits, k=12)
-    relay_state = ''.join(choices)
+    relay_state = next_url or reverse('djangosaml2:saml2_echo_attributes')
     http_info = client.apply_binding(binding,
                                      authn_req_signed, location,
                                      sign=True,
@@ -141,25 +141,25 @@ def spid_login(request,
     """
     logger.debug('SPID Login process started')
 
-    came_from = request.GET.get('next', settings.LOGIN_REDIRECT_URL)
-    if not came_from:
+    next_url = request.GET.get('next', settings.LOGIN_REDIRECT_URL)
+    if not next_url:
         logger.warning('The next parameter exists but is empty')
-        came_from = settings.LOGIN_REDIRECT_URL
+        next_url = settings.LOGIN_REDIRECT_URL
 
     # Ensure the user-originating redirection url is safe.
-    if not validate_referral_url(request, came_from):
-        came_from = settings.LOGIN_REDIRECT_URL
+    if not validate_referral_url(request, next_url):
+        next_url = settings.LOGIN_REDIRECT_URL
 
     if callable(request.user.is_authenticated):
         redirect_authenticated_user = getattr(settings,
                                               'SAML_IGNORE_AUTHENTICATED_USERS_ON_LOGIN',
                                               True)
         if redirect_authenticated_user:
-            return HttpResponseRedirect(came_from)
+            return HttpResponseRedirect(next_url)
         else:
             logger.debug('User is already logged in')
             return render(request, authorization_error_template, {
-                    'came_from': came_from})
+                    'came_from': next_url})
     
     # this works only if request came from wayf
     selected_idp = request.GET.get('idp', None)
@@ -172,7 +172,7 @@ def spid_login(request,
         logger.debug('A discovery process is needed')
         return render(request, wayf_template, {
                 'available_idps': idps.items(),
-                'came_from': came_from})
+                'next_url': next_url})
     else:
         # otherwise is the first one
         try:
@@ -200,7 +200,8 @@ def spid_login(request,
                                            settings.SPID_NAMEID_FORMAT,
                                            settings.SPID_AUTH_CONTEXT,
                                            settings.SPID_SIG_ALG,
-                                           settings.SPID_DIG_ALG
+                                           settings.SPID_DIG_ALG,
+                                           next_url
     )
     
     session_id = login_response['session_id']
@@ -208,8 +209,8 @@ def spid_login(request,
     
     # success, so save the session ID and return our response
     logger.debug(f'Saving session-id {session_id} in the OutstandingQueries cache')
-    oq_cache = OutstandingQueriesCache(request.session)
-    oq_cache.set(session_id, came_from)
+    oq_cache = OutstandingQueriesCache(request.saml_session)
+    oq_cache.set(session_id, next_url)
     return HttpResponse(http_response['data'])
 
 
@@ -220,12 +221,12 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     This view initiates the SAML2 Logout request
     using the pysaml2 library to create the LogoutRequest.
     """
-    state = StateCache(request.session)
+    state = StateCache(request.saml_session)
     conf = get_config(config_loader_path, request)
 
     client = Saml2Client(conf, state_cache=state,
-                         identity_cache=IdentityCache(request.session))
-    subject_id = _get_subject_id(request.session)
+                         identity_cache=IdentityCache(request.saml_session))
+    subject_id = _get_subject_id(request.saml_session)
     if subject_id is None:
         logger.warning(
             'The session does not contain the subject id for user %s',
