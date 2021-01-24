@@ -5,6 +5,7 @@ import saml2
 import string
 
 from django.conf import settings
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.dispatch import receiver
@@ -140,7 +141,6 @@ def spid_login(request,
     It uses the SAML 2.0 Http POST protocol binding.
     """
     logger.debug('SPID Login process started')
-
     next_url = request.GET.get('next', settings.LOGIN_REDIRECT_URL)
     if not next_url:
         logger.warning('The next parameter exists but is empty')
@@ -185,7 +185,7 @@ def spid_login(request,
             return HttpResponse(text_type(e))
 
     binding = BINDING_HTTP_POST
-    logger.debug('Trying binding %s for IDP %s', binding, selected_idp)
+    logger.debug(f'Trying binding {binding} for IDP {selected_idp}')
 
     # ensure our selected binding is supported by the IDP
     supported_bindings = get_idp_sso_supported_bindings(selected_idp, config=conf)
@@ -223,9 +223,13 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     """
     state = StateCache(request.saml_session)
     conf = get_config(config_loader_path, request)
-
     client = Saml2Client(conf, state_cache=state,
                          identity_cache=IdentityCache(request.saml_session))
+    
+    # whatever happens, however, the user will be logged out of this sp
+    auth.logout(request)
+    state.sync()
+    
     subject_id = _get_subject_id(request.saml_session)
     if subject_id is None:
         logger.warning(
@@ -278,7 +282,7 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     slo_req.assertion_consumer_service_url = assertion_consumer_service_url
 
     slo_req_signed = client.sign(slo_req, sign_prepare=False,
-                                 sign_alg=settings.SPID_ENC_ALG,
+                                 sign_alg=settings.SPID_SIG_ALG,
                                  digest_alg=settings.SPID_DIG_ALG)
     session_id = slo_req.id
 
@@ -299,12 +303,12 @@ def spid_logout(request, config_loader_path=None, **kwargs):
     if not slo_location:
         logger.error('Unable to know SLO endpoint in {}'.format(subject_id.name_qualifier))
         return HttpResponse(text_type(e))
-
+    
     http_info = client.apply_binding(binding,
                                      _req_str,
                                      slo_location,
                                      sign=True,
-                                     sigalg=settings.SPID_ENC_ALG
+                                     sigalg=settings.SPID_SIG_ALG
     )
     state.sync()
     return HttpResponse(http_info['data'])

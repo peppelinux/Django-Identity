@@ -14,7 +14,7 @@ BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/spid/login/'
 # LOGOUT_URL = '/saml2/logout/'
-LOGOUT_URL = '/logout/'
+LOGOUT_URL = '/spid/logout/'
 
 
 SPID_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
@@ -156,9 +156,10 @@ SAML_CONFIG = {
                   # other here...
                   # ],
         #
-        "remote": [{
-            "url":"http://localhost:8080/metadata.xml",
-            }]
+        "remote": [
+            {"url":"http://localhost:8080/metadata.xml"},
+            # {'url': 'http://0.0.0.0:8088/metadata'}
+        ]
     },
 
     # Signing
