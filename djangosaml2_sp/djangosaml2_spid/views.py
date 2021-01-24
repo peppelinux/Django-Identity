@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.dispatch import receiver
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
@@ -170,9 +170,12 @@ def spid_login(request,
     idps = available_idps(conf)
     if selected_idp is None and len(idps) > 1:
         logger.debug('A discovery process is needed')
-        return render(request, wayf_template, {
+        return render(request, wayf_template, 
+            {
                 'available_idps': idps.items(),
-                'next_url': next_url})
+                'next_url': next_url
+            }
+        )
     else:
         # otherwise is the first one
         try:
@@ -180,9 +183,6 @@ def spid_login(request,
         except TypeError as e:
             logger.error('Unable to know which IdP to use')
             return HttpResponse(text_type(e))
-
-    # choose a binding to try first
-    # sign_requests = getattr(conf, '_sp_authn_requests_signed', False)
 
     binding = BINDING_HTTP_POST
     logger.debug('Trying binding %s for IDP %s', binding, selected_idp)
@@ -233,7 +233,7 @@ def spid_logout(request, config_loader_path=None, **kwargs):
             request.user)
         logger.error("Looks like the user %s is not logged in any IdP/AA", subject_id)
         return HttpResponseBadRequest("You are not logged in any IdP/AA")
-
+    
     slo_req = saml2.samlp.LogoutRequest()
 
     binding = settings.SPID_DEFAULT_BINDING
@@ -256,7 +256,7 @@ def spid_logout(request, config_loader_path=None, **kwargs):
 
     # oggetto
     slo_req.name_id = subject_id
-
+    
     session_info = client.users.get_info_from(slo_req.name_id,
                                               subject_id.name_qualifier,
                                               False)

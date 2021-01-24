@@ -13,7 +13,9 @@ BASE = 'http://sp1.testunical.it:8000'
 BASE_URL = '{}/saml2'.format(BASE)
 
 LOGIN_URL = '/spid/login/'
-LOGOUT_URL = '/saml2/logout/'
+# LOGOUT_URL = '/saml2/logout/'
+LOGOUT_URL = '/logout/'
+
 
 SPID_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
 SPID_DIG_ALG = saml2.xmldsig.DIGEST_SHA256
@@ -104,8 +106,6 @@ SAML_CONFIG = {
                                     'fiscalNumber',
                                     'email'],
 
-            # this are formaly correct but in pySAML4.7 it doesn't make sense because with SPID they doesn't work properly
-            # as spid-testenv2 doesn't sent in AuthnRequest the attribute format and pySAML2 manage these as URI!
             'requested_attribute_name_format': saml2.saml.NAME_FORMAT_BASIC,
             'name_format': saml2.saml.NAME_FORMAT_BASIC,
             #

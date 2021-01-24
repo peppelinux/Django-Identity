@@ -164,7 +164,6 @@ if 'saml2_sp' in INSTALLED_APPS or \
 
 if 'djangosaml2_spid' in INSTALLED_APPS:
     from djangosaml2_spid.settings import *
-    LOGOUT_URL = '/spid/logout'
 
 
 LOGGING = {
