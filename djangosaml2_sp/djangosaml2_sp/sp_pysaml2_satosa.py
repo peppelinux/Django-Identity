@@ -100,14 +100,14 @@ SAML_CONFIG = {
 
     # many metadata, many idp...
     'metadata': {
-        #  'local': [
+         'local': [
 
-                  #  os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
-                  #  'saml2_config'), 'idp.testunical.it.xml'),
+                   os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
+                   'saml2_config')),
 
                   # os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'),
                   # 'saml2_config'), 'satosa_metadata.xml'),
-                  #  ],
+                   ],
         #  #
 
         "remote": [
@@ -124,15 +124,16 @@ SAML_CONFIG = {
              #  "url": "https://idp.testunical.it/idp/shibboleth",
              #  "disable_ssl_certificate_validation": True,
              #  },
-            {
-             "url": "http://idp1.testunical.it:9000/idp/metadata/",
-             #  "disable_ssl_certificate_validation": True,
-             }
+            # {
+             # 'url': 'https://localhost:10000/Saml2IDP/metadata',
+             # only for test purpose !
+             # "disable_ssl_certificate_validation": True,
+             # }
             ],
 
         # "mdq": [{
             # "url": "https://ds.testunical.it",
-            # "cert": "certficates/others/ds.testunical.it.cert",
+            # "cert": "certificates/others/ds.testunical.it.cert",
             # "disable_ssl_certificate_validation": True,
             # }]
 
