@@ -18,22 +18,33 @@ OIDC Applications built on top of [jwtconnect.io](https://jwtconnect.io/) stack:
 
 - [django-oidc-op](https://github.com/peppelinux/django-oidc-op), based on [oidc-op](https://github.com/rohe/oidc-op)
 
-oAuth2:
-
-- [django-oauth-toolkit](https://django-oauth-toolkit.readthedocs.io/en/latest/index.html), See [oAuth2 RFC](https://tools.ietf.org/html/rfc6749#section-4)
-
 
 ### Run SP and IDP in HTTPs
 See Installation examples.
 
+###### Configuration
+
+Is you're a djangoer you should problably know that you have, first of all, set yuou environment and decide 
+which kind of RDBMS engine you want to use, then `./manage.py migrate`. This is an example project, use it as your best.
+
+In `djangosaml2_sp/settings.py` configure which type of SAML2 SP you want to use.
 ````
-pip install gunicorn
+# this is for a standard SAML2 federation
+if 'saml2_sp' in INSTALLED_APPS:
+    from . sp_pysaml2_satosa import *
+    # from . import sp_pysaml2_shibidp as sp_pysaml2
+    
 
-# example for sp is
-gunicorn -b0.0.0.0:11000 djangosaml2_sp.wsgi:application --keyfile=./certificates/private.key --certfile=./certificates/public.cert
+# SPID SP
+# if 'djangosaml2_spid' in INSTALLED_APPS:
+    # from djangosaml2_spid.settings import *
+````
 
-# or using uwsgi
-uwsgi --wsgi-file djangosaml2_sp.wsgi  --https 0.0.0.0:10000,./pki/frontend.cert,./pki/frontend.key --callable application --honour-stdin
+If you want to use a SPID SP see `djangosaml2_sp.settings` for configuration.
+
+###### run
+````
+bash run.sh
 
 ````
 
