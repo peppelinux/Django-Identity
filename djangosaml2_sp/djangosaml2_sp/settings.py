@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     # SAML2 SP
     'djangosaml2',
     'saml2_sp',
-    'djangosaml2_spid',
+    # 'djangosaml2_spid',
 ]
 
 MIDDLEWARE = [
@@ -152,17 +152,13 @@ if 'saml2_sp' in INSTALLED_APPS or \
         'django.contrib.auth.backends.ModelBackend',
         'djangosaml2.backends.Saml2Backend',
     )
-
-
-# this is for a standard SAML2 federation
-if 'saml2_sp' in INSTALLED_APPS:
-    from . sp_pysaml2_satosa import *
-    # from . import sp_pysaml2_shibidp as sp_pysaml2
-    
+ 
 
 # SPID SP
-# if 'djangosaml2_spid' in INSTALLED_APPS:
-    # from djangosaml2_spid.settings import *
+if 'djangosaml2_spid' in INSTALLED_APPS:
+    from djangosaml2_spid.settings import *
+elif 'saml2_sp' in INSTALLED_APPS:
+    from . sp_pysaml2_satosa import *
 
 
 LOGGING = {

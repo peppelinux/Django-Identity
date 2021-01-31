@@ -157,7 +157,7 @@ SAML_CONFIG = {
                   # ],
         #
         "remote": [
-            # {"url":"http://localhost:8080/metadata.xml"},
+            {"url":"http://localhost:8080/metadata.xml"},
             # {'url': 'http://0.0.0.0:8088/metadata'},
         ]
     },
