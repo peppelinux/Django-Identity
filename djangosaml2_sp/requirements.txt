@@ -7,4 +7,4 @@ cffi
 
 # django saml2 SP
 djangosaml2>=1.0.0
-https://github.com/peppelinux/djangosaml2_spid.git
+git+https://github.com/peppelinux/djangosaml2_spid.git
