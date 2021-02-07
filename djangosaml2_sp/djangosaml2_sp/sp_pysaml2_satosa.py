@@ -27,10 +27,7 @@ SAML_CONFIG = {
     # 'entity_category': [edugain.COCO, # "http://www.geant.net/uri/dataprotection-code-of-conduct/v1"
                         # refeds.RESEARCH_AND_SCHOLARSHIP],
 
-    'attribute_map_dir': os.path.join(os.path.join(os.path.join(BASE_DIR,
-                                                                'djangosaml2_spid'),
-                                      'saml2_config'),
-                                      'attribute-maps-satosa'),
+    'attribute_map_dir': 'saml2_sp/saml2_config/attribute-maps/',
     'service': {
 
 
@@ -124,6 +121,9 @@ SAML_CONFIG = {
              #  "url": "https://idp.testunical.it/idp/shibboleth",
              #  "disable_ssl_certificate_validation": True,
              #  },
+             {
+              "url": "http://idp1.testunical.it:9000/idp/metadata/",
+              },
             # {
              # 'url': 'https://localhost:10000/Saml2IDP/metadata',
              # only for test purpose !
