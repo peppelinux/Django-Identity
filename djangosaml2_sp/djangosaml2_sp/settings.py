@@ -24,7 +24,7 @@ SECRET_KEY = 'btl-x0ja09$zqer3h^n^_ic!9h+1q0g!-wqzj&&zio@(@5p*no'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     # SAML2 SP
     'djangosaml2',
     'saml2_sp',
-    # 'djangosaml2_spid',
+    'djangosaml2_spid'
 ]
 
 MIDDLEWARE = [
@@ -87,16 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'sqlite3.db',
-
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'djangosaml2_sp',
-#        'HOST': 'localhost',
-#        'USER': 'djangosaml2_sp',
-#        'PASSWORD': 'djangosaml2_sp78',
-#        'PORT': ''
     }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -138,8 +132,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 #
-SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-SESSION_COOKIE_AGE = 60 * 60 # an hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60  # an hour
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -152,11 +146,77 @@ if 'saml2_sp' in INSTALLED_APPS or \
         'django.contrib.auth.backends.ModelBackend',
         'djangosaml2.backends.Saml2Backend',
     )
- 
+
 
 # SPID SP
 if 'djangosaml2_spid' in INSTALLED_APPS:
     from djangosaml2_spid.settings import *
+    from djangosaml2_spid.settings import SAML_CONFIG, SPID_DEFAULT_BINDING, saml2
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE = 'http://hostnet:8000'
+    BASE_URL = '{}/saml2'.format(BASE)
+
+    SPID_CONTACTS = [
+        {
+            'contact_type': 'billing',
+            'telephone_number': '+39 84756344785',
+            'email_address': 'info@example.org',
+            'company': 'example s.p.a.',
+            # 'CodiceFiscale': 'NGLMRA80A01D086T',
+            'IdCodice': '983745349857',
+            'IdPaese': 'IT',
+            'Denominazione': 'Destinatario Fatturazione',
+            'Indirizzo': 'via tante cose',
+            'NumeroCivico': '12',
+            'CAP': '87100',
+            'Comune': 'Cosenza',
+            'Provincia': 'CS',
+            'Nazione': 'IT',
+        },
+    ]
+
+    SAML_CONFIG.update({
+        'entityid': '%s/metadata/' % BASE_URL,
+        'metadata': {
+            "remote": [
+                # {"url": "http://hostnet:8080/metadata.xml"},
+                {'url': 'http://hostnet:8088/metadata'},
+            ]
+        },
+
+        # Signing
+        'key_file': f'{BASE_DIR}/certificates/private.key',
+        'cert_file': f'{BASE_DIR}/certificates/public.cert',
+
+        # Encryption
+        'encryption_keypairs': [{
+            'key_file': f'{BASE_DIR}/certificates/private.key',
+            'cert_file': f'{BASE_DIR}/certificates/public.cert',
+        }],
+
+        # you can set multilanguage information here
+        'organization': {
+            'name': [('Example', 'it'), ('Example', 'en')],
+            'display_name': [('Example', 'it'), ('Example', 'en')],
+            'url': [('http://www.example.it', 'it'), ('http://www.example.it', 'en')],
+        },
+    })
+
+    SAML_CONFIG['service']['sp'].update({
+        'name': f'{BASE_URL}/metadata/',
+        'name_qualifier': BASE,
+        'endpoints': {
+            'assertion_consumer_service': [
+                (f'{BASE_URL}/acs/', SPID_DEFAULT_BINDING),
+            ],
+            'single_logout_service': [
+                (f'{BASE_URL}/ls/post/', saml2.BINDING_HTTP_POST),
+                (f'{BASE_URL}/ls/', saml2.BINDING_HTTP_REDIRECT),
+            ],
+        },
+    })
+
 elif 'saml2_sp' in INSTALLED_APPS:
     from . sp_pysaml2_satosa import *
 
