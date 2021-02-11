@@ -22,3 +22,14 @@ services:
     volumes:
       - "./configs/spid-testenv2/config.yaml:/app/conf/config.yaml:ro"
       - "./configs/spid-testenv2/users.json:/app/conf/users.json:ro"
+
+  spid-saml-check:
+    build:
+      context: ./spid-saml-check/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "hostnet:172.19.0.1"
+    volumes:
+      - "./configs/spid-saml-check/idp.json:/spid-saml-check/spid-validator/config/idp.json:ro"
