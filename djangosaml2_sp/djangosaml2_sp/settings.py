@@ -177,7 +177,7 @@ if 'djangosaml2_spid' in INSTALLED_APPS:
     ]
 
     SAML_CONFIG.update({
-        'entityid': f'{BASE_DIR}/metadata/',
+        'entityid': f'{BASE_URL}/metadata/',
         'metadata': {
             "remote": [
                 {
