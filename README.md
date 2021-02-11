@@ -64,3 +64,8 @@ To use Docker compose environment, add to /etc/hosts this line:
 ````
 
 then just use docker-compose up and go to http://hostnet:8000/spid/login
+
+### Known issues
+  - using two IdP together (tested with spid_testenv2 e spid-saml-check) the server shows an IdP selection page;
+  if you select the spid_testenv2 (default http://hostnet:8080/) you get an error about the AuthnRequest XML missing some elements
+    ("Issuer - attribute: NameQualifier", "NameIDPolicy", "RequestedAuthnContext"). __workaround__: use in settings.py one IdP at a time.

@@ -177,11 +177,17 @@ if 'djangosaml2_spid' in INSTALLED_APPS:
     ]
 
     SAML_CONFIG.update({
-        'entityid': '%s/metadata/' % BASE_URL,
+        'entityid': f'{BASE_DIR}/metadata/',
         'metadata': {
             "remote": [
-                # {"url": "http://hostnet:8080/metadata.xml"},
-                {'url': 'http://hostnet:8088/metadata'},
+                {
+                    'name': 'spid-testenv2',
+                    'url': 'http://hostnet:8088/metadata'
+                },
+                # {
+                #     'name': 'spid-saml-check',
+                #     'url': 'http://hostnet:8080/metadata.xml'
+                # },
             ]
         },
 
