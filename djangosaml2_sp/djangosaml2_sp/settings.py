@@ -24,7 +24,7 @@ SECRET_KEY = 'btl-x0ja09$zqer3h^n^_ic!9h+1q0g!-wqzj&&zio@(@5p*no'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     # SAML2 SP
     'djangosaml2',
     'saml2_sp',
-    # 'djangosaml2_spid',
+    'djangosaml2_spid'
 ]
 
 MIDDLEWARE = [
@@ -87,16 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'sqlite3.db',
-
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'djangosaml2_sp',
-#        'HOST': 'localhost',
-#        'USER': 'djangosaml2_sp',
-#        'PASSWORD': 'djangosaml2_sp78',
-#        'PORT': ''
     }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -138,8 +132,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 #
-SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-SESSION_COOKIE_AGE = 60 * 60 # an hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60  # an hour
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -152,11 +146,11 @@ if 'saml2_sp' in INSTALLED_APPS or \
         'django.contrib.auth.backends.ModelBackend',
         'djangosaml2.backends.Saml2Backend',
     )
- 
+
 
 # SPID SP
 if 'djangosaml2_spid' in INSTALLED_APPS:
-    from djangosaml2_spid.settings import *
+    from settingslocal import *
 elif 'saml2_sp' in INSTALLED_APPS:
     from . sp_pysaml2_satosa import *
 
