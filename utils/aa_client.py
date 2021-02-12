@@ -21,7 +21,8 @@ configured_idps = available_idps(conf)
 # Arguments needed to create an Attribute query
 ###############################################
 message_id = 'MSG_ID1'
-entityid = "http://idp1.testunical.it:9000/idp/metadata"
+entityid = "http://idp1.testunical.it:9000/idp/aa/metadata"
+destination = "http://idp1.testunical.it:9000/aap"
 subject_id = "E8042FB4-4D5B-48C3-8E14-8EDD852790DD"
 attributes = {
     ("urn:oid:2.5.4.42",
@@ -37,7 +38,7 @@ attributes = {
 
 # Create an Authoritative, signed, Attribute Query -> xml
 req_id, saml_req = client.create_attribute_query(
-            entityid,
+            destination,
             subject_id,
             
             # if I use attribute as argument using the official pysaml2 release
@@ -45,6 +46,7 @@ req_id, saml_req = client.create_attribute_query(
             # use pplnx's pysaml2-aa fork instead, it will correctly validate signature idp-aa-side
             attribute=attributes,
             
+            consent=True,
             format=saml.NAMEID_FORMAT_TRANSIENT,
             message_id=message_id,
             sign=True,
