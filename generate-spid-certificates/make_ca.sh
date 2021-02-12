@@ -16,8 +16,10 @@ export DAYS="730"
 
 set -e
 
+ls $CERTIFICATES_DIR > /dev/null
+
 ./generate_openssl_conf.sh > "$CERTIFICATES_DIR/$OPENSSL_CONF"
-cp -a oids.conf $CERTIFICATES_DIR
+cp -a oids.conf $CERTIFICATES_DIR/oids.conf.tmp
 
 $OPENSSL_CMD req \
   -new \
@@ -34,6 +36,9 @@ $OPENSSL_CMD x509 -noout -text -in /export/cert.pem
 # dump (ASN.1) the certificate
 $OPENSSL_CMD asn1parse \
   -inform PEM \
-  -oid /export/oids.conf \
+  -oid /export/oids.conf.tmp \
   -i \
   -in /export/cert.pem
+
+# cleanup
+rm -fv $CERTIFICATES_DIR/*.tmp
