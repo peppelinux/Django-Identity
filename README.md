@@ -24,7 +24,7 @@ See Installation examples.
 
 ###### Configuration
 
-Is you're a djangoer you should problably know that you have, first of all, set yuou environment and decide 
+Is you're a djangoer you should problably know that you have, first of all, set yuou environment and decide
 which kind of RDBMS engine you want to use, then `./manage.py migrate`. This is an example project, use it as your best.
 
 In `djangosaml2_sp/settings.py` configure which type of SAML2 SP you want to use.
@@ -33,7 +33,7 @@ In `djangosaml2_sp/settings.py` configure which type of SAML2 SP you want to use
 if 'saml2_sp' in INSTALLED_APPS:
     from . sp_pysaml2_satosa import *
     # from . import sp_pysaml2_shibidp as sp_pysaml2
-    
+
 
 # SPID SP
 # if 'djangosaml2_spid' in INSTALLED_APPS:
@@ -54,3 +54,18 @@ Also tested with a Shibboleth IDPv3.3.2 produced with the help of this playbook:
  - https://github.com/peppelinux/Ansible-Shibboleth-IDP-SP-Debian9
 
 The example file is in [djangosaml2_sp/sp_pysaml2_shibidp.py](https://github.com/peppelinux/Django-Identity/blob/master/djangosaml2_sp/djangosaml2_sp/djangosaml2_sp/sp_pysaml2_shibidp.py).
+
+
+### Docker compose
+
+To use Docker compose environment, add to /etc/hosts this line:
+````
+127.0.0.1	hostnet
+````
+
+then just use docker-compose up and go to http://hostnet:8000/spid/login
+
+### Known issues
+  - using two IdP together (tested with spid_testenv2 e spid-saml-check) the server shows an IdP selection page;
+  if you select the spid_testenv2 (default http://hostnet:8080/) you get an error about the AuthnRequest XML missing some elements
+    ("Issuer - attribute: NameQualifier", "NameIDPolicy", "RequestedAuthnContext"). __workaround__: use in settings.py one IdP at a time.
