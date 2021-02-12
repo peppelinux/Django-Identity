@@ -1,6 +1,8 @@
 CERTIFICATES_DIR="`pwd`/djangosaml2_sp/certificates/"
 OPENSSL_DOCKER_IMAGE="frapsoft/openssl"
 
+OPENSSL_CMD="docker run --rm -v $CERTIFICATES_DIR:/export/ $OPENSSL_DOCKER_IMAGE"
+
 SUBJ_C="IT"
 SUBJ_ST="State"
 SUBJ_L="City"
@@ -12,7 +14,7 @@ set -e
 
 ls $CERTIFICATES_DIR > /dev/null
 
-docker run --rm -v $CERTIFICATES_DIR:/export $OPENSSL_DOCKER_IMAGE req \
+$OPENSSL_CMD req \
   -nodes \
   -new \
   -x509 \
