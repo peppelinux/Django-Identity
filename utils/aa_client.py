@@ -25,14 +25,13 @@ entityid = "http://idp1.testunical.it:9000/idp/aa/metadata"
 destination = "http://idp1.testunical.it:9000/aap"
 subject_id = "E8042FB4-4D5B-48C3-8E14-8EDD852790DD"
 attributes = {
-    ("urn:oid:2.5.4.42",
-     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-     "givenName"): None,
-    ("urn:oid:2.5.4.4",
-     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-     "surname"): None,
-    ("urn:oid:1.2.840.113549.1.9.1",
-     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"): None,
+    ('urn:oasis:names:tc:SAML:attribute:pairwise-id',
+     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"): "spidCode-3242342342@idp.spid.it",
+    ("fiscalCode",
+     "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"): "TIN-SDF7SD89F7SD98F",
+    ("email",
+     "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+     "email"): None,
 }
 
 
@@ -49,9 +48,9 @@ req_id, saml_req = client.create_attribute_query(
             consent=True,
             format=saml.NAMEID_FORMAT_TRANSIENT,
             message_id=message_id,
-            sign=True,
-            sign_alg=saml2.xmldsig.SIG_RSA_SHA256,
-            digest_alg=saml2.xmldsig.DIGEST_SHA256
+            # sign=True,
+            # sign_alg=saml2.xmldsig.SIG_RSA_SHA256,
+            # digest_alg=saml2.xmldsig.DIGEST_SHA256
 )
 
 data = {'SAMLRequest' : base64.b64encode(saml_req.encode())}
