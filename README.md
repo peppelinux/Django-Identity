@@ -63,7 +63,13 @@ To use Docker compose environment, add to /etc/hosts this line:
 127.0.0.1	hostnet
 ````
 
-then just use docker-compose up and go to http://hostnet:8000/spid/login
+Duplicate the two files "*local.py.example" under the directory "./djangosaml2_sp/djangosaml2_sp/" and remove the ".example" extension, like so:
+````
+cp -a ./djangosaml2_sp/djangosaml2_sp/settingslocal.py.example ./djangosaml2_sp/djangosaml2_sp/settingslocal.py
+cp -a ./djangosaml2_sp/djangosaml2_sp/spid_settingslocal.py.example ./djangosaml2_sp/djangosaml2_sp/spid_settingslocal.py
+````
+
+then use docker-compose up (the process takes some time) and when the services are up go to http://hostnet:8000/spid/login
 
 ### Known issues
   - using two IdP together (tested with spid_testenv2 e spid-saml-check) the server shows an IdP selection page;
